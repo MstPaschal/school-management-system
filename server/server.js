@@ -1,6 +1,14 @@
 const path = require("path");
 const express = require("express");
 const cors = require("cors");
+
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://school-management-system-ebon-one.vercel.app"
+  ],
+  credentials: true
+}));
 require("dotenv").config();
 
 const sequelize = require("./config/db");
