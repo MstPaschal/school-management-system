@@ -6,7 +6,7 @@ const crypto = require("crypto");
 
 const nodemailer = require("nodemailer");
 
-const User = require("../models/User");
+const User = require("../models/user");
 
 const transporter =
   nodemailer.createTransport({

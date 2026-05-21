@@ -11,7 +11,7 @@ const Subject =
   require("../models/Subject");
 
 const User =
-  require("../models/User");
+  require("../models/user");
 
 
 

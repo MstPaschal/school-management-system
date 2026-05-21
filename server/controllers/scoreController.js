@@ -6,7 +6,7 @@ const Teacher =
   require("../models/Teacher");
 
 const User =
-  require("../models/User");
+  require("../models/user");
 
 const Class =
   require("../models/Class");

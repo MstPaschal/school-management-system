@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 
 const Teacher = require("../models/Teacher");
 
-const User = require("../models/User");
+const User = require("../models/user");
 
 const generateTeacherRegNumber = require(
   "../utils/generateTeacherRegNumber"

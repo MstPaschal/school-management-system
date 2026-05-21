@@ -24,7 +24,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 const sequelize = require("./config/db");
 
 // Models (IMPORTANT: match file names exactly)
-const User = require("./models/User");
+const User = require("./models/user");
 const Class = require("./models/Class");
 const Subject = require("./models/Subject");
 const Session = require("./models/Session");
