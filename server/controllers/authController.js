@@ -79,9 +79,7 @@ exports.registerAdmin = async (req, res) => {
 
 // LOGIN
 exports.login = async (req, res) => {
-
   try {
-
     const { username, password } = req.body;
 
     console.log("LOGIN REQUEST:", req.body);
@@ -91,34 +89,26 @@ exports.login = async (req, res) => {
       where: { username }
     });
 
-    let assignedClass = null;
-
-    if (user.role === "teacher") {
-
-      const Teacher =
-        require("../models/Teacher");
-
-      const teacher =
-        await Teacher.findOne({
-
-          where: {
-            userId: user.id
-          }
-
-        });
-
-      assignedClass =
-        teacher?.assignedClass || null;
-
-    }
-
-    console.log("FOUND USER:", user)
-
+    // ✅ FIX: CHECK USER FIRST
     if (!user) {
       return res.status(400).json({
         message: "Invalid username or password"
       });
     }
+
+    let assignedClass = null;
+
+    if (user.role === "teacher") {
+      const Teacher = require("../models/Teacher");
+
+      const teacher = await Teacher.findOne({
+        where: { userId: user.id }
+      });
+
+      assignedClass = teacher?.assignedClass || null;
+    }
+
+    console.log("FOUND USER:", user);
 
     // CHECK PASSWORD
     const isMatch = await bcrypt.compare(
@@ -126,58 +116,38 @@ exports.login = async (req, res) => {
       user.password
     );
 
-    console.log("PASSWORD MATCH:", isMatch);
-
     if (!isMatch) {
       return res.status(400).json({
         message: "Invalid username or password"
       });
     }
 
-    console.log("JWT SECRET:", process.env.JWT_SECRET);
-
-    // CREATE TOKEN
+    // JWT
     const token = jwt.sign(
       {
         id: user.id,
         role: user.role
       },
       process.env.JWT_SECRET,
-      {
-        expiresIn: "7d"
-      }
+      { expiresIn: "7d" }
     );
 
-    console.log("TOKEN CREATED");
-
     res.status(200).json({
-
       token,
-
       user: {
-
         id: user.id,
-
         username: user.username,
-
         role: user.role,
-
-        assignedClass: assignedClass
-
+        assignedClass
       }
-
     });
 
   } catch (error) {
-
-    console.log("LOGIN ERROR",error);
-
+    console.log("LOGIN ERROR", error);
     res.status(500).json({
       message: "Server Error"
     });
-
   }
-
 };
 
 
