@@ -36,7 +36,7 @@ export const AuthProvider =
 
       const res =
         await api.post(
-          "/auth/login",
+          "api/auth/login",
           {
             username,
             password
