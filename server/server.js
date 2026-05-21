@@ -8,9 +8,7 @@ const app = express();
 
 // ✅ Middleware
 app.use(cors({
-  origin: [
-    "https://school-management-system-ebon-one.vercel.app"
-  ],
+  origin: true,
   credentials: true
 }));
 
