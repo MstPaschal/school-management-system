@@ -324,7 +324,7 @@ function ViewStudents() {
                             ? (
 
                               <img
-                                src={`http://localhost:5000/uploads/${student.passport}`}
+                                src={`https://portal-grisfield-schools.onrender.com/uploads/${student.passport}`}
                                 alt="passport"
                                 className="w-14 h-14 rounded-full object-cover"
                               />
@@ -490,7 +490,7 @@ function ViewStudents() {
                             ? (
 
                               <img
-                                src={`http://localhost:5000/uploads/${selectedStudent.passport}`}
+                                src={`https://portal-grisfield-schools.onrender.com/uploads/${selectedStudent.passport}`}
                                 alt="passport"
                                 className="w-40 h-40 rounded-xl object-cover border"
                               />

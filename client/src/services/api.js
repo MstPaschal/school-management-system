@@ -4,7 +4,7 @@ import axios from "axios";
 const api = axios.create({
 
   baseURL:
-    "https://portal-grisfield-schools.onrender.com"
+    "https://portal-grisfield-schools.onrender.com/api"
 
 });
 

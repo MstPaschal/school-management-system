@@ -626,7 +626,7 @@ function CreateTeacher() {
                           ? (
 
                             <img
-                              src={`http://localhost:5000/uploads/${teacher.passport}`}
+                              src={`https://portal-grisfield-schools.onrender.com/uploads/${teacher.passport}`}
                               alt="passport"
                               className="w-16 h-16 rounded-full object-cover"
                             />
@@ -794,7 +794,7 @@ function CreateTeacher() {
                           ? (
 
                             <img
-                              src={`http://localhost:5000/uploads/${selectedTeacher.passport}`}
+                              src={`https://portal-grisfield-schools.onrender.com/uploads/${selectedTeacher.passport}`}
                               alt="passport"
                               className="w-44 h-44 rounded-xl object-cover border"
                             />

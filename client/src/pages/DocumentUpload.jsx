@@ -426,7 +426,7 @@ function DocumentUpload() {
                     <td className="p-3">
 
                       <a
-                        href={`http://localhost:5000/uploads/${doc.fileName}`}
+                        href={`https://portal-grisfield-schools.onrender.com/uploads/${doc.fileName}`}
                         target="_blank"
                         rel="noreferrer"
                         className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"

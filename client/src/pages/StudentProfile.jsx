@@ -87,7 +87,7 @@ function StudentProfile() {
               student.passport ? (
 
                 <img
-                  src={`http://localhost:5000/uploads/${student.passport}`}
+                  src={`https://portal-grisfield-schools.onrender.com/uploads/${student.passport}`}
                   alt="passport"
                   className="w-40 h-40 rounded-2xl object-cover border"
                 />
