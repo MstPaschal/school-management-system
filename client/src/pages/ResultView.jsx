@@ -25,20 +25,41 @@ function ResultView() {
 
 
   // PRINT SECTION
-  const printSection =
-    (sectionId, title) => {
+  const printSection = (sectionId) => {
 
-      const content =
-        document.getElementById(
-          sectionId
-        ).innerHTML;
+  // HIDE EVERYTHING
+  const allSections =
+    document.querySelectorAll(
+      ".printable-section"
+    );
 
-      const win =
-        window.open(
-          "",
-          "",
-          "width=1200,height=900"
-        );
+  allSections.forEach((section) => {
+
+    section.style.display = "none";
+
+  });
+
+  // SHOW ONLY TARGET
+  const target =
+    document.getElementById(sectionId);
+
+  if (target) {
+
+    target.style.display = "block";
+
+  }
+
+  // PRINT
+  window.print();
+
+  // RESTORE EVERYTHING
+  allSections.forEach((section) => {
+
+    section.style.display = "block";
+
+  });
+
+};
 
       win.document.write(`
 
@@ -156,7 +177,7 @@ function ResultView() {
 
         {/* ================= RESULT SECTION ================= */}
 
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 printable-section">
 
           <div
             id="result-section"
@@ -717,10 +738,7 @@ function ResultView() {
 
             <button
               onClick={() =>
-                printSection(
-                  "result-section",
-                  "Result Sheet"
-                )
+                printSection("result-section")
               }
               className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg"
             >
@@ -736,7 +754,7 @@ function ResultView() {
 
         {/* ================= PAYMENT SECTION ================= */}
 
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 printable-section">
 
           <div id="payment-section">
 
@@ -944,10 +962,7 @@ function ResultView() {
 
             <button
               onClick={() =>
-                printSection(
-                  "payment-section",
-                  "Payment Schedule"
-                )
+                printSection("payment-section")
               }
               className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg"
             >
@@ -963,7 +978,7 @@ function ResultView() {
 
         {/* ================= DOCUMENTS ================= */}
 
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 printable-section">
 
           <h2 className="text-3xl font-bold mb-8">
 
