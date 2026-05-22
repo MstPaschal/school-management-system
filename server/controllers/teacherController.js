@@ -101,7 +101,10 @@ exports.createTeacher = async (req, res) => {
 
   } catch (error) {
 
-    console.log(error);
+    console.log(
+      "CREATE TEACHER ERROR:",
+      error
+    );
 
     res.status(500).json({
       message: "Server Error"
