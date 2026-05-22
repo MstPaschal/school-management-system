@@ -27,106 +27,39 @@ function ResultView() {
   // PRINT SECTION
   const printSection = (sectionId) => {
 
-  // HIDE EVERYTHING
-  const allSections =
-    document.querySelectorAll(
-      ".printable-section"
-    );
+    // HIDE ALL PRINTABLE SECTIONS
+    const allSections =
+      document.querySelectorAll(
+        ".printable-section"
+      );
 
-  allSections.forEach((section) => {
+    allSections.forEach((section) => {
 
-    section.style.display = "none";
+      section.style.display = "none";
 
-  });
+    });
 
-  // SHOW ONLY TARGET
-  const target =
-    document.getElementById(sectionId);
+    // SHOW ONLY THE TARGET SECTION
+    const target =
+      document.getElementById(sectionId);
 
-  if (target) {
+    if (target) {
 
-    target.style.display = "block";
+      target.style.display = "block";
 
-  }
+    }
 
-  // PRINT
-  window.print();
+    // PRINT
+    window.print();
 
-  // RESTORE EVERYTHING
-  allSections.forEach((section) => {
+    // RESTORE SECTIONS
+    allSections.forEach((section) => {
 
-    section.style.display = "block";
+      section.style.display = "block";
 
-  });
+    });
 
-};
-
-      win.document.write(`
-
-        <html>
-
-          <head>
-
-            <title>${title}</title>
-
-            <style>
-
-              body{
-                font-family: Arial, sans-serif;
-                padding:20px;
-                color:#000;
-              }
-
-              table{
-                width:100%;
-                border-collapse: collapse;
-                margin-top:20px;
-              }
-
-              th, td{
-                border:1px solid #000;
-                padding:8px;
-                text-align:left;
-              }
-
-              h1,h2,h3,h4{
-                margin:0;
-              }
-
-              .text-center{
-                text-align:center;
-              }
-
-              .grid{
-                display:grid;
-                grid-template-columns:
-                repeat(2,1fr);
-                gap:20px;
-              }
-
-              img{
-                max-width:120px;
-              }
-
-            </style>
-
-          </head>
-
-          <body>
-
-            ${content}
-
-          </body>
-
-        </html>
-
-      `);
-
-      win.document.close();
-
-      win.print();
-
-    };
+  };
 
 
   if (!data) {
