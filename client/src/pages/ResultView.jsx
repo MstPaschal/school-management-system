@@ -5,8 +5,8 @@ function ResultView() {
   const [data, setData] =
     useState(null);
 
-
   useEffect(() => {
+
 
     const savedData =
       localStorage.getItem(
@@ -23,44 +23,81 @@ function ResultView() {
 
   }, []);
 
+  // PRINT FUNCTION
+  const printSection =
+    (sectionId) => {
 
-  // PRINT SECTION
-  const printSection = (sectionId) => {
+      const allSections =
+        document.querySelectorAll(
+          ".printable-section"
+        );
 
-    // HIDE ALL PRINTABLE SECTIONS
-    const allSections =
-      document.querySelectorAll(
-        ".printable-section"
+      allSections.forEach(
+        (section) => {
+          section.dataset.orginalDisplay =
+          window.getComputedStyle(section).display;
+
+          section.style.display =
+            "none";
+
+        }
       );
 
-    allSections.forEach((section) => {
+      const target =
+        document.getElementById(
+          sectionId
+        );
 
-      section.style.display = "none";
+      if (target) {
 
-    });
+        target.style.display =
+          "block";
 
-    // SHOW ONLY THE TARGET SECTION
-    const target =
-      document.getElementById(sectionId);
+      }
 
-    if (target) {
+      window.print();
 
-      target.style.display = "block";
+      allSections.forEach(
+        (section) => {
 
-    }
+          section.style.display =
+          section.dataset.orginalDisplay || "block";
 
-    // PRINT
-    window.print();
+        }
+      );
 
-    // RESTORE SECTIONS
-    allSections.forEach((section) => {
+    };
 
-      section.style.display = "block";
+  useEffect(() => {
+    const style =
+      document.createElement("style");
+    
+    style.innerHTML = `
+      @media print {
+        .no-print {
+          display: none !important;
+        }
 
-    });
+        body {
+          background: white !important;
+        }
 
-  };
+        .printable-section {
+          box-shadow: none !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
 
+      }
+    `;
+
+    document.head.appendChild(style);
+
+    return () => {
+      document.head.removeChild(style);
+    };
+
+  }, []);
 
   if (!data) {
 
@@ -76,206 +113,241 @@ function ResultView() {
 
   }
 
-
-  // PAYMENT TOTAL
   const paymentTotal =
 
-    Number(data.payment?.tuitionFee || 0) +
+    Number(
+      data.payment?.tuitionFee || 0
+    ) +
 
-    Number(data.payment?.saturdayLesson || 0) +
+    Number(
+      data.payment?.saturdayLesson || 0
+    ) +
 
-    Number(data.payment?.scratchCard || 0) +
+    Number(
+      data.payment?.scratchCard || 0
+    ) +
 
-    Number(data.payment?.termlyActivities || 0) +
+    Number(
+      data.payment?.termlyActivities || 0
+    ) +
 
-    Number(data.payment?.books || 0) +
+    Number(
+      data.payment?.books || 0
+    ) +
 
-    Number(data.payment?.schoolBus || 0) +
+    Number(
+      data.payment?.schoolBus || 0
+    ) +
 
-    Number(data.payment?.outstanding || 0) +
+    Number(
+      data.payment?.outstanding || 0
+    ) +
 
-    Number(data.payment?.graduation || 0) +
+    Number(
+      data.payment?.graduation || 0
+    ) +
 
-    Number(data.payment?.excursion || 0) +
+    Number(
+      data.payment?.excursion || 0
+    ) +
 
-    Number(data.payment?.practicals || 0);
-
+    Number(
+      data.payment?.practicals || 0
+    );
 
   return (
 
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-gray-100 p-4">
 
       <div className="max-w-7xl mx-auto space-y-10">
 
+        {/* RESULT SECTION */}
+        <div
+          id="result-section"
+          className="printable-section bg-white border-2 border-black p-4 relative"
+        >
 
-        {/* ================= RESULT SECTION ================= */}
+          {/* WATERMARK */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
 
-        <div className="bg-white rounded-2xl shadow-2xl p-8 printable-section">
+            <img
+              src="/Logo.png"
+              alt="Watermark"
+              className="w-[500px]"
+            />
 
-          <div
-            id="result-section"
-            className="relative"
-          >
+          </div>
 
-            {/* WATERMARK */}
-            <div className="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
+          {/* HEADER */}
+          <div className="border-b-2 border-black pb-4 mb-4">
 
-              <img
-                src="/Logo.png"
-                alt="Watermark"
-                className="w-[900px]"
-              />
+            <div className="flex justify-between items-center">
 
-            </div>
-
-
-            {/* HEADER */}
-            <div className="relative text-center mb-8">
-
+              {/* LOGO */}
               <img
                 src="/Logo.png"
                 alt="Logo"
-                className="w-24 h-24 mx-auto mb-3"
+                className="w-24 h-24"
               />
 
-              <h1 className="text-4xl font-bold text-blue-900">
+              {/* SCHOOL INFO */}
+              <div className="text-center flex-1">
 
-                {
-                  data.result.schoolName ||
-                  "GRISFIELD SCHOOLS"
-                }
+                <h1 className="text-2xl font-bold uppercase">
 
-              </h1>
+                  {
+                    data.result.schoolName ||
+                    "GRISFIELD SCHOOLS"
+                  }
 
-               <p className="mt-1">
+                </h1>
 
-                {data.result.schoolAddress}
-
-              </p>
-
-               <p>
-
-                {data.result.schoolPhone}
-
-              </p>
-
-              <h2 className="text-2xl font-semibold mt-2">
-
-                ACADEMIC REPORT CARD
-
-              </h2>
-
-            </div>
-
-
-            {/* STUDENT INFO */}
-            <div className="relative grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-
-              <div>
-
-                <p className="font-bold">
-                  Student Name
+                <p>
+                  {data.result.schoolAddress}
                 </p>
 
                 <p>
-                  {data.student.fullName}
+                  {data.result.schoolPhone}
                 </p>
+
+                <h2 className="font-bold mt-2 text-lg">
+
+                  STUDENT'S ACADEMIC REPORT CARD
+
+                </h2>
 
               </div>
 
+              {/* PASSPORT */}
+              <div className="w-24 h-24 border border-black overflow-hidden">
 
-              <div>
-
-                <p className="font-bold">
-                  Reg Number
-                </p>
-
-                <p>
-                  {data.student.regNumber}
-                </p>
-
-              </div>
-
-
-              <div>
-
-                <p className="font-bold">
-                  Class
-                </p>
-
-                <p>
-                  {data.student.currentClassName || "N/A"}
-                </p>
-
-              </div>
-
-
-              <div>
-
-                <p className="font-bold">
-                  Session
-                </p>
-
-                <p>
-                  {data.sessionName || "N/A"}
-                </p>
-
-              </div>
-
-
-              <div>
-
-                <p className="font-bold">
-                  Term
-                </p>
-
-                <p>
-                  {data.term}
-                </p>
+                <img
+                  src={
+                    data.student.passport ||
+                    "/avatar.png"
+                  }
+                  alt="Passport"
+                  className="w-full h-full object-cover"
+                />
 
               </div>
 
             </div>
 
+          </div>
+
+          {/* STUDENT INFO */}
+          <div className="grid grid-cols-2 md:grid-cols-4 border border-black mb-4 text-sm">
+
+            <div className="border-r border-b p-2">
+
+              <b>Name:</b><br />
+
+              {data.student.fullName}
+
+            </div>
+
+            <div className="border-r border-b p-2">
+
+              <b>Reg No:</b><br />
+
+              {data.student.regNumber}
+
+            </div>
+
+            <div className="border-r border-b p-2">
+
+              <b>Class:</b><br />
+
+              {
+                data.student.currentClassName
+              }
+
+            </div>
+
+            <div className="border-b p-2">
+
+              <b>Term:</b><br />
+
+              {data.term}
+
+            </div>
+
+            <div className="border-r p-2">
+
+              <b>Session:</b><br />
+
+              {data.sessionName}
+
+            </div>
+
+            <div className="border-r p-2">
+
+              <b>Position:</b><br />
+
+              {data.result.position}
+
+            </div>
+
+            <div className="border-r p-2">
+
+              <b>Average:</b><br />
+
+              {data.result.average}
+
+            </div>
+
+            <div className="p-2">
+
+              <b>Grade:</b><br />
+
+              {data.result.mainGrade}
+
+            </div>
+
+          </div>
+
+          {/* MAIN CONTENT */}
+          <div className="grid grid-cols-12 gap-3">
 
             {/* RESULT TABLE */}
-            <div className="overflow-x-auto mb-8 relative">
+            <div className="col-span-12 lg:col-span-9 overflow-x-auto">
 
-              <table className="w-full border-collapse border">
+              <table className="w-full border-collapse border border-black text-sm">
 
                 <thead>
 
-                  <tr className="bg-gray-100">
+                  <tr className="bg-gray-200">
 
-                    <th className="border p-3">
+                    <th className="border p-2">
                       Subject
                     </th>
 
-                    <th className="border p-3">
+                    <th className="border p-2">
                       1st CA
                     </th>
 
-                    <th className="border p-3">
+                    <th className="border p-2">
                       2nd CA
                     </th>
 
-                    <th className="border p-3">
+                    <th className="border p-2">
                       Project
                     </th>
 
-                    <th className="border p-3">
+                    <th className="border p-2">
                       Exam
                     </th>
 
-                    <th className="border p-3">
+                    <th className="border p-2">
                       Total
                     </th>
 
-                    <th className="border p-3">
+                    <th className="border p-2">
                       Grade
                     </th>
 
-                    <th className="border p-3">
+                    <th className="border p-2">
                       Remark
                     </th>
 
@@ -283,58 +355,60 @@ function ResultView() {
 
                 </thead>
 
-
                 <tbody>
 
                   {
                     data.result.subjects.map(
-                      (subject, index) => (
+                      (
+                        subject,
+                        index
+                      ) => (
 
                         <tr key={index}>
 
-                          <td className="border p-3">
+                          <td className="border p-2">
 
                             {subject.subject}
 
                           </td>
 
-                          <td className="border p-3">
+                          <td className="border p-2 text-center">
 
                             {subject.firstCA}
 
                           </td>
 
-                          <td className="border p-3">
+                          <td className="border p-2 text-center">
 
                             {subject.secondCA}
 
                           </td>
 
-                          <td className="border p-3">
+                          <td className="border p-2 text-center">
 
                             {subject.project}
 
                           </td>
 
-                          <td className="border p-3">
+                          <td className="border p-2 text-center">
 
                             {subject.exam}
 
                           </td>
 
-                          <td className="border p-3 font-bold">
+                          <td className="border p-2 text-center font-bold">
 
                             {subject.total}
 
                           </td>
 
-                          <td className="border p-3">
+                          <td className="border p-2 text-center">
 
                             {subject.grade}
 
                           </td>
 
-                          <td className="border p-3">
+                          <td className="border p-2 text-center">
 
                             {subject.remark}
 
@@ -352,68 +426,32 @@ function ResultView() {
 
             </div>
 
+            {/* SIDE PANEL */}
+            <div className="col-span-12 lg:col-span-3 space-y-4">
 
-            {/* SUMMARY */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              {/* GRADING */}
+              <div className="border border-black">
 
-              <div>
+                <div className="bg-gray-200 border-b p-2 font-bold">
 
-                <p className="font-bold">
-                  Grand Total
-                </p>
+                  GRADING SYSTEM
 
-                <p>
-                  {data.result.total}
-                </p>
+                </div>
 
-              </div>
+                <div className="p-2 text-sm space-y-1">
 
+                  <p>A = 70 - 100</p>
+                  <p>B = 60 - 69</p>
+                  <p>C = 50 - 59</p>
+                  <p>D = 45 - 49</p>
+                  <p>F = 0 - 44</p>
 
-              <div>
-
-                <p className="font-bold">
-                  Average
-                </p>
-
-                <p>
-                  {data.result.average}
-                </p>
+                </div>
 
               </div>
 
-
-              <div>
-
-                <p className="font-bold">
-                  Grade
-                </p>
-
-                <p>
-                  {data.result.mainGrade}
-                </p>
-
-              </div>
-
-
-              <div>
-
-                <p className="font-bold">
-                  Position
-                </p>
-
-                <p>
-                  {data.result.position}
-                </p>
-
-              </div>
-
-            </div>
-
-
-            {/* COMMENTS */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-
-              <div>
+              {/* COMMENTS */}
+              <div className="border border-black p-2 text-sm">
 
                 <p className="font-bold mb-2">
 
@@ -421,19 +459,18 @@ function ResultView() {
 
                 </p>
 
-                <div className="border rounded-lg p-4 min-h-[80px]">
+                <p>
 
                   {
                     data.result.teacherComment ||
-                    "No comment"
+                    "No Comment"
                   }
 
-                </div>
+                </p>
 
               </div>
 
-
-              <div>
+              <div className="border border-black p-2 text-sm">
 
                 <p className="font-bold mb-2">
 
@@ -441,221 +478,12 @@ function ResultView() {
 
                 </p>
 
-                <div className="border rounded-lg p-4 min-h-[80px]">
+                <p>
 
                   {
                     data.result.proprietorComment ||
-                    "No comment"
+                    "No Comment"
                   }
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            {/* NEXT TERM */}
-            <div className="mb-8">
-
-              <p className="font-bold text-lg">
-
-                Next Term Resumption Date
-
-              </p>
-
-              <p className="text-lg">
-
-                {
-                  data.result
-                    .nextTermResumptionDate
-
-                    ? new Date(
-                        data.result
-                        .nextTermResumptionDate
-                      ).toLocaleDateString()
-
-                    : "Not Set"
-                }
-
-              </p>
-
-            </div>
-
-
-            {/* CUMULATIVE */}
-            {
-              data.result.cumulativeResult && (
-
-                <div className="border rounded-xl p-5 bg-gray-50 mb-8">
-
-                  <h2 className="text-2xl font-bold mb-4">
-
-                    Cumulative Result
-
-                  </h2>
-
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-
-                    <div>
-
-                      <p className="font-bold">
-
-                        1st Term Average
-
-                      </p>
-
-                      <p>
-
-                        {
-                          data.result
-                          .cumulativeResult
-                          .firstTermAverage
-                        }
-
-                      </p>
-
-                    </div>
-
-                    <div>
-
-                      <p className="font-bold">
-
-                        2nd Term Average
-
-                      </p>
-
-                      <p>
-
-                        {
-                          data.result
-                          .cumulativeResult
-                          .secondTermAverage
-                        }
-
-                      </p>
-
-                    </div>
-
-                    <div>
-
-                      <p className="font-bold">
-
-                        3rd Term Average
-
-                      </p>
-
-                      <p>
-
-                        {
-                          data.result
-                          .cumulativeResult
-                          .thirdTermAverage
-                        }
-
-                      </p>
-
-                    </div>
-
-                    <div>
-
-                      <p className="font-bold">
-
-                        Cumulative Average
-
-                      </p>
-
-                      <p>
-
-                        {
-                          data.result
-                          .cumulativeResult
-                          .cumulativeAverage
-                        }
-
-                      </p>
-
-                    </div>
-
-                    <div>
-
-                      <p className="font-bold">
-
-                        Cumulative Grade
-
-                      </p>
-
-                      <p>
-
-                        {
-                          data.result
-                          .cumulativeResult
-                          .cumulativeGrade
-                        }
-
-                      </p>
-
-                    </div>
-
-                    <div>
-
-                      <p className="font-bold">
-
-                        Promotion Status
-
-                      </p>
-
-                      <p>
-
-                        {
-                          data.result
-                          .cumulativeResult
-                          .promotionStatus
-                        }
-
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-              )
-            }
-
-
-            {/* FOOTER */}
-            <div className="flex justify-between items-end mt-16">
-
-              <div className="text-center">
-
-                <img
-                  src="/Signature.png"
-                  alt="Signature"
-                  className="w-32 mx-auto"
-                />
-
-                <p className="border-t pt-2 mt-2">
-
-                  Principal's Signature
-
-                </p>
-
-              </div>
-
-
-              <div className="text-center">
-
-                <img
-                  src="/Stamp.png"
-                  alt="Stamp"
-                  className="w-32 mx-auto"
-                />
-
-                <p className="mt-2">
-
-                  School Stamp
 
                 </p>
 
@@ -665,15 +493,146 @@ function ResultView() {
 
           </div>
 
+          {/* CUMULATIVE RESULT */}
+          {
+            data.result.cumulativeResult && (
 
-          {/* PRINT RESULT */}
-          <div className="text-center mt-10">
+              <div className="mt-6 border border-black p-4">
+
+                <h2 className="font-bold text-lg mb-4">
+
+                  Cumulative Result
+
+                </h2>
+
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+
+                  <div>
+
+                    <b>1st Term Avg:</b><br />
+
+                    {
+                      data.result
+                        .cumulativeResult
+                        .firstTermAverage
+                    }
+
+                  </div>
+
+                  <div>
+
+                    <b>2nd Term Avg:</b><br />
+
+                    {
+                      data.result
+                        .cumulativeResult
+                        .secondTermAverage
+                    }
+
+                  </div>
+
+                  <div>
+
+                    <b>3rd Term Avg:</b><br />
+
+                    {
+                      data.result
+                        .cumulativeResult
+                        .thirdTermAverage
+                    }
+
+                  </div>
+
+                  <div>
+
+                    <b>Cumulative Avg:</b><br />
+
+                    {
+                      data.result
+                        .cumulativeResult
+                        .cumulativeAverage
+                    }
+
+                  </div>
+
+                  <div>
+
+                    <b>Cumulative Grade:</b><br />
+
+                    {
+                      data.result
+                        .cumulativeResult
+                        .cumulativeGrade
+                    }
+
+                  </div>
+
+                  <div>
+
+                    <b>Promotion:</b><br />
+
+                    {
+                      data.result
+                        .cumulativeResult
+                        .promotionStatus
+                    }
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            )
+          }
+
+          {/* FOOTER */}
+          <div className="flex justify-between items-end mt-10">
+
+            <div className="text-center">
+
+              <img
+                src="/Signature.png"
+                alt="Signature"
+                className="w-28 mx-auto"
+              />
+
+              <p className="border-t border-black mt-2 pt-1">
+
+                Principal's Signature
+
+              </p>
+
+            </div>
+
+            <div className="text-center">
+
+              <img
+                src="/Stamp.png"
+                alt="Stamp"
+                className="w-28 mx-auto"
+              />
+
+              <p className="mt-1">
+
+                School Stamp
+
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* PRINT BUTTON */}
+          <div className="text-center mt-8 no-print">
 
             <button
               onClick={() =>
-                printSection("result-section")
+                printSection(
+                  "result-section"
+                )
               }
-              className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg"
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg"
             >
 
               Print Result
