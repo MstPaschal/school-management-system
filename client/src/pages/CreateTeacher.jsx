@@ -43,6 +43,8 @@ function CreateTeacher() {
 
       username: "",
 
+      email: "",
+
       password: "",
 
       dob: "",
@@ -203,6 +205,8 @@ function CreateTeacher() {
 
           username: "",
 
+          email: "",
+
           password: "",
 
           dob: "",
@@ -338,6 +342,27 @@ function CreateTeacher() {
               type="text"
               name="username"
               value={formData.username}
+              onChange={handleChange}
+              required
+              className="w-full border rounded-lg px-4 py-3"
+            />
+
+          </div>
+
+
+          {/* EMAIL */}
+          <div>
+
+            <label className="block mb-1 font-medium">
+
+              Email
+
+            </label>
+
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
               onChange={handleChange}
               required
               className="w-full border rounded-lg px-4 py-3"

@@ -24,6 +24,7 @@ exports.createTeacher = async (req, res) => {
       nokAddress,
       assignedClass,
       username,
+      email,
       password
     } = req.body;
 
@@ -52,6 +53,8 @@ exports.createTeacher = async (req, res) => {
     const user = await User.create({
 
       username,
+
+      email,
 
       password: hashedPassword,
 
