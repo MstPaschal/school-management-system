@@ -532,6 +532,18 @@ function ResultReport() {
                         Total
                       </th>
 
+                      <th className="border p-2">
+                        Class Highest
+                      </th>
+
+                      <th className="border p-2">
+                        Class Lowest
+                      </th>
+
+                      <th className="border p-2">
+                        Subject Avg
+                      </th>
+
                       <th className="border p-3">
                         Grade
                       </th>
@@ -575,6 +587,24 @@ function ResultReport() {
 
                             <td className="border p-3">
                               {subject.total}
+                            </td>
+
+                            <td className="border p-2 text-center">
+
+                              {subject.highestScore}
+
+                            </td>
+
+                            <td className="border p-2 text-center">
+
+                              {subject.lowestScore}
+
+                            </td>
+
+                            <td className="border p-2 text-center font-bold">
+
+                              {subject.subjectAverage}
+
                             </td>
 
                             <td className="border p-3">
