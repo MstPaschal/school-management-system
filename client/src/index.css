@@ -2,26 +2,19 @@
 
 @media print {
 
-  body * {
-    visibility: hidden;
+  body {
+    background: white !important;
   }
 
-  #result-section,
-  #result-section * {
-    visibility: visible;
+  .no-print {
+    display: none !important;
   }
 
-  #payment-section,
-  #payment-section * {
-    visibility: visible;
-  }
-
-  #result-section,
-  #payment-section {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
+  .printable-section {
+    display: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
 }

@@ -24,49 +24,54 @@ function ResultView() {
   }, []);
 
   // PRINT FUNCTION
-  const printSection =
-    (sectionId) => {
+  const printSection = (sectionId) => {
 
-      const allSections =
-        document.querySelectorAll(
-          ".printable-section"
-        );
-
-      allSections.forEach(
-        (section) => {
-          section.dataset.orginalDisplay =
-          window.getComputedStyle(section).display;
-
-          section.style.display =
-            "none";
-
-        }
+    const allSections =
+      document.querySelectorAll(
+        ".printable-section"
       );
 
-      const target =
-        document.getElementById(
-          sectionId
-        );
+    // HIDE ALL SECTIONS
+    allSections.forEach((section) => {
 
-      if (target) {
+      section.dataset.originalDisplay =
+        window.getComputedStyle(section).display;
 
-        target.style.display =
+      section.style.display = "none";
+
+    });
+
+    // FIND TARGET SECTION
+    const target =
+      document.getElementById(sectionId);
+
+    if (target) {
+
+      // SHOW THE ENTIRE PRINTABLE SECTION
+      const printableParent =
+        target.closest(".printable-section");
+
+      if (printableParent) {
+
+        printableParent.style.display =
           "block";
 
       }
 
-      window.print();
+    }
 
-      allSections.forEach(
-        (section) => {
+    // PRINT
+    window.print();
 
-          section.style.display =
-          section.dataset.orginalDisplay || "block";
+    // RESTORE ALL SECTIONS
+    allSections.forEach((section) => {
 
-        }
-      );
+      section.style.display =
+        section.dataset.originalDisplay || "block";
 
-    };
+    });
+
+  };
 
   useEffect(() => {
     const style =

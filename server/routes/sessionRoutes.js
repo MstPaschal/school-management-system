@@ -29,7 +29,6 @@ router.post(
 // GET SESSIONS
 router.get(
   "/",
-  verifyToken,
   getSessions
 );
 
