@@ -48,4 +48,13 @@ router.post(
   checkResult
 );
 
+
+// =========================
+// GET STUDENT BY REG NUMBER
+// =========================
+router.get(
+  "/student-by-reg/:regNumber",
+  resultCheckerController.getStudentByReg
+);
+
 module.exports = router;

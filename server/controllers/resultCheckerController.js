@@ -163,6 +163,59 @@ exports.loadPins =
 
 
 // =========================
+// GET STUDENT BY REG NUMBER
+// =========================
+exports.getStudentByReg =
+  async (req, res) => {
+
+    try {
+
+      const student =
+        await Student.findOne({
+
+          where: {
+            regNumber:
+              req.params.regNumber
+          }
+
+        });
+
+      if (!student) {
+
+        return res.status(404).json({
+
+          message:
+            "Student not found"
+
+        });
+
+      }
+
+      res.json({
+
+        fullName:
+          student.fullName
+
+      });
+
+    } catch (error) {
+
+      console.log(error);
+
+      res.status(500).json({
+
+        message:
+          "Server error"
+
+      });
+
+    }
+
+  };
+
+
+  
+// =========================
 // CHECK RESULT
 // =========================
 exports.checkResult =

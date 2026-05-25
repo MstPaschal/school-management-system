@@ -85,7 +85,68 @@ exports.viewStudentResult = async (req, res) => {
 
       if (!subject) continue;
 
+
+      // ======================================
+      // GET ALL SCORES FOR THIS SUBJECT
+      // ======================================
+      const allSubjectScores =
+        await Score.findAll({
+
+          where: {
+
+            subjectId: score.subjectId,
+
+            classId,
+
+            sessionId,
+
+            term
+
+          }
+
+        });
+
+
+      // ======================================
+      // EXTRACT TOTALS
+      // ======================================
+      const totals =
+        allSubjectScores.map(
+          (item) =>
+            Number(item.total || 0)
+        );
+
+
+      // ======================================
+      // HIGHEST SCORE
+      // ======================================
+      const highestScore =
+        totals.length > 0
+          ? Math.max(...totals)
+          : 0;
+
+
+      // ======================================
+      // LOWEST SCORE
+      // ======================================
+      const lowestScore =
+        totals.length > 0
+          ? Math.min(...totals)
+          : 0;
+
+
+      // ======================================
+      // SUBJECT AVERAGE
+      // ======================================
+      const subjectAverage =
+        (
+          highestScore +
+          lowestScore
+        ) / 2;
+
+
       grandTotal += Number(score.total || 0);
+
 
       resultSubjects.push({
 
@@ -103,7 +164,16 @@ exports.viewStudentResult = async (req, res) => {
 
         grade: getGrade(score.total),
 
-        remark: getRemark(score.total)
+        remark: getRemark(score.total),
+
+        highestScore,
+
+        lowestScore,
+
+        subjectAverage:
+          Number(
+            subjectAverage.toFixed(2)
+          )
 
       });
 

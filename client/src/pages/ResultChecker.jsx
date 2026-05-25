@@ -7,6 +7,14 @@ function ResultChecker() {
 
   const [loading, setLoading] = useState(false);
 
+  const [studentName,
+    setStudentName] =
+    useState("");
+
+  const [checkingStudent,
+    setCheckingStudent] =
+    useState(false);
+
   const [resultData, setResultData] = useState(null);
 
   const [formData, setFormData] = useState({
@@ -49,15 +57,67 @@ function ResultChecker() {
   // ======================================
   const handleChange = (e) => {
 
+    const {
+      name,
+      value
+    } = e.target;
+
     setFormData({
 
       ...formData,
 
-      [e.target.name]: e.target.value
+      [name]: value
 
     });
 
+    // AUTO FETCH STUDENT
+    if (name === "regNumber") {
+
+      fetchStudentName(value);
+
+    }
+
   };
+
+
+  // GET STUDENT BY REG NUMBER
+  const fetchStudentName =
+    async (regNumber) => {
+
+      if (!regNumber) {
+
+        setStudentName("");
+
+        return;
+
+      }
+
+      try {
+
+        setCheckingStudent(true);
+
+        const res =
+          await api.get(
+
+            `/student-by-reg/${regNumber}`
+
+          );
+
+        setStudentName(
+          res.data.fullName
+        );
+
+      } catch (error) {
+
+        setStudentName("");
+
+      } finally {
+
+        setCheckingStudent(false);
+
+      }
+
+    };
 
 
   // ======================================
@@ -174,6 +234,32 @@ function ResultChecker() {
                 className="w-full border rounded-lg px-4 py-3"
                 required
               />
+
+            </div>
+
+
+            {/* STUDENT NAME DISPLAY */}
+            <div className="md:col-span-2">
+
+              <div className="bg-gray-100 border rounded-lg px-4 py-3">
+
+                <p className="font-semibold text-sm text-gray-600 mb-1">
+
+                  Student Name
+
+                </p>
+
+                <p className="text-lg font-bold text-blue-700">
+
+                  {
+                    checkingStudent
+                      ? "Checking..."
+                      : studentName || "No student found"
+                  }
+
+                </p>
+
+              </div>
 
             </div>
 
