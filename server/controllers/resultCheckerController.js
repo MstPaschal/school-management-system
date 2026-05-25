@@ -369,37 +369,91 @@ exports.checkResult =
 
       for (const score of scores) {
 
-      const subject = await Subject.findByPk(
-        score.subjectId
-      );
+        const subject = await Subject.findByPk(
+          score.subjectId
+        );
 
-      if (!subject) {
-        continue;
+        if (!subject) {
+          continue;
+        }
+
+        const total = Number(score.total || 0);
+
+        grandTotal += total;
+
+        // =====================================
+        // CLASS SCORES FOR THIS SUBJECT
+        // =====================================
+        const classSubjectScores =
+          await Score.findAll({
+
+            where: {
+
+              subjectId: score.subjectId,
+
+              classId: student.currentClass,
+
+              sessionId,
+
+              term
+
+            }
+
+          });
+
+        // GET ALL TOTALS
+        const totals =
+          classSubjectScores.map(
+            (item) => Number(item.total || 0)
+          );
+
+        // CLASS HIGHEST
+        const classHighest =
+          totals.length > 0
+            ? Math.max(...totals)
+            : 0;
+
+        // CLASS LOWEST
+        const classLowest =
+          totals.length > 0
+            ? Math.min(...totals)
+            : 0;
+
+        // SUBJECT AVERAGE
+        const subjectAverage =
+          Number(
+            (
+              (classHighest + classLowest) / 2
+            ).toFixed(2)
+          );
+
+        subjects.push({
+
+          subject: subject.subjectName,
+
+          firstCA: Number(score.firstCA || 0),
+
+          secondCA: Number(score.secondCA || 0),
+
+          project: Number(score.project || 0),
+
+          exam: Number(score.exam || 0),
+
+          total,
+
+          classHighest,
+
+          classLowest,
+
+          subjectAverage,
+
+          grade: getGrade(total),
+
+          remark: getRemark(total)
+
+        });
+
       }
-
-      const total = Number(score.total || 0);
-
-      grandTotal += total;
-
-      subjects.push({
-        subject: subject.subjectName,
-
-        firstCA: Number(score.firstCA || 0),
-
-        secondCA: Number(score.secondCA || 0),
-
-        project: Number(score.project || 0),
-
-        exam: Number(score.exam || 0),
-
-        total,
-
-        grade: getGrade(total),
-
-        remark: getRemark(total)
-      });
-
-    }
 
 
       // =========================
