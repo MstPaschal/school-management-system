@@ -421,13 +421,13 @@ function ResultView() {
 
                           <td className="border p-2 text-center">
 
-                            {subject.highestScore}
+                            {subject.classHighest}
 
                           </td>
 
                           <td className="border p-2 text-center">
 
-                            {subject.lowestScore}
+                            {subject.classLowest}
 
                           </td>
 
