@@ -5,7 +5,8 @@ const router = express.Router();
 const {
   generatePins,
   loadPins,
-  checkResult
+  checkResult,
+  getStudentByReg
 } = require(
   "../controllers/resultCheckerController"
 );
@@ -54,7 +55,7 @@ router.post(
 // =========================
 router.get(
   "/student-by-reg/:regNumber",
-  resultCheckerController.getStudentByReg
+  getStudentByReg
 );
 
 module.exports = router;
