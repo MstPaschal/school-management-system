@@ -99,7 +99,7 @@ function ResultChecker() {
         const res =
           await api.get(
 
-            `/student-by-reg/${regNumber}`
+            `/result-checker/student-by-reg/${regNumber}`
 
           );
 
