@@ -170,15 +170,29 @@ exports.getStudentByReg =
 
     try {
 
+      const cleanRegNumber =
+        String(req.params.regNumber)
+          .trim()
+          .toUpperCase();
+
+      console.log(
+        "Searching Reg Number:",
+        cleanRegNumber
+      );
+
       const student =
         await Student.findOne({
 
           where: {
-            regNumber:
-              req.params.regNumber
+            regNumber: cleanRegNumber
           }
 
         });
+
+      console.log(
+        "Student Found:",
+        student
+      );
 
       if (!student) {
 
@@ -191,7 +205,7 @@ exports.getStudentByReg =
 
       }
 
-      res.json({
+      res.status(200).json({
 
         fullName:
           student.fullName
