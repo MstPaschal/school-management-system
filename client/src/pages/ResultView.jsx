@@ -296,6 +296,14 @@ function ResultView() {
 
             <div className="border-r p-2">
 
+              <b>Number in class</b><br />
+
+              {data.result.totalStudentsInClass}
+              
+            </div>
+
+            <div className="border-r p-2">
+
               <b>Average:</b><br />
 
               {data.result.average}
@@ -349,15 +357,11 @@ function ResultView() {
                     </th>
 
                     <th className="border p-2">
-                      Class Highest
-                    </th>
-
-                    <th className="border p-2">
-                      Class Lowest
-                    </th>
-
-                    <th className="border p-2">
                       Subject Avg
+                    </th>
+
+                    <th className="border p-2">
+                      Subject Position
                     </th>
 
                     <th className="border p-2">
@@ -419,21 +423,15 @@ function ResultView() {
 
                           </td>
 
-                          <td className="border p-2 text-center">
-
-                            {subject.classHighest}
-
-                          </td>
-
-                          <td className="border p-2 text-center">
-
-                            {subject.classLowest}
-
-                          </td>
-
                           <td className="border p-2 text-center font-bold">
 
                             {subject.subjectAverage}
+
+                          </td>
+
+                          <td className="border p-2 text-center">
+
+                            {subject.subjectPosition}
 
                           </td>
 

@@ -441,6 +441,70 @@ exports.checkResult =
             ).toFixed(2)
           );
 
+        // ===================
+        // SUBJECT POSITIONING
+        // ===================
+        const subjectRanking = [];
+
+        for (const clsScore of classSubjectScores) {
+
+          subjectRanking.push({
+
+            studentId: clsScore.studentId,
+
+            total: Number(clsScore.total || 0)
+          });
+
+        }
+
+        // SORT DESCENDING
+        subjectRanking.sort(
+          (a, b) => b.total - a.total
+        );
+
+        // APPLY POSITION LOGIC
+        for (let i = 0; i < subjectRanking.length; i++) {
+
+          if (i === 0) {
+
+            subjectRanking[i].position = 1;
+
+          }
+
+          else if (
+
+            subjectRanking[i].total ===
+            subjectRanking[i - 1].total
+
+          ) {
+
+            subjectRanking[i].position =
+              subjectRanking[i - 1].position;
+
+          }
+
+          else {
+
+            subjectRanking[i].position = i + 1;
+
+          }
+
+        }
+
+        // FIND CURRENT STUDENT POSITION
+        const currentSubjectPosition =
+          subjectRanking.find(
+
+            (item) =>
+              item.studentId === student.id
+
+          );
+
+        const subjectPosition =
+          getPosition(
+            currentSubjectPosition?.position || 0
+          );
+
         subjects.push({
 
           subject: subject.subjectName,
@@ -460,6 +524,8 @@ exports.checkResult =
           classLowest,
 
           subjectAverage,
+
+          subjectPosition,
 
           grade: getGrade(total),
 
@@ -611,6 +677,9 @@ exports.checkResult =
         getPosition(
           currentStudent?.position || 0
         );
+
+      const totalStudentsInClass = 
+        classStudents.length;
 
 
       // =========================
@@ -850,6 +919,8 @@ exports.checkResult =
           total: grandTotal,
 
           average,
+
+          totalStudentsInClass,
 
           mainGrade:
             getGrade(average),
