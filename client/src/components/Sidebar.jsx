@@ -1,61 +1,35 @@
 import {
-
   FaHome,
-
   FaUserGraduate,
-
   FaChalkboardTeacher,
-
   FaBook,
-
   FaComment,
-
   FaMoneyBill,
-
   FaClipboardList,
-
   FaSchool,
-
   FaBookOpen,
-
   FaTasks,
-
   FaSignOutAlt,
-
   FaRegCommentDots,
-
   FaUserCheck,
-
   FaArrowUp,
-
   FaFileUpload,
-
   FaBars,
-
   FaTimes
-
 } from "react-icons/fa";
 
 import {
-
   Link,
-
   useNavigate
-
 } from "react-router-dom";
 
 import {
-
   useAuth
-
 } from "../context/AuthContext";
 
 import {
-
   useState
-
 } from "react";
-
 
 function Sidebar() {
 
@@ -96,7 +70,7 @@ function Sidebar() {
         onClick={() =>
           setIsOpen(true)
         }
-        className="lg:hidden fixed top-4 left-4 z-50 bg-blue-900 text-white p-3 rounded-lg shadow-lg"
+        className="lg:hidden fixed top-4 left-4 z-[60] bg-blue-900 text-white p-3 rounded-lg shadow-lg"
       >
 
         <FaBars size={20} />
@@ -110,7 +84,7 @@ function Sidebar() {
 
           <div
             onClick={closeSidebar}
-            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           />
 
         )
@@ -118,18 +92,18 @@ function Sidebar() {
 
 
       {/* SIDEBAR */}
-      <div
+      <aside
         className={`
 
           fixed top-0 left-0 z-50
 
-          w-64 min-h-screen
+          w-72 h-screen
 
-          bg-blue-900 text-white p-5
+          bg-blue-900 text-white
 
-          flex flex-col justify-between
+          transform transition-transform duration-300 ease-in-out
 
-          transform transition-transform duration-300
+          flex flex-col
 
           ${
 
@@ -139,15 +113,15 @@ function Sidebar() {
 
           }
 
-          lg:translate-x-0 lg:static
+          lg:translate-x-0
 
         `}
       >
 
-        <div>
+        {/* HEADER */}
+        <div className="p-5 border-b border-blue-800">
 
-          {/* MOBILE CLOSE BUTTON */}
-          <div className="flex justify-between items-center mb-6 lg:hidden">
+          <div className="flex items-center justify-between lg:hidden">
 
             <h1 className="text-xl font-bold">
 
@@ -157,7 +131,6 @@ function Sidebar() {
 
             <button
               onClick={closeSidebar}
-              className="text-white"
             >
 
               <FaTimes size={22} />
@@ -166,87 +139,71 @@ function Sidebar() {
 
           </div>
 
+          <div className="mt-2">
 
-          <h1 className="text-2xl font-bold mb-2">
+            <h1 className="text-2xl font-bold">
 
-            Grisfield Schools
+              Grisfield Schools
 
-          </h1>
+            </h1>
 
-          <p className="text-sm text-gray-300 mb-10">
+            <p className="text-sm text-blue-200 mt-1 capitalize">
 
-            {user?.role}
+              {user?.role}
 
-          </p>
+            </p>
 
+          </div>
 
-          <ul className="space-y-4">
-
-            <li>
-
-              <Link
-                to={
-                  user?.role === "teacher"
-                    ? "/teacher-dashboard"
-                    : "/dashboard"
-                }
-                onClick={closeSidebar}
-                className="flex items-center gap-3 hover:text-yellow-300"
-              >
-
-                <FaHome />
-
-                Dashboard
-
-              </Link>
-
-            </li>
+        </div>
 
 
-            {/* SUPER ADMIN ONLY */}
+        {/* SCROLLABLE CONTENT */}
+        <div className="flex-1 overflow-y-auto px-5 py-6 scrollbar-hide">
+
+          <ul className="space-y-3">
+
+
+            {/* DASHBOARD */}
+            <SidebarLink
+              to={
+                user?.role === "teacher"
+                  ? "/teacher-dashboard"
+                  : "/dashboard"
+              }
+              icon={<FaHome />}
+              label="Dashboard"
+              closeSidebar={closeSidebar}
+            />
+
+
+            {/* SUPER ADMIN */}
             {
               user?.role === "superadmin" && (
+
                 <>
 
-                  <li>
+                  <SidebarLink
+                    to="/create-admin"
+                    icon={<FaUserCheck />}
+                    label="Create Admin"
+                    closeSidebar={closeSidebar}
+                  />
 
-                    <Link
-                      to="/create-admin"
-                      onClick={closeSidebar}
-                      className="flex items-center gap-3 hover:text-yellow-300"
-                    >
-
-                      <FaUserCheck />
-
-                      Create Admin
-
-                    </Link>
-
-                  </li>
-
-
-                  <li>
-
-                    <Link
-                      to="/result-pins"
-                      onClick={closeSidebar}
-                      className="flex items-center gap-3 hover:text-yellow-300"
-                    >
-
-                      <FaClipboardList />
-
-                      Result Pins
-
-                    </Link>
-
-                  </li>
+                  <SidebarLink
+                    to="/result-pins"
+                    icon={<FaClipboardList />}
+                    label="Result Pins"
+                    closeSidebar={closeSidebar}
+                  />
 
                 </>
+
               )
             }
 
 
-            {/* ADMIN */}
+            {/* ADMIN + SUPERADMIN */}
             {
               (
                 user?.role === "admin" ||
@@ -255,208 +212,89 @@ function Sidebar() {
 
                 <>
 
-                  <li>
-
-                    <Link
-                      to="/students/create"
-                      onClick={closeSidebar}
-                      className="flex items-center gap-3 hover:text-yellow-300"
-                    >
-
-                      <FaUserGraduate />
-
-                      Create Student
-
-                    </Link>
-
-                  </li>
-
-
-                  <li>
-
-                    <Link
-                      to="/students/view"
-                      onClick={closeSidebar}
-                      className="flex items-center gap-3 hover:text-yellow-300"
-                    >
-
-                      <FaUserGraduate />
-
-                      View Students
-
-                    </Link>
-
-                  </li>
-
-
-                  <li>
-
-                    <Link
-                      to="/student-status"
-                      onClick={closeSidebar}
-                      className="flex items-center gap-3 hover:text-yellow-300"
-                    >
-
-                      <FaUserCheck />
-
-                      Student Status
-
-                    </Link>
-
-                  </li>
-
-
-                  <li>
-
-                    <Link
-                      to="/student-promotion"
-                      onClick={closeSidebar}
-                      className="flex items-center gap-3 hover:text-yellow-300"
-                    >
-
-                      <FaArrowUp />
-
-                      Student Promotion
-
-                    </Link>
-
-                  </li>
-
-
-                  <li>
-
-                    <Link
-                      to="/sessions"
-                      onClick={closeSidebar}
-                      className="flex items-center gap-3 hover:text-yellow-300"
-                    >
-
-                      <FaClipboardList />
-
-                      Sessions
-
-                    </Link>
-
-                  </li>
-
-
-                  <li>
-
-                    <Link
-                      to="/teachers"
-                      onClick={closeSidebar}
-                      className="flex items-center gap-3 hover:text-yellow-300"
-                    >
-
-                      <FaChalkboardTeacher />
-
-                      Teachers
-
-                    </Link>
-
-                  </li>
-
-
-                  <li>
-
-                    <Link
-                      to="/comment-manager"
-                      onClick={closeSidebar}
-                      className="flex items-center gap-3 hover:text-yellow-300"
-                    >
-
-                      <FaComment />
-
-                      Comment Manager
-
-                    </Link>
-
-                  </li>
-
-
-                  <li>
-
-                    <Link
-                      to="/admin-settings"
-                      onClick={closeSidebar}
-                      className="flex items-center gap-3 hover:text-yellow-300"
-                    >
-
-                      <FaMoneyBill />
-
-                      Admin Settings
-
-                    </Link>
-
-                  </li>
-
-
-                  <li>
-
-                    <Link
-                      to="/classes"
-                      onClick={closeSidebar}
-                      className="flex items-center gap-3 hover:text-yellow-300"
-                    >
-
-                      <FaSchool />
-
-                      Classes
-
-                    </Link>
-
-                  </li>
-
-
-                  <li>
-
-                    <Link
-                      to="/subjects"
-                      onClick={closeSidebar}
-                      className="flex items-center gap-3 hover:text-yellow-300"
-                    >
-
-                      <FaBookOpen />
-
-                      Subjects
-
-                    </Link>
-
-                  </li>
-
-
-                  <li>
-
-                    <Link
-                      to="/assign-subject"
-                      onClick={closeSidebar}
-                      className="flex items-center gap-3 hover:text-yellow-300"
-                    >
-
-                      <FaTasks />
-
-                      Assign Subjects
-
-                    </Link>
-
-                  </li>
-
-
-                  <li>
-
-                    <Link
-                      to="/documents"
-                      onClick={closeSidebar}
-                      className="flex items-center gap-3 hover:text-yellow-300"
-                    >
-
-                      <FaFileUpload />
-
-                      Documents
-
-                    </Link>
-
-                  </li>
+                  <SidebarLink
+                    to="/students/create"
+                    icon={<FaUserGraduate />}
+                    label="Create Student"
+                    closeSidebar={closeSidebar}
+                  />
+
+                  <SidebarLink
+                    to="/students/view"
+                    icon={<FaUserGraduate />}
+                    label="View Students"
+                    closeSidebar={closeSidebar}
+                  />
+
+                  <SidebarLink
+                    to="/student-status"
+                    icon={<FaUserCheck />}
+                    label="Student Status"
+                    closeSidebar={closeSidebar}
+                  />
+
+                  <SidebarLink
+                    to="/student-promotion"
+                    icon={<FaArrowUp />}
+                    label="Student Promotion"
+                    closeSidebar={closeSidebar}
+                  />
+
+                  <SidebarLink
+                    to="/sessions"
+                    icon={<FaClipboardList />}
+                    label="Sessions"
+                    closeSidebar={closeSidebar}
+                  />
+
+                  <SidebarLink
+                    to="/teachers"
+                    icon={<FaChalkboardTeacher />}
+                    label="Teachers"
+                    closeSidebar={closeSidebar}
+                  />
+
+                  <SidebarLink
+                    to="/comment-manager"
+                    icon={<FaComment />}
+                    label="Comment Manager"
+                    closeSidebar={closeSidebar}
+                  />
+
+                  <SidebarLink
+                    to="/admin-settings"
+                    icon={<FaMoneyBill />}
+                    label="Admin Settings"
+                    closeSidebar={closeSidebar}
+                  />
+
+                  <SidebarLink
+                    to="/classes"
+                    icon={<FaSchool />}
+                    label="Classes"
+                    closeSidebar={closeSidebar}
+                  />
+
+                  <SidebarLink
+                    to="/subjects"
+                    icon={<FaBookOpen />}
+                    label="Subjects"
+                    closeSidebar={closeSidebar}
+                  />
+
+                  <SidebarLink
+                    to="/assign-subject"
+                    icon={<FaTasks />}
+                    label="Assign Subjects"
+                    closeSidebar={closeSidebar}
+                  />
+
+                  <SidebarLink
+                    to="/documents"
+                    icon={<FaFileUpload />}
+                    label="Documents"
+                    closeSidebar={closeSidebar}
+                  />
 
                 </>
 
@@ -465,98 +303,52 @@ function Sidebar() {
 
 
             {/* COMMON */}
-            <li>
+            <SidebarLink
+              to="/score-entry"
+              icon={<FaBook />}
+              label="Score Entry"
+              closeSidebar={closeSidebar}
+            />
 
-              <Link
-                to="/score-entry"
-                onClick={closeSidebar}
-                className="flex items-center gap-3 hover:text-yellow-300"
-              >
+            <SidebarLink
+              to="/make-comments"
+              icon={<FaRegCommentDots />}
+              label="Make Comments"
+              closeSidebar={closeSidebar}
+            />
 
-                <FaBook />
+            <SidebarLink
+              to="/payments/set"
+              icon={<FaMoneyBill />}
+              label="Payments"
+              closeSidebar={closeSidebar}
+            />
 
-                Score Entry
-
-              </Link>
-
-            </li>
-
-
-            <li>
-
-              <Link
-                to="/make-comments"
-                onClick={closeSidebar}
-                className="flex items-center gap-3 hover:text-yellow-300"
-              >
-
-                <FaRegCommentDots />
-
-                Make Comments
-
-              </Link>
-
-            </li>
-
-
-            <li>
-
-              <Link
-                to="/payments/set"
-                onClick={closeSidebar}
-                className="flex items-center gap-3 hover:text-yellow-300"
-              >
-
-                <FaMoneyBill />
-
-                Payments
-
-              </Link>
-
-            </li>
-
-
-            <li>
-
-              <Link
-                to="/results"
-                onClick={closeSidebar}
-                className="flex items-center gap-3 hover:text-yellow-300"
-              >
-
-                <FaClipboardList />
-
-                Reports
-
-              </Link>
-
-            </li>
+            <SidebarLink
+              to="/results"
+              icon={<FaClipboardList />}
+              label="Reports"
+              closeSidebar={closeSidebar}
+            />
 
           </ul>
 
         </div>
 
 
-        <div className="space-y-4">
+        {/* FOOTER */}
+        <div className="p-5 border-t border-blue-800 space-y-3">
 
-          {/* CHANGE PASSWORD */}
-          <Link
+          <SidebarLink
             to="/change-password"
-            onClick={closeSidebar}
-            className="flex items-center gap-3 hover:text-yellow-300"
-          >
+            icon={<FaUserCheck />}
+            label="Change Password"
+            closeSidebar={closeSidebar}
+          />
 
-            <FaUserCheck />
-
-            Change Password
-
-          </Link>
-
-
-          {/* LOGOUT */}
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 bg-red-600 hover:bg-red-700 px-4 py-3 rounded-lg"
+            className="w-full flex items-center gap-3 bg-red-600 hover:bg-red-700 px-4 py-3 rounded-lg transition"
           >
 
             <FaSignOutAlt />
@@ -567,9 +359,40 @@ function Sidebar() {
 
         </div>
 
-      </div>
+      </aside>
 
     </>
+
+  );
+
+}
+
+
+// REUSABLE SIDEBAR LINK
+function SidebarLink({
+  to,
+  icon,
+  label,
+  closeSidebar
+}) {
+
+  return (
+
+    <li>
+
+      <Link
+        to={to}
+        onClick={closeSidebar}
+        className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-blue-800 transition duration-200"
+      >
+
+        {icon}
+
+        <span>{label}</span>
+
+      </Link>
+
+    </li>
 
   );
 

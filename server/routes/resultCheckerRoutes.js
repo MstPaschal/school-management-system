@@ -42,20 +42,20 @@ router.get(
 
 
 // =========================
-// CHECK RESULT
-// =========================
-router.post(
-  "/",
-  checkResult
-);
-
-
-// =========================
 // GET STUDENT BY REG NUMBER
 // =========================
 router.get(
   "/student-by-reg/:regNumber",
   getStudentByReg
+);
+
+
+// =========================
+// CHECK RESULT
+// =========================
+router.post(
+  "/",
+  checkResult
 );
 
 module.exports = router;
