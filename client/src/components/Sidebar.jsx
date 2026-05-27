@@ -66,16 +66,17 @@ function Sidebar() {
     <>
 
       {/* MOBILE MENU BUTTON */}
-      <button
-        onClick={() =>
-          setIsOpen(true)
-        }
-        className="lg:hidden fixed top-4 left-4 z-[60] bg-blue-900 text-white p-3 rounded-lg shadow-lg"
-      >
-
-        <FaBars size={20} />
-
-      </button>
+      {
+        !isOpen && (
+          <button
+            onClick={() =>
+              setIsOpen(true)
+            }
+            className="lg:hidden fixed top-4 left-4 z-[60] bg-blue-900 text-white p-3 rounded-lg shadow-lg"
+          >
+          </button>
+        )
+      }
 
 
       {/* OVERLAY */}
@@ -93,17 +94,19 @@ function Sidebar() {
 
       {/* SIDEBAR */}
       <aside
+  
         className={`
 
-          fixed top-0 left-0 z-50
+          fixed lg:sticky
+          top-0 left-0 z-50
 
-          w-72 h-screen
+          w-64 h-screen
 
-          bg-blue-900 text-white
+          bg-blue-900 text-white p-5
 
-          transform transition-transform duration-300 ease-in-out
+          flex flex-col justify-between
 
-          flex flex-col
+          transform transition-transform duration-300
 
           ${
 
@@ -114,6 +117,8 @@ function Sidebar() {
           }
 
           lg:translate-x-0
+
+          overflow-y-auto
 
         `}
       >
