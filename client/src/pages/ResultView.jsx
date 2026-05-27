@@ -31,9 +31,9 @@ function ResultView() {
     document
       .querySelectorAll(".print-target")
       .forEach((el) => {
-        el.classList.remove("print-terget");
+        el.classList.remove("print-target");
 
-      })
+      });
 
     // FIND TARGET SECTION
     const target =
@@ -45,10 +45,14 @@ function ResultView() {
     target.classList.add("print-target");
 
     // PRINT
+    setTimeout(() => {
+
     window.print();
 
     // CLEANUP
     target.classList.remove("print-target");
+
+    }, 300);
 
   };
 
@@ -147,13 +151,6 @@ function ResultView() {
       data.payment?.practicals || 0
     );
 
-  const downloadResult = () => {
-    // OPEN PRINT DIALOG
-    // USER CAN SAVE AS PDF
-
-    printSection("result-section");
-
-  };
 
   const downloadResultPDF = () => {
 
@@ -189,7 +186,7 @@ function ResultView() {
       jsPDF: {
         unit: "in",
         format: "a4",
-        orientation: "potriat"
+        orientation: "potrait"
       }
 
     };
