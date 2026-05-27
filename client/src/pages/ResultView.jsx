@@ -27,73 +27,64 @@ function ResultView() {
   // PRINT FUNCTION
   const printSection = (sectionId) => {
 
-    // REMOVE OLD PRINT TARGETS
-    document
-      .querySelectorAll(".print-target")
-      .forEach((el) => {
-        el.classList.remove("print-target");
-
-      });
-
-    // FIND TARGET SECTION
-    const target =
+    const content =
       document.getElementById(sectionId);
 
-    if (!target) return;
+    if (!content) return;
 
-    // ADD PRINT TARGET
-    target.classList.add("print-target");
+    const printWindow =
+      window.open("", "_blank");
 
-    // PRINT
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Print Result</title>
+
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              padding: 20px;
+            }
+
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+
+            table, th, td {
+              border: 1px solid black;
+            }
+
+            th, td {
+              padding: 6px;
+              text-align: center;
+            }
+
+            img {
+              max-width: 100%;
+            }
+          </style>
+        </head>
+
+        <body>
+          ${content.innerHTML}
+        </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+
+    printWindow.focus();
+
     setTimeout(() => {
 
-    window.print();
+      printWindow.print();
 
-    // CLEANUP
-    target.classList.remove("print-target");
+      printWindow.close();
 
-    }, 300);
+    }, 1000);
 
   };
-
-  useEffect(() => {
-    const style =
-      document.createElement("style");
-    
-    style.innerHTML = `
-      @media print {
-
-        body * {
-          visibility: hidden; 
-        }
-
-        .print-target,
-        .print-target * {
-          visibility: visible;
-        }
-
-        .print-target {
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 100%;
-          background: white;
-        }
-        
-        .no-print {
-          display: none !important;
-        }
-
-      }
-    `;
-
-    document.head.appendChild(style);
-
-    return () => {
-      document.head.removeChild(style);
-    };
-
-  }, []);
 
   if (!data) {
 
@@ -152,7 +143,7 @@ function ResultView() {
     );
 
 
-  const downloadResultPDF = () => {
+  const downloadResultPDF = async () => {
 
     const element =
       document.getElementById(
@@ -180,24 +171,37 @@ function ResultView() {
 
       html2canvas: {
         scale: 3,
-        useCORS: true
+        useCORS: true,
+        logging: false
       },
 
       jsPDF: {
         unit: "in",
         format: "a4",
-        orientation: "potrait"
+        orientation: "portrait"
       }
 
     };
 
-    html2pdf()
+    try {
 
-      .set(options)
+      await html2pdf()
+        .set(options)
+        .from(element)
+        .save();
 
-      .from(element)
+    } catch (error) {
 
-      .save();
+      console.error(
+        "PDF Download Error:",
+        error
+      );
+
+      alert(
+        "Failed to download result"
+      );
+
+    }
 
   };
 
