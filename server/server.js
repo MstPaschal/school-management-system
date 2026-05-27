@@ -108,7 +108,7 @@ Teacher.belongsTo(User, {
 });
 
 // Start server
-sequelize.sync({ alter: true })
+sequelize.sync()
   .then(() => {
     console.log("Database Synced");
 
