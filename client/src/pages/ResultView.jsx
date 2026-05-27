@@ -113,12 +113,56 @@ function ResultView() {
 
   const downloadResultPDF = async () => {
 
-    const element =
+    const originalElement =
       document.getElementById(
         "result-section"
       );
 
-    if (!element) return;
+    if (!originalElement) return;
+
+    // CLONE THE RESULT SECTION
+    const clonedElement =
+      originalElement.cloneNode(true);
+
+    // CREATE TEMP CONTAINER
+    const tempContainer =
+      document.createElement("div");
+
+    tempContainer.style.background =
+      "#ffffff";
+
+    tempContainer.style.padding =
+      "20px";
+
+    tempContainer.style.position =
+      "fixed";
+
+    tempContainer.style.left =
+      "-99999px";
+
+    tempContainer.appendChild(
+      clonedElement
+    );
+
+    document.body.appendChild(
+      tempContainer
+    );
+
+    // REMOVE TAILWIND COLORS
+    clonedElement
+      .querySelectorAll("*")
+      .forEach((el) => {
+
+        el.style.color =
+          "#000000";
+
+        el.style.backgroundColor =
+          "#ffffff";
+
+        el.style.borderColor =
+          "#000000";
+
+      });
 
     const studentName =
       data.student.fullName
@@ -133,23 +177,33 @@ function ResultView() {
         `${studentName}_RESULT.pdf`,
 
       image: {
+
         type: "jpeg",
+
         quality: 1
+
       },
 
       html2canvas: {
-        scale: 3,
+
+        scale: 2,
+
         useCORS: true,
+
         logging: false,
-        backgroundColor: "#ffffff",
-        ignoreElements: (element) =>
-          element.classList.contains("no-print")
+
+        backgroundColor: "#ffffff"
+
       },
 
       jsPDF: {
+
         unit: "in",
+
         format: "a4",
+
         orientation: "portrait"
+
       }
 
     };
@@ -157,8 +211,11 @@ function ResultView() {
     try {
 
       await html2pdf()
+
         .set(options)
-        .from(element)
+
+        .from(clonedElement)
+
         .save();
 
     } catch (error) {
@@ -173,6 +230,11 @@ function ResultView() {
       );
 
     }
+
+    // REMOVE TEMP ELEMENT
+    document.body.removeChild(
+      tempContainer
+    );
 
   };
 
@@ -524,7 +586,7 @@ function ResultView() {
 
                 <p className="font-bold mb-2">
 
-                  Proprietor's Comment
+                  HeadTeacher's Comment
 
                 </p>
 
@@ -706,9 +768,11 @@ function ResultView() {
 
         {/* ================= PAYMENT SECTION ================= */}
 
-        <div className="bg-white rounded-2xl shadow-2xl p-8 print-section">
+        <div
+          id="payment-section"
+          className="bg-white rounded-2xl shadow-2xl p-8 print-section"
+        >
 
-          <div id="payment-section">
 
             <h2 className="text-3xl font-bold mb-8">
 
@@ -906,8 +970,6 @@ function ResultView() {
               <b>Account Name:</b> Grisfield Schools
             </p>
 
-          </div>
-
 
           {/* PRINT PAYMENT */}
           <div className="text-center mt-10">
@@ -940,7 +1002,7 @@ function ResultView() {
             Uploaded Documents
           
           </h2>
-          <h3>Please ensure to download <b>'NEWSLETTER'</b> and your <b>HOLIDAY PROJECT/ASSIGNMENT</b></h3>
+          <h3>Please ensure to download <b>'NEWSLETTER'</b> and your <b>'HOLIDAY PROJECT/ASSIGNMENT'</b></h3>
 
 
           {
