@@ -127,3 +127,44 @@ exports.loadDocuments =
     }
 
   };
+
+
+
+// =========================
+// DELETE DOCUMENT
+// =========================
+exports.deleteDocument =
+  async (req, res) => {
+
+    try {
+
+      const { id } = req.params;
+
+      const document =
+        await UploadedDocument.findByPk(id);
+
+      if (!document) {
+
+        return res.status(404).json({
+          message: "Document not found"
+        });
+
+      }
+
+      await document.destroy();
+
+      res.status(200).json({
+        message: "Document deleted successfully"
+      });
+
+    } catch (error) {
+
+      console.log(error);
+
+      res.status(500).json({
+        message: error.message
+      });
+
+    }
+
+  };

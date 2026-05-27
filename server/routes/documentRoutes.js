@@ -6,7 +6,9 @@ const {
 
   uploadDocument,
 
-  loadDocuments
+  loadDocuments,
+
+  deleteDocument
 
 } = require(
   "../controllers/documentController"
@@ -39,6 +41,15 @@ router.get(
   "/",
   verifyToken,
   loadDocuments
+);
+
+
+// DELETE DOCUMENT
+router.delete(
+  "/:id",
+  verifyToken,
+  isAdmin,
+  deleteDocument
 );
 
 module.exports = router;

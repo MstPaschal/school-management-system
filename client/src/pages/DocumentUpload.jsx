@@ -161,6 +161,44 @@ function DocumentUpload() {
     };
 
 
+  // DELETE DOCUMENT
+  const handleDeleteDocument =
+    async (id) => {
+
+      const confirmDelete =
+        window.confirm(
+          "Are you sure you want to delete this document?"
+        );
+
+      if (!confirmDelete) return;
+
+      try {
+
+        await api.delete(
+          `/documents/${id}`
+        );
+
+        alert(
+          "Document deleted successfully"
+        );
+
+        // REFRESH DOCUMENTS
+        loadDocuments();
+
+      } catch (error) {
+
+        console.log(error);
+
+        alert(
+          error.response?.data?.message ||
+          "Failed to delete document"
+        );
+
+      }
+
+    };
+
+
   // UPLOAD DOCUMENT
   const handleUpload =
     async (e) => {
@@ -425,16 +463,31 @@ function DocumentUpload() {
 
                     <td className="p-3">
 
-                      <a
-                        href={`https://portal-grisfield-schools.onrender.com/uploads/${doc.fileName}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
-                      >
+                      <div className="flex gap-2">
 
-                        View
+                        <a
+                          href={`https://portal-grisfield-schools.onrender.com/uploads/${doc.fileName}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+                        >
 
-                      </a>
+                          View
+
+                        </a>
+
+                        <button
+                          onClick={() =>
+                            handleDeleteDocument(doc.id)
+                          }
+                          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
+                        >
+
+                          Delete
+
+                        </button>
+
+                      </div>
 
                     </td>
 

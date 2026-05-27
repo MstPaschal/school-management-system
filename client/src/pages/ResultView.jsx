@@ -306,8 +306,9 @@ function ResultView() {
 
                 <img
                   src={
-                    data.student.passport ||
-                    "/avatar.png"
+                    data.student.passport
+                      ? `https://portal-grisfield-schools.onrender.com/uploads/${data.student.passport}`
+                      : "/avatar.png"
                   }
                   alt="Passport"
                   className="w-full h-full object-cover"
