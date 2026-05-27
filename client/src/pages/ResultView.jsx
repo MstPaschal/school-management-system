@@ -27,60 +27,28 @@ function ResultView() {
   // PRINT FUNCTION
   const printSection = (sectionId) => {
 
-    const content =
+    const section =
       document.getElementById(sectionId);
 
-    if (!content) return;
+    if (!section) return;
 
-    const printWindow =
-      window.open("", "_blank");
+    document
+      .querySelectorAll(".print-section")
+      .forEach((el) => {
+        el.style.display = "none";
+      });
 
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Print Result</title>
+    section.style.display = "block";
 
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              padding: 20px;
-            }
-
-            table {
-              width: 100%;
-              border-collapse: collapse;
-            }
-
-            table, th, td {
-              border: 1px solid black;
-            }
-
-            th, td {
-              padding: 6px;
-              text-align: center;
-            }
-
-            img {
-              max-width: 100%;
-            }
-          </style>
-        </head>
-
-        <body>
-          ${content.innerHTML}
-        </body>
-      </html>
-    `);
-
-    printWindow.document.close();
-
-    printWindow.focus();
+    window.print();
 
     setTimeout(() => {
 
-      printWindow.print();
-
-      printWindow.close();
+      document
+        .querySelectorAll(".print-section")
+        .forEach((el) => {
+          el.style.display = "block";
+        });
 
     }, 1000);
 
@@ -172,7 +140,10 @@ function ResultView() {
       html2canvas: {
         scale: 3,
         useCORS: true,
-        logging: false
+        logging: false,
+        backgroundColor: "#ffffff",
+        ignoreElements: (element) =>
+          element.classList.contains("no-print")
       },
 
       jsPDF: {
@@ -214,7 +185,7 @@ function ResultView() {
         {/* RESULT SECTION */}
         <div
           id="result-section"
-          className="printable-section bg-white border-2 border-black p-4 relative"
+          className="print-section bg-white border-2 border-black p-4 relative"
         >
 
           {/* WATERMARK */}
@@ -735,7 +706,7 @@ function ResultView() {
 
         {/* ================= PAYMENT SECTION ================= */}
 
-        <div className="bg-white rounded-2xl shadow-2xl p-8 printable-section">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 print-section">
 
           <div id="payment-section">
 
@@ -961,7 +932,7 @@ function ResultView() {
 
         <div 
           id="documents-section"
-          className="bg-white rounded-2xl shadow-2xl p-8 printable-section"
+          className="bg-white rounded-2xl shadow-2xl p-8 print-section"
         >
 
           <h2 className="text-3xl font-bold mb-8">
