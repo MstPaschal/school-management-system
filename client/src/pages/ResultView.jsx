@@ -1,3 +1,4 @@
+import html2pdf from "html2pdf.js";
 import { useEffect, useState } from "react";
 
 function ResultView() {
@@ -26,50 +27,28 @@ function ResultView() {
   // PRINT FUNCTION
   const printSection = (sectionId) => {
 
-    const allSections =
-      document.querySelectorAll(
-        ".printable-section"
-      );
+    // REMOVE OLD PRINT TARGETS
+    document
+      .querySelectorAll(".print-target")
+      .forEach((el) => {
+        el.classList.remove("print-terget");
 
-    // HIDE ALL SECTIONS
-    allSections.forEach((section) => {
-
-      section.dataset.originalDisplay =
-        window.getComputedStyle(section).display;
-
-      section.style.display = "none";
-
-    });
+      })
 
     // FIND TARGET SECTION
     const target =
       document.getElementById(sectionId);
 
-    if (target) {
+    if (!target) return;
 
-      // SHOW THE ENTIRE PRINTABLE SECTION
-      const printableParent =
-        target.closest(".printable-section");
-
-      if (printableParent) {
-
-        printableParent.style.display =
-          "block";
-
-      }
-
-    }
+    // ADD PRINT TARGET
+    target.classList.add("print-target");
 
     // PRINT
     window.print();
 
-    // RESTORE ALL SECTIONS
-    allSections.forEach((section) => {
-
-      section.style.display =
-        section.dataset.originalDisplay || "block";
-
-    });
+    // CLEANUP
+    target.classList.remove("print-target");
 
   };
 
@@ -79,18 +58,26 @@ function ResultView() {
     
     style.innerHTML = `
       @media print {
+
+        body * {
+          visibility: hidden; 
+        }
+
+        .print-target,
+        .print-target * {
+          visibility: visible;
+        }
+
+        .print-target {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          background: white;
+        }
+        
         .no-print {
           display: none !important;
-        }
-
-        body {
-          background: white !important;
-        }
-
-        .printable-section {
-          box-shadow: none !important;
-          margin: 0 !important;
-          padding: 0 !important;
         }
 
       }
@@ -160,6 +147,63 @@ function ResultView() {
       data.payment?.practicals || 0
     );
 
+  const downloadResult = () => {
+    // OPEN PRINT DIALOG
+    // USER CAN SAVE AS PDF
+
+    printSection("result-section");
+
+  };
+
+  const downloadResultPDF = () => {
+
+    const element =
+      document.getElementById(
+        "result-section"
+      );
+
+    if (!element) return;
+
+    const studentName =
+      data.student.fullName
+        ?.replace(/\s+/g, "_")
+        ?.toUpperCase();
+
+    const options = {
+
+      margin: 0.3,
+
+      filename:
+        `${studentName}_RESULT.pdf`,
+
+      image: {
+        type: "jpeg",
+        quality: 1
+      },
+
+      html2canvas: {
+        scale: 3,
+        useCORS: true
+      },
+
+      jsPDF: {
+        unit: "in",
+        format: "a4",
+        orientation: "potriat"
+      }
+
+    };
+
+    html2pdf()
+
+      .set(options)
+
+      .from(element)
+
+      .save();
+
+  };
+
   return (
 
     <div className="min-h-screen bg-gray-100 p-4">
@@ -176,7 +220,7 @@ function ResultView() {
           <div className="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
 
             <img
-              src="/Logo.png"
+              src={`${window.location.origin}/Logo.png`}
               alt="Watermark"
               className="w-[500px]"
             />
@@ -190,7 +234,7 @@ function ResultView() {
 
               {/* LOGO */}
               <img
-                src="/Logo.png"
+                src={`${window.location.origin}/Logo.png`}
                 alt="Logo"
                 className="w-24 h-24"
               />
@@ -473,11 +517,12 @@ function ResultView() {
 
                 <div className="p-2 text-sm space-y-1">
 
-                  <p>A = 70 - 100</p>
-                  <p>B = 60 - 69</p>
+                  <p>A+ = 90 - 100</p>
+                  <p>A = 80 - 89</p>
+                  <p>B = 60 - 79</p>
                   <p>C = 50 - 59</p>
-                  <p>D = 45 - 49</p>
-                  <p>F = 0 - 44</p>
+                  <p>D = 40 - 49</p>
+                  <p>F = 0 - 39</p>
 
                 </div>
 
@@ -625,7 +670,7 @@ function ResultView() {
             <div className="text-center">
 
               <img
-                src="/Signature.png"
+                src={`${window.location.origin}/Signature.png`}
                 alt="Signature"
                 className="w-28 mx-auto"
               />
@@ -641,7 +686,7 @@ function ResultView() {
             <div className="text-center">
 
               <img
-                src="/Stamp.png"
+                src={`${window.location.origin}/Stamp.png`}
                 alt="Stamp"
                 className="w-28 mx-auto"
               />
@@ -656,9 +701,9 @@ function ResultView() {
 
           </div>
 
-          {/* PRINT BUTTON */}
-          <div className="text-center mt-8 no-print">
+          <div className="flex flex-wrap justify-center gap-4 mt-8 no-print">
 
+            {/* PRINT BUTTON */}
             <button
               onClick={() =>
                 printSection(
@@ -669,6 +714,16 @@ function ResultView() {
             >
 
               Print Result
+
+            </button>
+
+            {/* DOWNLOAD BUTTON */}
+            <button
+              onClick={downloadResultPDF}
+              className="bg-blue-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg"
+            >
+
+              Download Result
 
             </button>
 
@@ -903,7 +958,10 @@ function ResultView() {
 
         {/* ================= DOCUMENTS ================= */}
 
-        <div className="bg-white rounded-2xl shadow-2xl p-8 printable-section">
+        <div 
+          id="documents-section"
+          className="bg-white rounded-2xl shadow-2xl p-8 printable-section"
+        >
 
           <h2 className="text-3xl font-bold mb-8">
 
