@@ -74,6 +74,9 @@ function Sidebar() {
             }
             className="lg:hidden fixed top-4 left-4 z-[60] bg-blue-900 text-white p-3 rounded-lg shadow-lg"
           >
+
+            <FaBars size={20} />
+            
           </button>
         )
       }

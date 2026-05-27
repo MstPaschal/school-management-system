@@ -293,6 +293,10 @@ function ViewStudents() {
                 </th>
 
                 <th className="p-3">
+                  Admission No
+                </th>
+
+                <th className="p-3">
                   Status
                 </th>
 
@@ -359,6 +363,14 @@ function ViewStudents() {
                       <td className="p-3">
 
                         {student.regNumber}
+
+                      </td>
+
+
+                      {/* ADMISSION NUMBER */}
+                      <td className="p-3">
+
+                        {student.admissionNumber}
 
                       </td>
 
@@ -536,6 +548,23 @@ function ViewStudents() {
                           <p>
 
                             {selectedStudent.regNumber}
+
+                          </p>
+
+                        </div>
+
+
+                        <div>
+
+                          <h3 className="font-bold text-gray-600">
+
+                            Admission Number
+
+                          </h3>
+
+                          <p>
+
+                            {selectedStudent.admissionNumber}
 
                           </p>
 

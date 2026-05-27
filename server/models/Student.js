@@ -9,6 +9,12 @@ const Student = sequelize.define("Student", {
     unique: true,
   },
 
+  admissionNumber: {
+    type: DataTypes.STRING,
+    unique: true,
+    allowNull: true,
+  },
+
   fullName: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -35,9 +41,9 @@ const Student = sequelize.define("Student", {
   },
 
   currentClass: {
-  type: DataTypes.INTEGER,
-  allowNull: false,
-},
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
 
   passport: {
     type: DataTypes.STRING,

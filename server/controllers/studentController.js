@@ -12,6 +12,7 @@ exports.createStudent = async (req, res) => {
 
     const {
       fullName,
+      admissionNumber,
       dob,
       gender,
       address,
@@ -65,6 +66,8 @@ const regNumber =
   const student = await Student.create({
 
   regNumber,
+
+  admissionNumber,
 
   passport,
 
@@ -196,6 +199,8 @@ exports.updateStudent =
 
         fullName,
 
+        admissionNumber,
+
         dob,
 
         gender,
@@ -213,6 +218,9 @@ exports.updateStudent =
 
       student.fullName =
         fullName;
+
+      student.admissionNumber =
+        admissionNumber;
 
       student.dob =
         dob;

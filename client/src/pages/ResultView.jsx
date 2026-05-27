@@ -340,6 +340,14 @@ function ResultView() {
 
             <div className="border-r border-b p-2">
 
+              <b>Admission No:</b><br />
+
+              {data.student.admissionNumber}
+
+            </div>
+
+            <div className="border-r border-b p-2">
+
               <b>Class:</b><br />
 
               {

@@ -41,6 +41,8 @@ function EditStudent() {
 
       fullName: "",
 
+      admissionNumber: "",
+
       dob: "",
 
       gender: "",
@@ -80,6 +82,9 @@ function EditStudent() {
 
           fullName:
             res.data.fullName || "",
+
+          admissionNumber:
+            res.data.admissionNumber || "",
 
           dob:
             res.data.dob || "",
@@ -275,6 +280,27 @@ function EditStudent() {
               type="text"
               name="fullName"
               value={formData.fullName}
+              onChange={handleChange}
+              required
+              className="w-full border rounded-lg px-4 py-3"
+            />
+
+          </div>
+
+
+          {/* ADMISSION NUMBER */}
+          <div>
+
+            <label className="block mb-1 font-medium">
+
+              Admission Number
+
+            </label>
+
+            <input
+              type="text"
+              name="admissionNumber"
+              value={formData.admissionNumber}
               onChange={handleChange}
               required
               className="w-full border rounded-lg px-4 py-3"
