@@ -198,10 +198,10 @@ function Home() {
 
           {
             [
-              ["1500+", "Students"],
-              ["100+", "Teachers"],
-              ["20+", "Years Experience"],
-              ["98%", "Success Rate"]
+              ["500+", "Students"],
+              ["50+", "Teachers"],
+              ["6+", "Years Experience"],
+              ["95%", "Success Rate"]
             ].map((item, index) => (
 
               <motion.div
