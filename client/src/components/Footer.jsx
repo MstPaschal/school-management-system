@@ -55,11 +55,11 @@ function Footer() {
 
           <div className="space-y-2 text-gray-300">
 
-            <p>Lagos, Nigeria</p>
+            <p>Plot 107 Gracious Estate, Nkwelle Ezunaka, Anambra State.</p>
 
-            <p>+234 XXX XXX XXXX</p>
+            <p>+234 9060158332</p>
 
-            <p>info@grisfieldschools.com</p>
+            <p>info@grisfieldschools.com.ng</p>
 
           </div>
 
