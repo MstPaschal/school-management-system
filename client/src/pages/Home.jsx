@@ -2,6 +2,8 @@ import PublicLayout from "../layouts/PublicLayout";
 
 import HeroSlider from "../components/HeroSlider";
 
+import CountUp from "react-countup";
+
 import { 
   FaChild, FaHandshake, FaStar, FaBullseye 
 } from "react-icons/fa";
@@ -97,6 +99,32 @@ function Home() {
 
       </section>
 
+      {/* VIDEO SECTION */}
+      <section className="py-24 bg-white">
+
+        <div className="max-w-5xl mx-auto px-6 text-center">
+
+          <h2 className="text-5xl font-bold text-purple-800 mb-12">
+
+            Watch Life At Grisfield
+
+          </h2>
+
+          <div className="rounded-3xl overflow-hidden shadow-2xl">
+
+            <iframe
+              className="w-full h-[500px]"
+              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+              title="School Video"
+              allowFullScreen
+            />
+
+          </div>
+
+        </div>
+
+      </section>
+
       {/* PRINCIPAL SECTION */}
       <section className="py-24 bg-gray-50">
 
@@ -116,7 +144,7 @@ function Home() {
 
             <h2 className="text-5xl font-bold text-purple-800 mb-8">
 
-              Welcome From The Principal
+              Note of Welcome from the Proprietress
 
             </h2>
 
@@ -135,13 +163,13 @@ function Home() {
 
               <h3 className="font-bold text-2xl text-purple-700">
 
-                Dr. Example Name
+                Dr. Mrs. Ugo-Ejike Miracle Nkeiruka
 
               </h3>
 
               <p className="text-gray-500">
 
-                School Principal
+                Proprietress
 
               </p>
 
@@ -293,7 +321,10 @@ function Home() {
 
                 <h3 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-purple-700">
 
-                  {item[0]}
+                  <CountUp
+                    end={parseInt(item[0])}
+                    duration={4}
+                  />
 
                 </h3>
 
@@ -494,6 +525,40 @@ function Home() {
 
               ))
             }
+
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* CAMPUS */}
+      <section className="py-24 bg-gray-50">
+
+        <div className="max-w-7xl mx-auto px-6">
+
+          <div className="text-center mb-16">
+
+            <h2 className="text-5xl font-bold text-purple-800">
+
+              Our Learning Environment
+
+            </h2>
+
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+
+            {[1,2,3].map((item) => (
+
+              <img
+                key={item}
+                src="/School Building.jpg"
+                alt="Campus"
+                className="rounded-3xl shadow-xl h-80 object-cover w-full"
+              />
+
+            ))}
 
           </div>
 
