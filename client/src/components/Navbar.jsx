@@ -31,12 +31,12 @@ function Navbar() {
           <img
             src="/Logo.png"
             alt="Logo"
-            className="w-12 h-12"
+            className="w-15 h-12"
           />
 
           <div>
 
-            <h1 className="text-2xl font-bold text-purple-700">
+            <h1 className="text-3xl font-bold text-purple-700">
 
               GRISFIELD SCHOOLS
 
@@ -44,7 +44,7 @@ function Navbar() {
 
             <p className="text-xs text-gray-500">
 
-              Excellence & Leadership
+              Taking the child beyond the limit
 
             </p>
 

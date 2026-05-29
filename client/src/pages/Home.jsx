@@ -1,5 +1,9 @@
 import PublicLayout from "../layouts/PublicLayout";
 
+import { 
+  FaChild, FaHandshake, FaStar, FaBullseye 
+} from "react-icons/fa";
+
 import {
   motion
 } from "framer-motion";
@@ -248,61 +252,40 @@ function Home() {
 
       {/* CORE VALUES */}
       <section className="py-20">
-
         <div className="max-w-7xl mx-auto px-6">
 
           <h2 className="text-4xl font-bold text-center mb-14 text-purple-800">
-
             Our Core Values
-
           </h2>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
-
-              <h3 className="text-2xl font-bold mb-4 text-purple-700">
-
-                Godly Children
-
-              </h3>
-
+            {/* Godly Children */}
+            <div className="bg-green-600 text-white p-10 rounded-2xl shadow-lg flex flex-col items-center justify-center text-center">
+              <FaChild className="text-5xl mb-4" />
+              <h3 className="text-2xl font-bold">Godly Children</h3>
             </div>
 
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
-
-              <h3 className="text-2xl font-bold mb-4 text-blue-700">
-
-                Integrity
-
-              </h3>
-
+            {/* Integrity */}
+            <div className="bg-yellow-500 text-white p-10 rounded-2xl shadow-lg flex flex-col items-center justify-center text-center">
+              <FaHandshake className="text-5xl mb-4" />
+              <h3 className="text-2xl font-bold">Integrity</h3>
             </div>
 
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
-
-              <h3 className="text-2xl font-bold mb-4 text-orange-600">
-
-                Excellence
-
-              </h3>
-
+            {/* Excellence */}
+            <div className="bg-purple-700 text-white p-10 rounded-2xl shadow-lg flex flex-col items-center justify-center text-center">
+              <FaStar className="text-5xl mb-4" />
+              <h3 className="text-2xl font-bold">Excellence</h3>
             </div>
 
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
-
-              <h3 className="text-2xl font-bold mb-4 text-orange-600">
-
-                Goal Oriented
-
-              </h3>
-
+            {/* Goal Oriented */}
+            <div className="bg-red-700 text-white p-10 rounded-2xl shadow-lg flex flex-col items-center justify-center text-center">
+              <FaBullseye className="text-5xl mb-4" />
+              <h3 className="text-2xl font-bold">Goal Oriented</h3>
             </div>
 
           </div>
-
         </div>
-
       </section>
 
       {/* STATISTICS */}
