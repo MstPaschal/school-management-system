@@ -4,7 +4,7 @@ function Footer() {
 
     <footer className="bg-purple-900 text-white mt-20">
 
-      <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10">
+      <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-10">
 
         <div>
 
@@ -24,8 +24,15 @@ function Footer() {
         </div>
 
         <div>
-          <iframe 
-          src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d253853.9180028169!2d6.54306248671875!3d6.201895900000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sgrisfield%20schools!5e0!3m2!1sen!2sng!4v1780012764190!5m2!1sen!2sng" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+          <iframe
+          src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d253853.9180028169!2d6.54306248671875!3d6.201895900000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sgrisfield%20schools!5e0!3m2!1sen!2sng!4v1780012764190!5m2!1sen!2sng"
+          width="100%"
+          height="250"
+          style={{ border: 0 }}
+          allowFullScreen=""
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          className="rounded-2xl">
           </iframe>
         </div>
 
