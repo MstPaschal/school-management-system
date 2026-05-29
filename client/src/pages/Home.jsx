@@ -97,6 +97,62 @@ function Home() {
 
       </section>
 
+      {/* PRINCIPAL SECTION */}
+      <section className="py-24 bg-gray-50">
+
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+
+          <div>
+
+            <img
+              src="/Dr Mrs UgoEjike.jpg"
+              alt="Principal"
+              className="rounded-3xl shadow-2xl"
+            />
+
+          </div>
+
+          <div>
+
+            <h2 className="text-5xl font-bold text-purple-800 mb-8">
+
+              Welcome From The Principal
+
+            </h2>
+
+            <p className="text-lg text-gray-700 leading-9">
+
+              At Grisfield Schools,
+              we believe every child possesses
+              unique greatness waiting to be developed.
+
+              Our mission is to nurture confident,
+              disciplined and globally competitive learners.
+
+            </p>
+
+            <div className="mt-8">
+
+              <h3 className="font-bold text-2xl text-purple-700">
+
+                Dr. Example Name
+
+              </h3>
+
+              <p className="text-gray-500">
+
+                School Principal
+
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
       {/* FEATURES */}
       <section className="py-20">
 
