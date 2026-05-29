@@ -321,7 +321,10 @@ function Home() {
 
                 <h3 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-purple-700">
 
-                  {item[0]}
+                  <CountUp
+                    end={Number(item[0].replace("+", ""))}
+                    duration={4}
+                  />
 
                 </h3>
 
