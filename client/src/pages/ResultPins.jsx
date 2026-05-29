@@ -27,6 +27,9 @@ function ResultPins() {
 
     });
 
+  const [printMode, setPrintMode] = 
+    useState(false);
+
 
   useEffect(() => {
 
@@ -69,40 +72,39 @@ function ResultPins() {
     };
 
 
-  const generatePins =
-    async () => {
+  const generatePins = async () => {
+    try {
+      setLoading(true);
 
-      try {
-
-        setLoading(true);
-
-        await api.post(
-          "/result-checker/generate",
-          formData
-        );
-
-        alert(
-          "Pins generated successfully"
-        );
-
-        loadPins();
-
-      } catch (error) {
-
-        console.log(error);
-
-        alert(
-          "Failed to generate pins"
-        );
-
-      } finally {
-
-        setLoading(false);
-
+      // ✅ VALIDATION RULE (ADD THIS HERE)
+      if (!formData.sessionId) {
+        alert("Please select a session first");
+        return;
       }
 
-    };
+      if (!formData.term) {
+        alert("Please select a term");
+        return;
+      }
 
+      if (!formData.quantity || formData.quantity < 1) {
+        alert("Quantity must be at least 1");
+        return;
+      }
+
+      await api.post("/result-checker/generate", formData);
+
+      alert("Pins generated successfully");
+
+      loadPins();
+
+    } catch (error) {
+      console.log(error);
+      alert("Failed to generate pins");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadPins =
     async () => {
@@ -246,6 +248,14 @@ function ResultPins() {
 
         </button>
 
+        <button
+          onClick={() => setPrintMode(true)}
+          className="bg-purple-700 hover:bg-purple-800 text-white px-6 py-3 rounded-lg mb-6"
+        >
+          Print Pins
+          
+        </button>
+
 
         {/* PINS TABLE */}
         <div className="overflow-x-auto">
@@ -309,6 +319,58 @@ function ResultPins() {
         </div>
 
       </div>
+
+      {printMode && (
+        <div className="print-area">
+          
+          {/* PRINT HEADER BUTTON */}
+          <div className="no-print flex gap-3 mb-6">
+            <button
+              onClick={() => window.print()}
+              className="bg-green-600 text-white px-4 py-2 rounded"
+            >
+              Print Now
+            </button>
+
+            <button
+              onClick={() => setPrintMode(false)}
+              className="bg-red-600 text-white px-4 py-2 rounded"
+            >
+              Close
+            </button>
+          </div>
+
+          {/* GRID CONTAINER */}
+          <div className="grid grid-cols-3 gap-3">
+            {pins.map((pin) => (
+              <div
+                key={pin.id}
+                className="border p-3 text-center rounded shadow-md h-[140px] flex flex-col justify-center"
+              >
+                <h2 className="font-bold text-purple-800 text-sm">
+                  GRISFIELD SCHOOLS
+                </h2>
+
+                <p className="text-xs mt-1">
+                  RESULT PIN CARD
+                </p>
+
+                <p className="text-xs mt-1">
+                  SESSION: {formData.sessionId} | TERM: {formData.term}
+                </p>
+
+                <div className="text-xl font-bold mt-2 tracking-widest">
+                  {pin.pin}
+                </div>
+
+                <p className="text-[10px] mt-2 text-gray-600">
+                  Scratch carefully to reveal PIN
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
     </div>
 
