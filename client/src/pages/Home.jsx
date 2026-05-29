@@ -202,6 +202,8 @@ function Home() {
 
               </h3>
 
+              <img src="Classroom.jpg" alt="Modern Facilities" />
+
               <p className="text-gray-600">
 
                 We provide world-class academic standards
@@ -218,6 +220,8 @@ function Home() {
                 Moral Excellence
 
               </h3>
+
+              <img src="/reading-pose.png" alt="Moral Excellence" />
 
               <p className="text-gray-600">
 
@@ -236,7 +240,7 @@ function Home() {
 
               </h3>
 
-              <img src="Smart School.jpg" alt="Modern Facilities" />
+              <img src="smart-school.jpg" alt="Modern Facilities" />
 
               <p className="text-gray-600">
 
@@ -428,7 +432,7 @@ function Home() {
               >
 
                 <img
-                  src="/event.jpg"
+                  src="cross-section-of-pupils.jpg"
                   alt="news"
                   className="h-60 w-full object-cover"
                 />
@@ -496,7 +500,7 @@ function Home() {
                 >
 
                   <img
-                    src="/event.jpg"
+                    src="/color-day.jpg"
                     alt="Event"
                     className="h-64 w-full object-cover"
                   />
@@ -550,7 +554,7 @@ function Home() {
 
               <img
                 key={item}
-                src="/School Building.jpg"
+                src="/school-building.jpg"
                 alt="Campus"
                 className="rounded-3xl shadow-xl h-80 object-cover w-full"
               />

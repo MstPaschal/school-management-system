@@ -8,7 +8,7 @@ const slides = [
     subtitle: "Preparing children for global excellence."
   },
   {
-    image: "/event.jpg",
+    image: "/pupils-line-up.jpg",
     title: "Learning Beyond The Classroom",
     subtitle: "Sports, creativity and innovation."
   },
@@ -16,6 +16,11 @@ const slides = [
     image: "/smart-school.jpg",
     title: "Modern Smart Learning",
     subtitle: "Technology-driven education system."
+  },
+  {
+    image: "reading-pose.png",
+    title: "Sound Reading Culture",
+    subtitle: "We make reading and learning a culture."
   }
 ];
 
