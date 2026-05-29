@@ -82,8 +82,8 @@ function HeroSlider() {
           }}
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage:
-              `url(${slides[current].image})`
+            backgroundImage: 
+                `url("${encodeURI(slides[current].image)}")`
           }}
         >
 
