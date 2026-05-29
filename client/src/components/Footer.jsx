@@ -84,6 +84,8 @@ function Footer() {
 
         © 2026 Grisfield Schools.
         All Rights Reserved.
+        <span>Designed and Managed by 
+          <a href="">Passy Technologies</a></span>
 
       </div>
 
