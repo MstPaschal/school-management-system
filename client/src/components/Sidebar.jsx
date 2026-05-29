@@ -48,7 +48,7 @@ function Sidebar() {
 
       logout();
 
-      navigate("/");
+      navigate("/portal");
 
     };
 

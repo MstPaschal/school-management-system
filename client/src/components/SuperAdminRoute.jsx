@@ -17,7 +17,7 @@ function SuperAdminRoute({
 
   if (!user) {
 
-    return <Navigate to="/" />;
+    return <Navigate to="/portal" />;
 
   }
 

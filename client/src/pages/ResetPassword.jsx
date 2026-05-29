@@ -62,7 +62,7 @@ function ResetPassword() {
 
         setTimeout(() => {
 
-          navigate("/");
+          navigate("/portal");
 
         }, 2000);
 
