@@ -3,6 +3,10 @@ import {
   useState
 } from "react";
 
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+
 import api from "../services/api";
 
 function ResultPins() {
@@ -26,6 +30,203 @@ function ResultPins() {
       quantity: 10
 
     });
+
+    const downloadPDF = () => {
+
+      if (!pins.length) {
+        alert("No pins available");
+        return;
+      }
+
+      const pdf = new jsPDF("p", "mm", "a4");
+
+      // A4 DIMENSIONS
+      const pageWidth = 210;
+      const pageHeight = 297;
+
+      // CARD SETTINGS
+      const cols = 3;
+      const rows = 7;
+
+      const cardWidth = 63;
+      const cardHeight = 38;
+
+      const marginX = 8;
+      const marginY = 10;
+
+      const gapX = 4;
+      const gapY = 2;
+
+      const cardsPerPage = cols * rows;
+
+      // TOTAL PAGES
+      const totalPages =
+        Math.ceil(pins.length / cardsPerPage);
+
+      pins.forEach((pin, index) => {
+
+        const pageIndex =
+          Math.floor(index / cardsPerPage);
+
+        const positionInPage =
+          index % cardsPerPage;
+
+        const row =
+          Math.floor(positionInPage / cols);
+
+        const col =
+          positionInPage % cols;
+
+        // NEW PAGE
+        if (
+          index > 0 &&
+          positionInPage === 0
+        ) {
+          pdf.addPage();
+        }
+
+        // CARD POSITION
+        const x =
+          marginX +
+          col * (cardWidth + gapX);
+
+        const y =
+          marginY +
+          row * (cardHeight + gapY);
+
+        // CARD BORDER
+        pdf.setDrawColor(120);
+        pdf.rect(
+          x,
+          y,
+          cardWidth,
+          cardHeight
+        );
+
+        // SCHOOL NAME
+        pdf.setFontSize(12);
+        pdf.setTextColor(90, 0, 120);
+
+        pdf.text(
+          "GRISFIELD SCHOOLS",
+          x + 7,
+          y + 7
+        );
+
+        // SUBTITLE
+        pdf.setFontSize(6);
+
+        pdf.setTextColor(255, 120, 0);
+
+        pdf.text(
+          "Taking the child beyond limit",
+          x + 12,
+          y + 11
+        );
+
+        // RESULT PIN CARD
+        pdf.setFontSize(10);
+
+        pdf.setTextColor(0, 0, 0);
+
+        pdf.text(
+          "RESULT PIN CARD",
+          x + 13,
+          y + 16
+        );
+
+        // SESSION
+        const sessionName =
+          sessions.find(
+            (s) =>
+              s.id ==
+              formData.sessionId
+          )?.sessionName || "";
+
+        pdf.setFontSize(7);
+
+        pdf.text(
+          `SESSION: ${sessionName}`,
+          x + 3,
+          y + 21
+        );
+
+        // TERM
+        pdf.text(
+          `TERM: ${formData.term}`,
+          x + 43,
+          y + 21
+        );
+
+        // PIN TITLE
+        pdf.setFontSize(16);
+
+        pdf.setTextColor(90, 0, 120);
+
+        pdf.text(
+          "PIN",
+          x + 25,
+          y + 28
+        );
+
+        // PIN VALUE
+        pdf.setFontSize(18);
+
+        pdf.setTextColor(0, 0, 0);
+
+        pdf.text(
+          pin.pin,
+          x + 9,
+          y + 35
+        );
+
+        // INSTRUCTIONS
+        pdf.setFontSize(5);
+
+        pdf.setTextColor(60);
+
+        pdf.text(
+          "Use this pin to check result online.",
+          x + 4,
+          y + 41
+        );
+
+        pdf.text(
+          "Maximum usage: 5 times only.",
+          x + 9,
+          y + 44
+        );
+
+        // SECURITY WATERMARK
+        pdf.setFontSize(20);
+
+        pdf.setTextColor(230);
+
+        pdf.text(
+          "GRISFIELD",
+          x + 7,
+          y + 30,
+          {
+            angle: 45
+          }
+        );
+
+        // PAGE NUMBER
+        pdf.setFontSize(7);
+
+        pdf.setTextColor(100);
+
+        pdf.text(
+          `Page ${pageIndex + 1} of ${totalPages}`,
+          170,
+          290
+        );
+
+      });
+
+      pdf.save("grisfield-result-pins.pdf");
+
+    };
 
   const [printMode, setPrintMode] = 
     useState(false);
@@ -256,6 +457,13 @@ function ResultPins() {
           
         </button>
 
+        <button
+          onClick={downloadPDF}
+          className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg mb-6"
+        >
+          Download PDF
+        </button>
+
 
         {/* PINS TABLE */}
         <div className="overflow-x-auto">
@@ -341,6 +549,7 @@ function ResultPins() {
           </div>
 
           {/* GRID CONTAINER */}
+          <div id="pins-print">
           <div className="grid grid-cols-3 gap-3">
             {pins.map((pin) => (
               <div
@@ -368,6 +577,7 @@ function ResultPins() {
                 </p>
               </div>
             ))}
+          </div>
           </div>
         </div>
       )}
