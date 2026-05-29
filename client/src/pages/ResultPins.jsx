@@ -4,8 +4,6 @@ import {
 } from "react";
 
 import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 
 import api from "../services/api";
 
@@ -34,17 +32,17 @@ function ResultPins() {
     const downloadPDF = () => {
 
       if (!pins.length) {
+
         alert("No pins available");
+
         return;
+
       }
 
-      const pdf = new jsPDF("p", "mm", "a4");
+      const pdf =
+        new jsPDF("p", "mm", "a4");
 
-      // A4 DIMENSIONS
-      const pageWidth = 210;
-      const pageHeight = 297;
-
-      // CARD SETTINGS
+      // GRID SETTINGS
       const cols = 3;
       const rows = 7;
 
@@ -57,22 +55,36 @@ function ResultPins() {
       const gapX = 4;
       const gapY = 2;
 
-      const cardsPerPage = cols * rows;
+      const cardsPerPage =
+        cols * rows;
 
-      // TOTAL PAGES
       const totalPages =
-        Math.ceil(pins.length / cardsPerPage);
+        Math.ceil(
+          pins.length / cardsPerPage
+        );
+
+      // SESSION NAME
+      const sessionName =
+        sessions.find(
+          (s) =>
+            s.id ==
+            formData.sessionId
+        )?.sessionName || "";
 
       pins.forEach((pin, index) => {
 
         const pageIndex =
-          Math.floor(index / cardsPerPage);
+          Math.floor(
+            index / cardsPerPage
+          );
 
         const positionInPage =
           index % cardsPerPage;
 
         const row =
-          Math.floor(positionInPage / cols);
+          Math.floor(
+            positionInPage / cols
+          );
 
         const col =
           positionInPage % cols;
@@ -82,68 +94,90 @@ function ResultPins() {
           index > 0 &&
           positionInPage === 0
         ) {
+
           pdf.addPage();
+
         }
 
         // CARD POSITION
         const x =
           marginX +
-          col * (cardWidth + gapX);
+          col *
+            (
+              cardWidth + gapX
+            );
 
         const y =
           marginY +
-          row * (cardHeight + gapY);
+          row *
+            (
+              cardHeight + gapY
+            );
 
-        // CARD BORDER
-        pdf.setDrawColor(120);
-        pdf.rect(
+        // BORDER
+        pdf.setDrawColor(150);
+
+        pdf.roundedRect(
           x,
           y,
           cardWidth,
-          cardHeight
+          cardHeight,
+          2,
+          2
         );
 
         // SCHOOL NAME
+        pdf.setFont(
+          "helvetica",
+          "bold"
+        );
+
         pdf.setFontSize(12);
-        pdf.setTextColor(90, 0, 120);
+
+        pdf.setTextColor(
+          75,
+          0,
+          130
+        );
 
         pdf.text(
           "GRISFIELD SCHOOLS",
-          x + 7,
+          x + 8,
           y + 7
         );
 
-        // SUBTITLE
+        // TAGLINE
         pdf.setFontSize(6);
 
-        pdf.setTextColor(255, 120, 0);
+        pdf.setTextColor(
+          255,
+          120,
+          0
+        );
 
         pdf.text(
           "Taking the child beyond limit",
-          x + 12,
+          x + 13,
           y + 11
         );
 
-        // RESULT PIN CARD
-        pdf.setFontSize(10);
+        // TITLE
+        pdf.setFontSize(9);
 
-        pdf.setTextColor(0, 0, 0);
+        pdf.setTextColor(
+          0,
+          0,
+          0
+        );
 
         pdf.text(
           "RESULT PIN CARD",
-          x + 13,
+          x + 16,
           y + 16
         );
 
-        // SESSION
-        const sessionName =
-          sessions.find(
-            (s) =>
-              s.id ==
-              formData.sessionId
-          )?.sessionName || "";
-
-        pdf.setFontSize(7);
+        // SESSION + TERM
+        pdf.setFontSize(6);
 
         pdf.text(
           `SESSION: ${sessionName}`,
@@ -151,7 +185,6 @@ function ResultPins() {
           y + 21
         );
 
-        // TERM
         pdf.text(
           `TERM: ${formData.term}`,
           x + 43,
@@ -159,52 +192,60 @@ function ResultPins() {
         );
 
         // PIN TITLE
-        pdf.setFontSize(16);
+        pdf.setFontSize(15);
 
-        pdf.setTextColor(90, 0, 120);
+        pdf.setTextColor(
+          90,
+          0,
+          120
+        );
 
         pdf.text(
           "PIN",
           x + 25,
-          y + 28
+          y + 27
         );
 
         // PIN VALUE
         pdf.setFontSize(18);
 
-        pdf.setTextColor(0, 0, 0);
+        pdf.setTextColor(
+          0,
+          0,
+          0
+        );
 
         pdf.text(
           pin.pin,
           x + 9,
-          y + 35
+          y + 34
         );
 
         // INSTRUCTIONS
         pdf.setFontSize(5);
 
-        pdf.setTextColor(60);
+        pdf.setTextColor(80);
 
         pdf.text(
-          "Use this pin to check result online.",
+          "Use this PIN to check result online.",
           x + 4,
-          y + 41
+          y + 40
         );
 
         pdf.text(
           "Maximum usage: 5 times only.",
-          x + 9,
-          y + 44
+          x + 10,
+          y + 43
         );
 
-        // SECURITY WATERMARK
-        pdf.setFontSize(20);
+        // WATERMARK
+        pdf.setFontSize(22);
 
-        pdf.setTextColor(230);
+        pdf.setTextColor(240);
 
         pdf.text(
           "GRISFIELD",
-          x + 7,
+          x + 8,
           y + 30,
           {
             angle: 45
@@ -214,7 +255,7 @@ function ResultPins() {
         // PAGE NUMBER
         pdf.setFontSize(7);
 
-        pdf.setTextColor(100);
+        pdf.setTextColor(120);
 
         pdf.text(
           `Page ${pageIndex + 1} of ${totalPages}`,
@@ -224,13 +265,11 @@ function ResultPins() {
 
       });
 
-      pdf.save("grisfield-result-pins.pdf");
+      pdf.save(
+        "grisfield-result-pins.pdf"
+      );
 
     };
-
-  const [printMode, setPrintMode] = 
-    useState(false);
-
 
   useEffect(() => {
 
@@ -274,37 +313,63 @@ function ResultPins() {
 
 
   const generatePins = async () => {
+
     try {
+
       setLoading(true);
 
-      // ✅ VALIDATION RULE (ADD THIS HERE)
+      // VALIDATION
       if (!formData.sessionId) {
+
         alert("Please select a session first");
+
+        setLoading(false);
+
         return;
+
       }
 
       if (!formData.term) {
+
         alert("Please select a term");
+
+        setLoading(false);
+
         return;
+
       }
 
       if (!formData.quantity || formData.quantity < 1) {
+
         alert("Quantity must be at least 1");
+
+        setLoading(false);
+
         return;
+
       }
 
-      await api.post("/result-checker/generate", formData);
+      await api.post(
+        "/result-checker/generate",
+        formData
+      );
 
       alert("Pins generated successfully");
 
       loadPins();
 
     } catch (error) {
+
       console.log(error);
+
       alert("Failed to generate pins");
+
     } finally {
+
       setLoading(false);
+
     }
+
   };
 
   const loadPins =
@@ -450,14 +515,6 @@ function ResultPins() {
         </button>
 
         <button
-          onClick={() => setPrintMode(true)}
-          className="bg-purple-700 hover:bg-purple-800 text-white px-6 py-3 rounded-lg mb-6"
-        >
-          Print Pins
-          
-        </button>
-
-        <button
           onClick={downloadPDF}
           className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg mb-6"
         >
@@ -527,60 +584,6 @@ function ResultPins() {
         </div>
 
       </div>
-
-      {printMode && (
-        <div className="print-area">
-          
-          {/* PRINT HEADER BUTTON */}
-          <div className="no-print flex gap-3 mb-6">
-            <button
-              onClick={() => window.print()}
-              className="bg-green-600 text-white px-4 py-2 rounded"
-            >
-              Print Now
-            </button>
-
-            <button
-              onClick={() => setPrintMode(false)}
-              className="bg-red-600 text-white px-4 py-2 rounded"
-            >
-              Close
-            </button>
-          </div>
-
-          {/* GRID CONTAINER */}
-          <div id="pins-print">
-          <div className="grid grid-cols-3 gap-3">
-            {pins.map((pin) => (
-              <div
-                key={pin.id}
-                className="border p-3 text-center rounded shadow-md h-[140px] flex flex-col justify-center"
-              >
-                <h2 className="font-bold text-purple-800 text-sm">
-                  GRISFIELD SCHOOLS
-                </h2>
-
-                <p className="text-xs mt-1">
-                  RESULT PIN CARD
-                </p>
-
-                <p className="text-xs mt-1">
-                  SESSION: {formData.sessionId} | TERM: {formData.term}
-                </p>
-
-                <div className="text-xl font-bold mt-2 tracking-widest">
-                  {pin.pin}
-                </div>
-
-                <p className="text-[10px] mt-2 text-gray-600">
-                  Scratch carefully to reveal PIN
-                </p>
-              </div>
-            ))}
-          </div>
-          </div>
-        </div>
-      )}
 
     </div>
 
