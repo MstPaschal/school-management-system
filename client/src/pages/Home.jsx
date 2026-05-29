@@ -15,103 +15,87 @@ function Home() {
     <PublicLayout>
 
       {/* HERO SECTION */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-r from-purple-900 via-blue-800 to-purple-700 text-white">
+      <section className="relative min-h-screen overflow-hidden">
 
-        {/* BACKGROUND OVERLAY */}
-        <div className="absolute inset-0 bg-black/40"></div>
+        {/* BACKGROUND IMAGE */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage:
+              "url('/School Building.jpg')"
+          }}
+        />
+
+        {/* DARK OVERLAY */}
+        <div className="absolute inset-0 bg-black/60" />
 
         {/* CONTENT */}
-        <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
+        <div className="relative z-10 min-h-screen flex items-center">
 
-          <motion.h1
-            initial={{
-              opacity: 0,
-              y: -50
-            }}
-            animate={{
-              opacity: 1,
-              y: 0
-            }}
-            transition={{
-              duration: 1
-            }}
-            className="text-5xl md:text-7xl font-extrabold leading-tight"
-          >
+          <div className="max-w-7xl mx-auto px-6 w-full">
 
-            Welcome to
-
-            <span className="block text-orange-400 mt-3">
-
-              GRISFIELD SCHOOLS
-
-            </span>
-
-          </motion.h1>
-
-          <motion.p
-            initial={{
-              opacity: 0,
-              y: 30
-            }}
-            animate={{
-              opacity: 1,
-              y: 0
-            }}
-            transition={{
-              delay: 0.3,
-              duration: 1
-            }}
-            className="mt-8 text-xl md:text-2xl max-w-3xl mx-auto text-gray-200"
-          >
-
-            Raising future leaders through
-            academic excellence, innovation,
-            discipline and creativity.
-
-          </motion.p>
-
-          {/* BUTTONS */}
-          <motion.div
-            initial={{
-              opacity: 0
-            }}
-            animate={{
-              opacity: 1
-            }}
-            transition={{
-              delay: 0.6
-            }}
-            className="mt-10 flex flex-wrap justify-center gap-5"
-          >
-
-            <Link
-              to="/apply"
-              className="bg-orange-500 hover:bg-orange-600 px-8 py-4 rounded-xl text-lg font-semibold shadow-lg"
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: 50
+              }}
+              animate={{
+                opacity: 1,
+                y: 0
+              }}
+              transition={{
+                duration: 1
+              }}
+              className="max-w-4xl"
             >
 
-              Apply Now
+              <p className="text-orange-400 font-semibold uppercase tracking-widest mb-4">
 
-            </Link>
+                Welcome To Grisfield Schools
 
-            <Link
-              to="/result-checker"
-              className="bg-white text-purple-800 hover:bg-gray-200 px-8 py-4 rounded-xl text-lg font-semibold shadow-lg"
-            >
+              </p>
 
-              Check Result
+              <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-tight">
 
-            </Link>
+                Raising Future Leaders
+                Through Excellence
 
-            <Link
-              to="/portal"
-              className="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-xl text-lg font-semibold shadow-lg"
-            >
+              </h1>
 
-              School Portal
+              <p className="mt-8 text-xl text-gray-200 leading-9">
 
-            </Link>
+                A modern learning environment
+                where children are inspired
+                academically, morally and socially.
 
-          </motion.div>
+              </p>
+
+              {/* BUTTONS */}
+              <div className="mt-10 flex flex-wrap gap-5">
+
+                <Link
+                  to="/apply"
+                  className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl text-lg font-semibold shadow-xl"
+                >
+
+                  Apply Now
+
+                </Link>
+
+                <Link
+                  to="/result-checker"
+                  className="bg-white text-purple-800 hover:bg-gray-200 px-8 py-4 rounded-xl text-lg font-semibold shadow-xl"
+                >
+
+                  Check Result
+
+                </Link>
+
+              </div>
+
+            </motion.div>
+
+          </div>
 
         </div>
 
@@ -371,6 +355,126 @@ function Home() {
 
       </section>
 
+      {/* TESTIMONIALS */}
+      <section className="py-24 bg-white">
+
+        <div className="max-w-7xl mx-auto px-6">
+
+          <div className="text-center mb-16">
+
+            <h2 className="text-5xl font-bold text-purple-800">
+
+              What Parents Say
+
+            </h2>
+
+            <p className="mt-5 text-gray-600">
+
+              Testimonials from parents and guardians.
+
+            </p>
+
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+
+            {[1,2,3].map((item) => (
+
+              <div
+                key={item}
+                className="bg-gray-50 rounded-3xl p-8 shadow-lg"
+              >
+
+                <p className="text-gray-600 leading-8">
+
+                  Grisfield Schools has transformed
+                  my child academically and morally.
+
+                </p>
+
+                <div className="mt-6">
+
+                  <h3 className="font-bold text-purple-700">
+
+                    Parent Name
+
+                  </h3>
+
+                  <p className="text-sm text-gray-500">
+
+                    Parent
+
+                  </p>
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* NEWS */}
+      <section className="py-24 bg-gray-50">
+
+        <div className="max-w-7xl mx-auto px-6">
+
+          <div className="text-center mb-16">
+
+            <h2 className="text-5xl font-bold text-purple-800">
+
+              Latest News
+
+            </h2>
+
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+
+            {[1,2,3].map((item) => (
+
+              <div
+                key={item}
+                className="bg-white rounded-3xl shadow-lg overflow-hidden"
+              >
+
+                <img
+                  src="/event.jpg"
+                  alt="news"
+                  className="h-60 w-full object-cover"
+                />
+
+                <div className="p-6">
+
+                  <h3 className="text-2xl font-bold text-purple-700">
+
+                    Admission Ongoing
+
+                  </h3>
+
+                  <p className="mt-4 text-gray-600">
+
+                    Registration for new students
+                    has officially commenced.
+
+                  </p>
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </div>
+
+        </div>
+
+      </section>
+
       {/* EVENTS SECTION */}
       <section className="py-24 bg-white">
 
@@ -470,6 +574,18 @@ function Home() {
         </div>
 
       </section>
+
+      {/* WHATSAPP FLOAT */}
+      <a
+        href="https://wa.me/2349060158332"
+        target="_blank"
+        rel="noreferrer"
+        className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl z-50 text-3xl"
+      >
+
+        💬
+
+      </a>
 
     </PublicLayout>
 

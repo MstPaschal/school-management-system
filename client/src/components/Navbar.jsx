@@ -18,7 +18,7 @@ function Navbar() {
 
   return (
 
-    <nav className="bg-white shadow-md sticky top-0 z-50">
+    <nav className="bg-white/90 backdrop-blur-md shadow-md sticky top-0 z-50">
 
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 
