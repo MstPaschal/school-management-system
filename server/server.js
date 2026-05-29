@@ -53,6 +53,9 @@ const studentStatusRoutes = require("./routes/studentStatusRoutes");
 const documentRoutes = require("./routes/documentRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const resultCheckerRoutes = require("./routes/resultCheckerRoutes");
+const admissionRoutes = require("./routes/admissionRoutes");
+
+
 
 // Routes middleware
 app.use("/api/auth", authRoutes);
@@ -72,6 +75,7 @@ app.use("/api/student-status", studentStatusRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/result-checker", resultCheckerRoutes);
+app.use("/api/admissions", admissionRoutes);
 
 // Home route
 app.get("/", (req, res) => {
