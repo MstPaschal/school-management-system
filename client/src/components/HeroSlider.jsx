@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 
 const slides = [
   {
@@ -18,7 +18,7 @@ const slides = [
     subtitle: "Technology-driven education system."
   },
   {
-    image: "reading-pose.png",
+    image: "/reading-pose.png",
     title: "Sound Reading Culture",
     subtitle: "We make reading and learning a culture."
   }
@@ -28,10 +28,13 @@ function HeroSlider() {
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
 
-  const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
+  const x = useMotionValue(0);
+  const parallax = useTransform(x, [-100, 100], [-20, 20]);
 
-  // AUTO SLIDE (with pause on hover)
+  const startX = useRef(0);
+  const currentX = useRef(0);
+
+  // AUTO SLIDE
   useEffect(() => {
     if (paused) return;
 
@@ -42,29 +45,28 @@ function HeroSlider() {
     return () => clearInterval(interval);
   }, [paused]);
 
-  // NEXT / PREV
-  const nextSlide = () =>
+  const next = () =>
     setCurrent((prev) => (prev + 1) % slides.length);
 
-  const prevSlide = () =>
+  const prev = () =>
     setCurrent((prev) =>
       prev === 0 ? slides.length - 1 : prev - 1
     );
 
-  // TOUCH START
+  // 🧠 FIXED SWIPE LOGIC
   const handleTouchStart = (e) => {
-    touchStartX.current = e.touches[0].clientX;
+    startX.current = e.touches[0].clientX;
   };
 
-  // TOUCH END (swipe detection)
+  const handleTouchMove = (e) => {
+    currentX.current = e.touches[0].clientX;
+  };
+
   const handleTouchEnd = () => {
-    touchEndX.current = touchStartX.current;
+    const diff = startX.current - currentX.current;
 
-    const diff =
-      touchStartX.current - touchEndX.current;
-
-    if (diff > 50) nextSlide();
-    if (diff < -50) prevSlide();
+    if (diff > 60) next();
+    if (diff < -60) prev();
   };
 
   return (
@@ -73,8 +75,10 @@ function HeroSlider() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
+
       <AnimatePresence mode="wait">
         <motion.div
           key={current}
@@ -85,7 +89,7 @@ function HeroSlider() {
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage: `url("${slides[current].image}")`,
-            transform: "scale(1.05)" // 🔥 parallax base effect
+            y: parallax // 🔥 REAL PARALLAX SHIFT
           }}
         >
           {/* DARK OVERLAY */}
@@ -120,7 +124,7 @@ function HeroSlider() {
         </motion.div>
       </AnimatePresence>
 
-      {/* DOT NAVIGATION */}
+      {/* DOTS */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
         {slides.map((_, index) => (
           <button
@@ -134,6 +138,7 @@ function HeroSlider() {
           />
         ))}
       </div>
+
     </section>
   );
 }
