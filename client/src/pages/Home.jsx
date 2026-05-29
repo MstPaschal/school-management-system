@@ -136,7 +136,7 @@ function Home() {
               transition={{
                 duration: 1
               }}
-              src="/school-building.jpg"
+              src="/School Building.jpg"
               alt="School"
               className="rounded-3xl shadow-2xl"
             />
@@ -246,11 +246,72 @@ function Home() {
 
               </h3>
 
+              <img src="Smart School.jpg" alt="Modern Facilities" />
+
               <p className="text-gray-600">
 
                 Smart classrooms, laboratories and digital learning systems.
 
               </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* CORE VALUES */}
+      <section className="py-20">
+
+        <div className="max-w-7xl mx-auto px-6">
+
+          <h2 className="text-4xl font-bold text-center mb-14 text-purple-800">
+
+            Our Core Values
+
+          </h2>
+
+          <div className="grid md:grid-cols-3 gap-8">
+
+            <div className="bg-white p-8 rounded-2xl shadow-lg">
+
+              <h3 className="text-2xl font-bold mb-4 text-purple-700">
+
+                Godly Children
+
+              </h3>
+
+            </div>
+
+            <div className="bg-white p-8 rounded-2xl shadow-lg">
+
+              <h3 className="text-2xl font-bold mb-4 text-blue-700">
+
+                Integrity
+
+              </h3>
+
+            </div>
+
+            <div className="bg-white p-8 rounded-2xl shadow-lg">
+
+              <h3 className="text-2xl font-bold mb-4 text-orange-600">
+
+                Excellence
+
+              </h3>
+
+            </div>
+
+            <div className="bg-white p-8 rounded-2xl shadow-lg">
+
+              <h3 className="text-2xl font-bold mb-4 text-orange-600">
+
+                Goal Oriented
+
+              </h3>
 
             </div>
 
