@@ -1,5 +1,7 @@
 import PublicLayout from "../layouts/PublicLayout";
 
+import HeroSlider from "../components/HeroSlider";
+
 import { 
   FaChild, FaHandshake, FaStar, FaBullseye 
 } from "react-icons/fa";
@@ -19,91 +21,7 @@ function Home() {
     <PublicLayout>
 
       {/* HERO SECTION */}
-      <section className="relative min-h-screen overflow-hidden">
-
-        {/* BACKGROUND IMAGE */}
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "url('/School Building.jpg')"
-          }}
-        />
-
-        {/* DARK OVERLAY */}
-        <div className="absolute inset-0 bg-black/60" />
-
-        {/* CONTENT */}
-        <div className="relative z-10 min-h-screen flex items-center">
-
-          <div className="max-w-7xl mx-auto px-6 w-full">
-
-            <motion.div
-              initial={{
-                opacity: 0,
-                y: 50
-              }}
-              animate={{
-                opacity: 1,
-                y: 0
-              }}
-              transition={{
-                duration: 1
-              }}
-              className="max-w-4xl"
-            >
-
-              <p className="text-orange-400 font-semibold uppercase tracking-widest mb-4">
-
-                Welcome To Grisfield Schools
-
-              </p>
-
-              <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-tight">
-
-                Raising Future Leaders
-                Through Excellence
-
-              </h1>
-
-              <p className="mt-8 text-xl text-gray-200 leading-9">
-
-                A modern learning environment
-                where children are inspired
-                academically, morally and socially.
-
-              </p>
-
-              {/* BUTTONS */}
-              <div className="mt-10 flex flex-wrap gap-5">
-
-                <Link
-                  to="/apply"
-                  className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl text-lg font-semibold shadow-xl"
-                >
-
-                  Apply Now
-
-                </Link>
-
-                <Link
-                  to="/result-checker"
-                  className="bg-white text-purple-800 hover:bg-gray-200 px-8 py-4 rounded-xl text-lg font-semibold shadow-xl"
-                >
-
-                  Check Result
-
-                </Link>
-
-              </div>
-
-            </motion.div>
-
-          </div>
-
-        </div>
-
-      </section>
+      <HeroSlider />
 
       {/* ABOUT SECTION */}
       <section className="py-24 bg-white">

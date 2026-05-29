@@ -36,10 +36,8 @@ function Navbar() {
 
           <div>
 
-            <h1 className="text-3xl font-bold text-purple-700">
-
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-purple-700 leading-tight">
               GRISFIELD SCHOOLS
-
             </h1>
 
             <p className="text-xs text-gray-500">
