@@ -314,10 +314,10 @@ function Home() {
                 transition={{
                   delay: index * 0.2
                 }}
-                className="bg-white rounded-3xl shadow-lg p-10"
+                className="bg-white rounded-3xl shadow-lg p-6 md:p-10"
               >
 
-                <h3 className="text-3xl font-extrabold text-purple-700">
+                <h3 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-purple-700">
 
                   {item[0]}
 
