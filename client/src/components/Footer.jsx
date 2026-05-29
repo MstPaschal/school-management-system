@@ -83,9 +83,8 @@ function Footer() {
       <div className="border-t border-purple-700 text-center py-4 text-sm">
 
         © 2026 Grisfield Schools.
-        All Rights Reserved.
-        <span>Designed and Managed by 
-          <a href="">Passy Technologies</a></span>
+        All Rights Reserved. <br>Designed and Managed by <span>
+          <a href="">Passy Technologies</a></span></br>
 
       </div>
 
