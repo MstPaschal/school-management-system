@@ -143,7 +143,7 @@ function ResultPins() {
         pdf.text(
           "GRISFIELD SCHOOLS",
           x + 8,
-          y + 7
+          y + 4
         );
 
         // TAGLINE
@@ -158,7 +158,7 @@ function ResultPins() {
         pdf.text(
           "Taking the child beyond limit",
           x + 13,
-          y + 11
+          y + 7
         );
 
         // TITLE
@@ -173,7 +173,7 @@ function ResultPins() {
         pdf.text(
           "RESULT PIN CARD",
           x + 16,
-          y + 16
+          y + 12
         );
 
         // SESSION + TERM
@@ -182,13 +182,13 @@ function ResultPins() {
         pdf.text(
           `SESSION: ${sessionName}`,
           x + 3,
-          y + 21
+          y + 16
         );
 
         pdf.text(
           `TERM: ${formData.term}`,
           x + 43,
-          y + 21
+          y + 16
         );
 
         // PIN TITLE
@@ -203,7 +203,7 @@ function ResultPins() {
         pdf.text(
           "PIN",
           x + 25,
-          y + 27
+          y + 21
         );
 
         // PIN VALUE
@@ -218,7 +218,7 @@ function ResultPins() {
         pdf.text(
           pin.pin,
           x + 9,
-          y + 34
+          y + 28
         );
 
         // INSTRUCTIONS
@@ -229,13 +229,13 @@ function ResultPins() {
         pdf.text(
           "Use this PIN to check result online.",
           x + 4,
-          y + 40
+          y + 34
         );
 
         pdf.text(
           "Maximum usage: 5 times only.",
           x + 10,
-          y + 43
+          y + 37
         );
 
         // WATERMARK
@@ -246,9 +246,9 @@ function ResultPins() {
         pdf.text(
           "GRISFIELD",
           x + 8,
-          y + 30,
+          y + 25,
           {
-            angle: 30
+            angle: 45
           }
         );
 
