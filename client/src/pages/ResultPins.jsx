@@ -147,7 +147,7 @@ function ResultPins() {
         );
 
         // TAGLINE
-        pdf.setFontSize(6);
+        pdf.setFontSize(5);
 
         pdf.setTextColor(
           255,
@@ -162,7 +162,7 @@ function ResultPins() {
         );
 
         // TITLE
-        pdf.setFontSize(9);
+        pdf.setFontSize(7);
 
         pdf.setTextColor(
           0,
@@ -192,7 +192,7 @@ function ResultPins() {
         );
 
         // PIN TITLE
-        pdf.setFontSize(15);
+        pdf.setFontSize(10);
 
         pdf.setTextColor(
           90,
@@ -207,7 +207,7 @@ function ResultPins() {
         );
 
         // PIN VALUE
-        pdf.setFontSize(18);
+        pdf.setFontSize(15);
 
         pdf.setTextColor(
           0,
@@ -222,7 +222,7 @@ function ResultPins() {
         );
 
         // INSTRUCTIONS
-        pdf.setFontSize(5);
+        pdf.setFontSize(4);
 
         pdf.setTextColor(80);
 
@@ -239,7 +239,7 @@ function ResultPins() {
         );
 
         // WATERMARK
-        pdf.setFontSize(22);
+        pdf.setFontSize(14);
 
         pdf.setTextColor(240);
 
@@ -248,12 +248,12 @@ function ResultPins() {
           x + 8,
           y + 30,
           {
-            angle: 45
+            angle: 30
           }
         );
 
         // PAGE NUMBER
-        pdf.setFontSize(7);
+        pdf.setFontSize(5);
 
         pdf.setTextColor(120);
 
