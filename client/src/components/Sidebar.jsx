@@ -15,7 +15,8 @@ import {
   FaArrowUp,
   FaFileUpload,
   FaBars,
-  FaTimes
+  FaTimes,
+  FaAddressBook
 } from "react-icons/fa";
 
 import {
@@ -301,6 +302,13 @@ function Sidebar() {
                     to="/documents"
                     icon={<FaFileUpload />}
                     label="Documents"
+                    closeSidebar={closeSidebar}
+                  />
+
+                  <SidebarLink
+                    to="/admission-requests"
+                    icon={<FaAddressBook />}
+                    label="Admissions"
                     closeSidebar={closeSidebar}
                   />
 

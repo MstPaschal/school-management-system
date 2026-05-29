@@ -82,6 +82,8 @@ import ResetPassword from "./pages/ResetPassword";
 
 import ChangePassword from "./pages/ChangePassword";
 
+import AdmissionRequests from "./pages/AdmissionRequests";
+
 
 function App() {
 
@@ -528,6 +530,24 @@ function App() {
       </MainLayout>
 
     </SuperAdminRoute>
+
+  }
+/>
+
+
+<Route
+  path="/admission-requests"
+  element={
+
+    <ProtectedRoute>
+
+      <MainLayout>
+
+        <AdmissionRequests />
+
+      </MainLayout>
+
+    </ProtectedRoute>
 
   }
 />
