@@ -317,7 +317,7 @@ function Home() {
                 className="bg-white rounded-3xl shadow-lg p-10"
               >
 
-                <h3 className="text-5xl font-extrabold text-purple-700">
+                <h3 className="text-3xl font-extrabold text-purple-700">
 
                   {item[0]}
 
