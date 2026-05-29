@@ -53,7 +53,7 @@ function HeroSlider() {
           initial={{ opacity: 0, scale: 1.05 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.4, ease: "easeInOut" }}
+          transition={{ duration: 0.9, ease: "easeInOut" }}
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage: `url("${slides[current].image}")`

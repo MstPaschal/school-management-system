@@ -44,7 +44,7 @@ function Home() {
               transition={{
                 duration: 1
               }}
-              src="/School Building.jpg"
+              src="/school-building.jpg"
               alt="School"
               className="rounded-3xl shadow-2xl"
             />
