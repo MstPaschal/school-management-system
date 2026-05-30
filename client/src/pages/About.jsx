@@ -6,7 +6,7 @@ function About() {
 
     <PublicLayout>
 
-      <section className="py-20 bg-white">
+      <section className="py-12 bg-white">
 
         <div className="max-w-6xl mx-auto px-6">
 
@@ -22,7 +22,7 @@ function About() {
 
           </h2>
 
-          <p className="text-lg text-gray-700 leading-4">
+          <p className="text-lg text-gray-700 leading-9">
 
             Grisfield Schools is committed to raising
             academically excellent and morally upright
