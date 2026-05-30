@@ -81,6 +81,7 @@ const documentRoutes = require("./routes/documentRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const resultCheckerRoutes = require("./routes/resultCheckerRoutes");
 const admissionRoutes = require("./routes/admissionRoutes");
+const contactRoutes = require("./routes/contactRoutes");
 
 
 
@@ -103,6 +104,7 @@ app.use("/api/documents", documentRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/result-checker", resultCheckerRoutes);
 app.use("/api/admissions", admissionRoutes);
+app.use("/api/contact", contactRoutes);
 
 // Home route
 app.get("/", (req, res) => {
