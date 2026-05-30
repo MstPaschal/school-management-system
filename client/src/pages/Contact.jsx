@@ -263,33 +263,6 @@ function Contact() {
 
       </section>
 
-      {/* MAP */}
-      <section className="py-20 bg-gray-50">
-
-        <div className="max-w-7xl mx-auto px-6">
-
-          <h2 className="text-4xl font-bold text-center text-purple-800 mb-10">
-            Find Us
-          </h2>
-
-          <div className="rounded-3xl overflow-hidden shadow-xl">
-
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3964.0923023926953!2d7.52!3d6.51!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x10438d0b788d4ae3%3A0x6a2d9c32a7eca17b!2sGrisfield%20Schools!5e0!3m2!1sen!2sng!4v1780159231510!5m2!1sen!2sng"
-              width="100%"
-              height="450"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-
-          </div>
-
-        </div>
-
-      </section>
-
     </PublicLayout>
   );
 }
