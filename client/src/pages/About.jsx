@@ -202,12 +202,21 @@ function About() {
             innovation and character are nurtured every day.
           </p>
 
-          <a
-            href="/apply"
-            className="inline-block mt-8 bg-orange-500 hover:bg-orange-600 px-8 py-4 rounded-xl font-semibold"
-          >
-            Apply For Admission
-          </a>
+          <div className="flex flex-wrap justify-center gap-4 mt-8">
+            <Link
+              to="/apply"
+              className="bg-orange-500 hover:bg-orange-600 px-8 py-4 rounded-xl"
+            >
+              Apply Now
+            </Link>
+
+            <Link
+              to="/contact"
+              className="bg-white text-purple-800 px-8 py-4 rounded-xl"
+            >
+              Contact Us
+            </Link>
+          </div>
 
         </div>
 
