@@ -22,7 +22,7 @@ function About() {
 
           </h2>
 
-          <p className="text-lg text-gray-700 leading-9">
+          <p className="text-lg text-gray-700 leading-4">
 
             Grisfield Schools is committed to raising
             academically excellent and morally upright
