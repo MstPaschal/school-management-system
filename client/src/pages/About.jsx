@@ -6,7 +6,7 @@ function About() {
 
     <PublicLayout>
 
-      <section className="py-12 bg-white">
+      <section className="py-10 bg-white">
 
         <div className="max-w-6xl mx-auto px-6">
 
@@ -43,11 +43,11 @@ function About() {
 
         <div className="max-w-7xl mx-auto px-6">
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-5 gap-5">
 
             <div className="bg-white p-8 rounded-2xl shadow-lg">
 
-              <h3 className="text-2xl font-bold mb-4 text-purple-700">
+              <h3 className="text-3xl font-bold mb-4 text-purple-700">
 
                 Our History
 
@@ -78,11 +78,71 @@ function About() {
 
             </div>
 
-            </div>
+            <div className="bg-white p-8 rounded-2xl shadow-lg">
+
+              <h3 className="text-3xl font-bold mb-4 text-purple-700">
+
+                Overview
+
+              </h3>
+
+              <p className="text-gray-600">
+
+                The school curriculum at Grisfield Schools is frequently updated 
+                to include new and modern teaching methodologies while retaining 
+                those that have proved valuable. 
+                Our teachers are encouraged to exercise their judgement and 
+                imagination in order to provide a stimulating classroom atmosphere. 
+                Our academic programme gives particular considerations to each child's 
+                capabilities and limitations. We aim for our pupils to love learning 
+                as they cultivate good reading habits.
+
+              </p>
 
             </div>
 
-            </section>
+            <div className="bg-white p-8 rounded-2xl shadow-lg">
+
+              <h3 className="text-3xl font-bold mb-4 text-purple-700">
+
+                Our Vision
+
+              </h3>
+
+              <p className="text-gray-600">
+
+                To provide comprehensive educational programs that 
+                challenge the pupils to perform at their highest 
+                potential
+
+              </p>
+
+            </div>
+
+            <div className="bg-white p-8 rounded-2xl shadow-lg">
+
+              <h3 className="text-3xl font-bold mb-4 text-purple-700">
+
+                Our Mission
+
+              </h3>
+
+              <p className="text-gray-600">
+
+                To teach and prepare each child for success by 
+                engaging them in rigorous and relevant learning 
+                activities that promote academic, physical and 
+                emotional growth.
+
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
 
     </PublicLayout>
 
