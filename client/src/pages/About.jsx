@@ -1,5 +1,6 @@
 import PublicLayout from "../layouts/PublicLayout";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { FaHistory, FaBullseye, FaEye } from "react-icons/fa";
 
 function About() {
