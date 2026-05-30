@@ -169,11 +169,15 @@ exports.acceptApplication =
 
     } catch (error) {
 
-      console.log(error);
+        console.error(
+            "EMAIL ERROR:",
+            error
+        );
 
-      res.status(500).json({
-        message: error.message
-      });
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
 
     }
 
