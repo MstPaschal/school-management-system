@@ -11,6 +11,11 @@ function AdmissionRequests() {
   const [examTime, setExamTime] = useState("");
 
   // =========================
+  // FILTER STATE (NEW)
+  // =========================
+  const [activeTab, setActiveTab] = useState("PENDING");
+
+  // =========================
   // LOAD APPLICATIONS
   // =========================
   const loadApplications = async () => {
@@ -31,7 +36,25 @@ function AdmissionRequests() {
   }, []);
 
   // =========================
-  // FILTER PENDING ONLY
+  // TAB COUNTS
+  // =========================
+  const counts = {
+    ALL: applications.length,
+    PENDING: applications.filter((a) => a.status === "PENDING").length,
+    ACCEPTED: applications.filter((a) => a.status === "ACCEPTED").length,
+    REJECTED: applications.filter((a) => a.status === "REJECTED").length,
+  };
+
+  // =========================
+  // FILTERED DATA
+  // =========================
+  const filteredApplications =
+    activeTab === "ALL"
+      ? applications
+      : applications.filter((app) => app.status === activeTab);
+
+  // =========================
+  // PENDING ONLY (FOR BULK)
   // =========================
   const pendingApps = applications.filter(
     (app) => app.status === "PENDING"
@@ -66,7 +89,7 @@ function AdmissionRequests() {
   };
 
   // =========================
-  // BULK ACCEPT (open schedule)
+  // BULK ACCEPT
   // =========================
   const handleBulkAccept = () => {
     if (selectedIds.length === 0) {
@@ -131,6 +154,31 @@ function AdmissionRequests() {
           Admission Requests
         </h1>
 
+        {/* ================= TABS (NEW GMAIL STYLE) ================= */}
+        <div className="flex gap-6 border-b mb-6 relative">
+          {["ALL", "PENDING", "ACCEPTED", "REJECTED"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => {
+                setActiveTab(tab);
+                setSelectedIds([]);
+              }}
+              className={`pb-3 relative font-medium transition ${
+                activeTab === tab
+                  ? "text-blue-600"
+                  : "text-gray-500"
+              }`}
+            >
+              {tab} ({counts[tab]})
+
+              {/* Animated underline */}
+              {activeTab === tab && (
+                <span className="absolute left-0 bottom-0 w-full h-[3px] bg-blue-600 rounded-full transition-all duration-300" />
+              )}
+            </button>
+          ))}
+        </div>
+
         {/* ================= TOP ACTIONS ================= */}
         <div className="flex gap-4 mb-4">
           <button
@@ -182,6 +230,7 @@ function AdmissionRequests() {
                       type="checkbox"
                       checked={isAllSelected}
                       onChange={toggleSelectAll}
+                      disabled={activeTab !== "PENDING"}
                     />
                   </th>
                   <th className="p-3 text-left">Student</th>
@@ -196,7 +245,7 @@ function AdmissionRequests() {
               </thead>
 
               <tbody>
-                {applications.map((app) => {
+                {filteredApplications.map((app) => {
                   const disabled = app.status !== "PENDING";
 
                   return (
