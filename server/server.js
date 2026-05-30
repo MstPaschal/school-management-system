@@ -34,6 +34,7 @@ const StudentComment = require("./models/StudentComment");
 const AdminSetting = require("./models/AdminSetting");
 const StudentPayment = require("./models/StudentPayment");
 const UploadedDocument = require("./models/UploadedDocument");
+const AdmissionApplication = require("./models/AdmissionApplication");
 
 // Associations
 Class.belongsToMany(Subject, {

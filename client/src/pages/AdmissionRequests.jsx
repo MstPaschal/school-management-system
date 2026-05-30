@@ -107,7 +107,7 @@ function AdmissionRequests() {
     }
 
     try {
-      const res = await api.put("/admissions/bulk-accept", {
+      const res = await api.put("/admissions/accept/bulk-accept", {
         ids: selectedIds,
         examDate,
         examTime,

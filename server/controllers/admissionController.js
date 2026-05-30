@@ -75,68 +75,143 @@ exports.getApplications =
 // ACCEPT APPLICATION
 // ==========================
 exports.bulkAccept = async (req, res) => {
+
   try {
 
-    const { ids, examDate, examTime } = req.body;
+    const {
+      ids,
+      examDate,
+      examTime
+    } = req.body;
+
+    if (
+      !ids ||
+      ids.length === 0
+    ) {
+
+      return res.status(400).json({
+        success: false,
+        message: "No students selected"
+      });
+
+    }
 
     const applications =
       await AdmissionApplication.findAll({
+
         where: {
           id: ids
         }
+
       });
 
     for (const app of applications) {
 
       app.status = "ACCEPTED";
+
       app.examDate = examDate;
+
       app.examTime = examTime;
 
       await app.save();
 
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: app.email,
-        subject: "Entrance Examination Invitation",
-        html: `
-          <h2>GRISFIELD SCHOOLS</h2>
+      console.log(
+        "Sending mail to:",
+        app.email
+      );
 
-          <p>Dear Parent,</p>
+      const info =
+        await transporter.sendMail({
 
-          <p>Your child has been invited for entrance examination.</p>
+          from:
+            process.env.EMAIL_USER,
 
-          <p><strong>Date:</strong> ${examDate}</p>
+          to:
+            app.email,
 
-          <p><strong>Time:</strong> ${examTime}</p>
+          subject:
+            "Entrance Examination Invitation",
 
-          <p>Please come with all the necessary writing materials needed for the exam.</p>
+          html: `
+            <h2>GRISFIELD SCHOOLS</h2>
 
-          <p><strong>Subjects:</strong> English Language (Comprhension, lexis, structure and Essay Writing), 
-          Mathematics and General Knowledge.</p>
+            <p>Dear Parent,</p>
 
-          <p><strong>Venue:</strong> Grisfield Schools Campus 2</p>
+            <p>
+              Your child has been invited
+              for entrance examination.
+            </p>
 
-          <p>Plot 107 Gracious Estate, Otigba, Nkwelle Ezunaka, Anambra State.</p>
-        `
-      });
+            <p>
+              <strong>Date:</strong>
+              ${examDate}
+            </p>
+
+            <p>
+              <strong>Time:</strong>
+              ${examTime}
+            </p>
+
+            <p>
+              Endeavour to come with your
+              complete writing materials
+            </p>
+            
+            <p>
+              Venue:
+              Grisfield Schools Campus 2
+            </p>
+
+            <p>
+              Plot 107 Gracious Estate,
+              Nkwelle Ezunaka,
+              Anambra State.
+            </p>
+
+            <p>
+              Subjects:
+              English Language,
+              Mathematics,
+              General Knowledge.
+            </p>
+          `
+
+        });
+
+      console.log(
+        "Mail sent:",
+        info.messageId
+      );
 
     }
 
-    res.status(200).json({
+    return res.status(200).json({
+
       success: true,
-      message: "Invitations sent successfully"
+
+      message:
+        `${applications.length} invitation(s) sent successfully`
+
     });
 
   } catch (error) {
 
-    console.log("BULK ACCEPT ERROR:", error);
+    console.log(
+      "BULK ACCEPT ERROR:",
+      error
+    );
 
-    res.status(500).json({
+    return res.status(500).json({
+
       success: false,
-      message: error.message
+
+      message:
+        error.message
+
     });
 
   }
+
 };
 
 

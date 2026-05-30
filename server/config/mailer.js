@@ -15,4 +15,23 @@ const transporter =
 
   });
 
+transporter.verify(function(error, success) {
+
+  if (error) {
+
+    console.log(
+      "MAIL ERROR:",
+      error
+    );
+
+  } else {
+
+    console.log(
+      "MAIL SERVER READY"
+    );
+
+  }
+
+});
+
 module.exports = transporter;
