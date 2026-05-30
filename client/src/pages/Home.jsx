@@ -11,15 +11,6 @@ import {
 } from "react-icons/fa";
 
 function Home() {
-  const floatUp = {
-    hidden: { opacity: 0, y: 60 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8 },
-    },
-  };
-
   const stats = [
     ["500+", "Students"],
     ["50+", "Teachers"],
@@ -110,7 +101,7 @@ function Home() {
 
           <div>
             <h2 className="text-5xl font-bold text-purple-800 mb-8">
-              Note of Welcome from the Proprietress
+              Address of Welcome from the Proprietress
             </h2>
 
             <p className="text-lg text-gray-700 leading-9">
@@ -209,30 +200,20 @@ function Home() {
       <section className="py-20 bg-amber-50">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
 
-          {stats.map(([num, label], i) => {
-            const value = parseInt(num.replace(/\D/g, "")); // extracts number
-
-            return (
-              <motion.div
-                key={i}
-                variants={floatUp}
-                initial="hidden"
-                whileInView="show"
-                viewport={{ once: true }}
-                className="bg-white rounded-3xl shadow-lg p-8 hover:-translate-y-2 transition-transform duration-300"
-              >
-                <h3 className="text-4xl font-extrabold text-purple-700">
-                  <CountUp
-                    end={value}
-                    duration={2.5}
-                    suffix={num.includes("%") ? "%" : "+"}
-                  />
-                </h3>
-
-                <p className="mt-4 text-gray-600">{label}</p>
-              </motion.div>
-            );
-          })}
+          {stats.map(([num, label], i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.15 }}
+              className="bg-white rounded-3xl shadow-lg p-8"
+            >
+              <h3 className="text-4xl font-extrabold text-purple-700">
+                {num}
+              </h3>
+              <p className="mt-4 text-gray-600">{label}</p>
+            </motion.div>
+          ))}
 
         </div>
       </section>
