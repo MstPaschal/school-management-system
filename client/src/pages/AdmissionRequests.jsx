@@ -8,6 +8,9 @@ import api from "../services/api";
 function AdmissionRequests() {
 
   const [applications, setApplications] =
+    useState([]); 
+    
+  const [selectedIds, setSelectedIds] =
     useState([]);
 
   const [loading, setLoading] =
@@ -180,11 +183,25 @@ function AdmissionRequests() {
 
             <div className="overflow-x-auto">
 
+                <button>
+                Accept Students
+                </button>
+
+                <button>
+                Send Invitations
+                </button>
+
               <table className="w-full border-collapse">
 
                 <thead>
 
                   <tr className="bg-gray-100">
+
+                    <th className="p-3 text-left">
+                        <input
+                        type="checkbox"
+                        />
+                    </th>
 
                     <th className="p-3 text-left">
                       Student
@@ -234,6 +251,17 @@ function AdmissionRequests() {
                           className="border-b"
                         >
 
+                        <td className="p-3">
+                            <input
+                                type="checkbox"
+                                checked={
+                                    selectedIds.includes(
+                                    app.id
+                                    )
+                                }
+                            />
+                        </td>
+                          
                           <td className="p-3">
                             {app.studentName}
                           </td>

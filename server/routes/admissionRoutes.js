@@ -10,7 +10,7 @@ const {
 
   getApplications,
 
-  acceptApplication,
+  bulkAccept,
 
   rejectApplication
 
@@ -47,10 +47,10 @@ router.get(
 );
 
 router.put(
-  "/accept/:id",
+  "/accept/bulk-accept",
   verifyToken,
   isAdmin,
-  acceptApplication
+  bulkAccept
 );
 
 router.put(

@@ -74,112 +74,86 @@ exports.getApplications =
 // ==========================
 // ACCEPT APPLICATION
 // ==========================
-exports.acceptApplication =
-  async (req, res) => {
+exports.bulkAccept =
+  async (req,res) => {
 
-    try {
+    const {
+      ids,
+      examDate,
+      examTime
+    } = req.body;
 
-      const {
-        examDate,
-        examTime
-      } = req.body;
+    const applications =
+      await AdmissionApplication.findAll({
 
-      const application =
-        await AdmissionApplication.findByPk(
-          req.params.id
-        );
+        where:{
+          id: ids
+        }
 
-      if (!application) {
+      });
 
-        return res.status(404).json({
-          message:
-            "Application not found"
-        });
+    for (
+      const app
+      of applications
+    ) {
 
-      }
-
-      application.status =
+      app.status =
         "ACCEPTED";
 
-      application.examDate =
+      app.examDate =
         examDate;
 
-      application.examTime =
+      app.examTime =
         examTime;
 
-      await application.save();
+      await app.save();
 
-
-      // SEND EMAIL
       await transporter.sendMail({
 
         from:
           process.env.EMAIL_USER,
 
         to:
-          application.email,
+          app.email,
 
         subject:
           "Entrance Examination Invitation",
 
         html: `
-          <h2>
-            GRISFIELD SCHOOLS
-          </h2>
+          Dear Parent,
 
-          <p>
-            Dear Parent,
-          </p>
+          Your child has been invited
+          for entrance examination.
 
-          <p>
-            Your child's admission application
-            has been accepted.
-          </p>
+          Date:
+          ${examDate}
 
-          <p>
-            You are invited for entrance examination.
-          </p>
+          Time:
+          ${examTime}
 
-          <p>
-            <strong>Date:</strong>
-            ${examDate}
-          </p>
+          Please come with all the necessary
+          writing materials needed for the exam.
 
-          <p>
-            <strong>Time:</strong>
-            ${examTime}
-          </p>
+          Subjects: English Language and Essay
+          Writing, Mathematics, General Knowledge.
 
-          <p>
-            Venue:
-            Grisfield Schools Campus
-          </p>
-
-          <p>
-            Thank you.
-          </p>
+          Venue: Grisfield Schools Campus 2
+          Address: Plot 107 Gracious Estate,
+          Otigba Nkwelle Ezunaka, Anambra State.
         `
 
       });
 
-      res.status(200).json({
-        message:
-          "Application accepted and email sent"
-      });
-
-    } catch (error) {
-
-        console.error(
-            "EMAIL ERROR:",
-            error
-        );
-
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
-
     }
+
+    res.json({
+
+      success:true,
+
+      message:
+        "Invitations sent"
+
+    });
 
   };
 
