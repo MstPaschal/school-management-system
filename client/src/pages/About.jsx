@@ -8,6 +8,27 @@ function About() {
 
       <section className="py-10 bg-amber-50">
 
+        <div>
+
+            <motion.img
+              initial={{
+                opacity: 0,
+                x: -50
+              }}
+              whileInView={{
+                opacity: 1,
+                x: 0
+              }}
+              transition={{
+                duration: 1
+              }}
+              src="/school-building.jpg"
+              alt="School"
+              className="rounded-3xl shadow-2xl"
+            />
+
+          </div>
+
         <div className="max-w-6xl mx-auto px-6">
 
           <h1 className="text-5xl font-bold text-purple-800 mb-8">
