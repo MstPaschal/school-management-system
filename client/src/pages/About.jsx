@@ -6,7 +6,7 @@ function About() {
 
     <PublicLayout>
 
-      <section className="py-10 bg-white">
+      <section className="py-10 bg-amber-50">
 
         <div className="max-w-6xl mx-auto px-6">
 
@@ -45,7 +45,7 @@ function About() {
 
           <div className="grid md:grid-cols-5 gap-5">
 
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
+            <div className="bg-amber-40 p-8 rounded-2xl shadow-lg">
 
               <h3 className="text-3xl font-bold mb-4 text-purple-700">
 
@@ -78,7 +78,7 @@ function About() {
 
             </div>
 
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
+            <div className="bg-amber-40 p-8 rounded-2xl shadow-lg">
 
               <h3 className="text-3xl font-bold mb-4 text-purple-700">
 
@@ -101,7 +101,7 @@ function About() {
 
             </div>
 
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
+            <div className="bg-amber-40 p-8 rounded-2xl shadow-lg">
 
               <h3 className="text-3xl font-bold mb-4 text-purple-700">
 
@@ -119,7 +119,7 @@ function About() {
 
             </div>
 
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
+            <div className="bg-amber-40 p-8 rounded-2xl shadow-lg">
 
               <h3 className="text-3xl font-bold mb-4 text-purple-700">
 
