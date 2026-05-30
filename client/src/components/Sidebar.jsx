@@ -28,6 +28,19 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 
+/* =========================
+   BADGE COMPONENT
+========================= */
+function Badge({ count }) {
+  if (!count) return null;
+
+  return (
+    <span className="ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+      {count}
+    </span>
+  );
+}
+
 function Sidebar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -35,14 +48,16 @@ function Sidebar() {
 
   const [isOpen, setIsOpen] = useState(false);
 
+  // submenu states
+  const [adminOpen, setAdminOpen] = useState(true);
+  const [superOpen, setSuperOpen] = useState(true);
+
   const handleLogout = () => {
     logout();
     navigate("/portal");
   };
 
-  const closeSidebar = () => {
-    setIsOpen(false);
-  };
+  const closeSidebar = () => setIsOpen(false);
 
   return (
     <>
@@ -95,23 +110,36 @@ function Sidebar() {
         </div>
 
         {/* MENU */}
-        <div className="flex-1 overflow-y-auto px-5 py-6">
-          <ul className="space-y-3">
+        <div className="flex-1 overflow-y-auto px-5 py-6 space-y-2">
 
-            <SidebarLink
-              to={
-                user?.role === "teacher"
-                  ? "/teacher-dashboard"
-                  : "/dashboard"
-              }
-              icon={<FaHome />}
-              label="Dashboard"
-              location={location}
-              closeSidebar={closeSidebar}
-            />
+          {/* DASHBOARD */}
+          <SidebarLink
+            to={
+              user?.role === "teacher"
+                ? "/teacher-dashboard"
+                : "/dashboard"
+            }
+            icon={<FaHome />}
+            label="Dashboard"
+            location={location}
+            closeSidebar={closeSidebar}
+          />
 
-            {user?.role === "superadmin" && (
-              <>
+          {/* ================= SUPERADMIN SECTION ================= */}
+          {user?.role === "superadmin" && (
+            <div>
+              <button
+                onClick={() => setSuperOpen(!superOpen)}
+                className="w-full flex items-center text-left px-4 py-2 font-semibold text-blue-200 hover:text-white"
+              >
+                Super Admin
+              </button>
+
+              <div
+                className={`overflow-hidden transition-all duration-300 ${
+                  superOpen ? "max-h-60" : "max-h-0"
+                }`}
+              >
                 <SidebarLink
                   to="/create-admin"
                   icon={<FaUserCheck />}
@@ -127,12 +155,26 @@ function Sidebar() {
                   location={location}
                   closeSidebar={closeSidebar}
                 />
-              </>
-            )}
+              </div>
+            </div>
+          )}
 
-            {(user?.role === "admin" ||
-              user?.role === "superadmin") && (
-              <>
+          {/* ================= ADMIN SECTION ================= */}
+          {(user?.role === "admin" ||
+            user?.role === "superadmin") && (
+            <div>
+              <button
+                onClick={() => setAdminOpen(!adminOpen)}
+                className="w-full flex items-center text-left px-4 py-2 font-semibold text-blue-200 hover:text-white"
+              >
+                Admin Tools
+              </button>
+
+              <div
+                className={`overflow-hidden transition-all duration-300 ${
+                  adminOpen ? "max-h-[1000px]" : "max-h-0"
+                }`}
+              >
                 <SidebarLink
                   to="/students/create"
                   icon={<FaUserGraduate />}
@@ -147,6 +189,16 @@ function Sidebar() {
                   label="View Students"
                   location={location}
                   closeSidebar={closeSidebar}
+                  badge={340}
+                />
+
+                <SidebarLink
+                  to="/admission-requests"
+                  icon={<FaAddressBook />}
+                  label="Admissions"
+                  location={location}
+                  closeSidebar={closeSidebar}
+                  badge={12}
                 />
 
                 <SidebarLink
@@ -182,22 +234,6 @@ function Sidebar() {
                 />
 
                 <SidebarLink
-                  to="/comment-manager"
-                  icon={<FaComment />}
-                  label="Comment Manager"
-                  location={location}
-                  closeSidebar={closeSidebar}
-                />
-
-                <SidebarLink
-                  to="/admin-settings"
-                  icon={<FaMoneyBill />}
-                  label="Admin Settings"
-                  location={location}
-                  closeSidebar={closeSidebar}
-                />
-
-                <SidebarLink
                   to="/classes"
                   icon={<FaSchool />}
                   label="Classes"
@@ -228,49 +264,42 @@ function Sidebar() {
                   location={location}
                   closeSidebar={closeSidebar}
                 />
+              </div>
+            </div>
+          )}
 
-                <SidebarLink
-                  to="/admission-requests"
-                  icon={<FaAddressBook />}
-                  label="Admissions"
-                  location={location}
-                  closeSidebar={closeSidebar}
-                />
-              </>
-            )}
+          {/* COMMON */}
+          <SidebarLink
+            to="/score-entry"
+            icon={<FaBook />}
+            label="Score Entry"
+            location={location}
+            closeSidebar={closeSidebar}
+          />
 
-            <SidebarLink
-              to="/score-entry"
-              icon={<FaBook />}
-              label="Score Entry"
-              location={location}
-              closeSidebar={closeSidebar}
-            />
+          <SidebarLink
+            to="/make-comments"
+            icon={<FaRegCommentDots />}
+            label="Make Comments"
+            location={location}
+            closeSidebar={closeSidebar}
+          />
 
-            <SidebarLink
-              to="/make-comments"
-              icon={<FaRegCommentDots />}
-              label="Make Comments"
-              location={location}
-              closeSidebar={closeSidebar}
-            />
+          <SidebarLink
+            to="/payments/set"
+            icon={<FaMoneyBill />}
+            label="Payments"
+            location={location}
+            closeSidebar={closeSidebar}
+          />
 
-            <SidebarLink
-              to="/payments/set"
-              icon={<FaMoneyBill />}
-              label="Payments"
-              location={location}
-              closeSidebar={closeSidebar}
-            />
-
-            <SidebarLink
-              to="/results"
-              icon={<FaClipboardList />}
-              label="Reports"
-              location={location}
-              closeSidebar={closeSidebar}
-            />
-          </ul>
+          <SidebarLink
+            to="/results"
+            icon={<FaClipboardList />}
+            label="Reports"
+            location={location}
+            closeSidebar={closeSidebar}
+          />
         </div>
 
         {/* FOOTER */}
@@ -297,31 +326,32 @@ function Sidebar() {
 }
 
 /* =========================
-   REUSABLE LINK (UPDATED)
+   SIDEBAR LINK
 ========================= */
 function SidebarLink({
   to,
   icon,
   label,
   location,
-  closeSidebar
+  closeSidebar,
+  badge
 }) {
   const isActive = location.pathname === to;
 
   return (
-    <li>
-      <Link
-        to={to}
-        onClick={closeSidebar}
-        className={`
-          flex items-center gap-3 px-4 py-3 rounded-lg transition duration-200
-          ${isActive ? "bg-blue-700" : "hover:bg-blue-800"}
-        `}
-      >
-        {icon}
-        <span>{label}</span>
-      </Link>
-    </li>
+    <Link
+      to={to}
+      onClick={closeSidebar}
+      className={`
+        flex items-center gap-3 px-4 py-3 rounded-lg transition
+        ${isActive ? "bg-blue-700" : "hover:bg-blue-800"}
+      `}
+    >
+      {icon}
+      <span>{label}</span>
+
+      <Badge count={badge} />
+    </Link>
   );
 }
 
