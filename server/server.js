@@ -35,6 +35,33 @@ const AdminSetting = require("./models/AdminSetting");
 const StudentPayment = require("./models/StudentPayment");
 const UploadedDocument = require("./models/UploadedDocument");
 
+// Associations
+Class.belongsToMany(Subject, {
+  through: ClassSubject,
+  foreignKey: "classId"
+});
+
+Subject.belongsToMany(Class, {
+  through: ClassSubject,
+  foreignKey: "subjectId"
+});
+
+Student.hasMany(Score, {
+  foreignKey: "studentId"
+});
+
+Score.belongsTo(Student, {
+  foreignKey: "studentId"
+});
+
+User.hasOne(Teacher, {
+  foreignKey: "userId"
+});
+
+Teacher.belongsTo(User, {
+  foreignKey: "userId"
+});
+
 // Routes
 const authRoutes = require("./routes/authRoutes");
 const testRoutes = require("./routes/testRoutes");
@@ -84,31 +111,26 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-// Associations
-Class.belongsToMany(Subject, {
-  through: ClassSubject,
-  foreignKey: "classId"
-});
+const transporter =
+  require("./config/mailer");
 
-Subject.belongsToMany(Class, {
-  through: ClassSubject,
-  foreignKey: "subjectId"
-});
+transporter.verify(function(error, success) {
 
-Student.hasMany(Score, {
-  foreignKey: "studentId"
-});
+  if (error) {
 
-Score.belongsTo(Student, {
-  foreignKey: "studentId"
-});
+    console.log(
+      "MAIL ERROR:",
+      error
+    );
 
-User.hasOne(Teacher, {
-  foreignKey: "userId"
-});
+  } else {
 
-Teacher.belongsTo(User, {
-  foreignKey: "userId"
+    console.log(
+      "Mail server ready"
+    );
+
+  }
+
 });
 
 // Start server

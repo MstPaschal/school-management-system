@@ -74,88 +74,70 @@ exports.getApplications =
 // ==========================
 // ACCEPT APPLICATION
 // ==========================
-exports.bulkAccept =
-  async (req,res) => {
+exports.bulkAccept = async (req, res) => {
+  try {
 
-    const {
-      ids,
-      examDate,
-      examTime
-    } = req.body;
+    const { ids, examDate, examTime } = req.body;
 
     const applications =
       await AdmissionApplication.findAll({
-
-        where:{
+        where: {
           id: ids
         }
-
       });
 
-    for (
-      const app
-      of applications
-    ) {
+    for (const app of applications) {
 
-      app.status =
-        "ACCEPTED";
-
-      app.examDate =
-        examDate;
-
-      app.examTime =
-        examTime;
+      app.status = "ACCEPTED";
+      app.examDate = examDate;
+      app.examTime = examTime;
 
       await app.save();
 
       await transporter.sendMail({
-
-        from:
-          process.env.EMAIL_USER,
-
-        to:
-          app.email,
-
-        subject:
-          "Entrance Examination Invitation",
-
+        from: process.env.EMAIL_USER,
+        to: app.email,
+        subject: "Entrance Examination Invitation",
         html: `
-          Dear Parent,
+          <h2>GRISFIELD SCHOOLS</h2>
 
-          Your child has been invited
-          for entrance examination.
+          <p>Dear Parent,</p>
 
-          Date:
-          ${examDate}
+          <p>Your child has been invited for entrance examination.</p>
 
-          Time:
-          ${examTime}
+          <p><strong>Date:</strong> ${examDate}</p>
 
-          Please come with all the necessary
-          writing materials needed for the exam.
+          <p><strong>Time:</strong> ${examTime}</p>
 
-          Subjects: English Language and Essay
-          Writing, Mathematics, General Knowledge.
+          <p>Please come with all the necessary writing materials needed for the exam.</p>
 
-          Venue: Grisfield Schools Campus 2
-          Address: Plot 107 Gracious Estate,
-          Otigba Nkwelle Ezunaka, Anambra State.
+          <p><strong>Subjects:</strong> English Language (Comprhension, lexis, structure and Essay Writing), 
+          Mathematics and General Knowledge.</p>
+
+          <p><strong>Venue:</strong> Grisfield Schools Campus 2</p>
+
+          <p>Plot 107 Gracious Estate, Otigba, Nkwelle Ezunaka, Anambra State.</p>
         `
-
       });
 
     }
 
-    res.json({
-
-      success:true,
-
-      message:
-        "Invitations sent"
-
+    res.status(200).json({
+      success: true,
+      message: "Invitations sent successfully"
     });
 
-  };
+  } catch (error) {
+
+    console.log("BULK ACCEPT ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+
+  }
+};
 
 
 // ==========================
