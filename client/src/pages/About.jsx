@@ -1,5 +1,7 @@
 import PublicLayout from "../layouts/PublicLayout";
 
+import { motion } from "framer-motion";
+
 function About() {
 
   return (
@@ -8,7 +10,7 @@ function About() {
 
       <section className="py-10 bg-amber-50">
 
-        <div>
+        <div className="max-w-6xl mx-auto px-6">
 
             <motion.img
               initial={{
@@ -24,12 +26,8 @@ function About() {
               }}
               src="/school-building.jpg"
               alt="School"
-              className="rounded-3xl shadow-2xl"
+              className="rounded-3xl shadow-2xl w-full mb-10"
             />
-
-          </div>
-
-        <div className="max-w-6xl mx-auto px-6">
 
           <h1 className="text-5xl font-bold text-purple-800 mb-8">
 
@@ -64,7 +62,7 @@ function About() {
 
         <div className="max-w-7xl mx-auto px-6">
 
-          <div className="grid md:grid-cols-5 gap-5">
+          <div className="grid md:grid-cols-4 gap-5">
 
             <div className="bg-amber-50 p-8 rounded-2xl shadow-lg">
 
