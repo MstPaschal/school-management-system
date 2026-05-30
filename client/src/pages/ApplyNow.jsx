@@ -2,60 +2,61 @@ import PublicLayout from "../layouts/PublicLayout";
 import { useState } from "react";
 import api from "../services/api";
 
-const [formData, setFormData] =
-  useState({
+function ApplyNow() {
 
-    studentName: "",
-    parentName: "",
-    phone: "",
-    email: "",
-    level: "",
-    className: "",
-    lastSchool: ""
+  const [formData, setFormData] =
+    useState({
 
-  });
+      studentName: "",
+      parentName: "",
+      phone: "",
+      email: "",
+      level: "",
+      className: "",
+      lastSchool: ""
 
-const handleChange = (e) => {
+    });
 
-  setFormData({
+  const handleChange = (e) => {
 
-    ...formData,
+    setFormData({
 
-    [e.target.name]:
-      e.target.value
+      ...formData,
 
-  });
+      [e.target.name]:
+        e.target.value
 
-};
-
-const handleSubmit =
-  async (e) => {
-
-    e.preventDefault();
-
-    try {
-
-      const res =
-        await api.post(
-          "/admissions",
-          formData
-        );
-
-      alert(res.data.message);
-
-    } catch (error) {
-
-      console.log(error);
-
-      alert(
-        "Failed to submit application"
-      );
-
-    }
+    });
 
   };
 
-function ApplyNow() {
+  const handleSubmit =
+    async (e) => {
+
+      e.preventDefault();
+
+      try {
+
+        const res =
+          await api.post(
+            "/admissions",
+            formData
+          );
+
+        alert(res.data.message);
+
+      } catch (error) {
+
+        console.log(error);
+
+        alert(
+          "Failed to submit application"
+        );
+
+      }
+
+    };
+
 
   return (
 
