@@ -12,7 +12,13 @@ function About() {
 
         <div className="max-w-6xl mx-auto px-6">
 
-            <motion.img
+          <h1 className="text-5xl font-bold text-purple-800 mb-8">
+
+            About Grisfield Schools
+
+          </h1>
+
+          <motion.img
               initial={{
                 opacity: 0,
                 x: -50
@@ -28,12 +34,6 @@ function About() {
               alt="School"
               className="rounded-3xl shadow-2xl w-full mb-10"
             />
-
-          <h1 className="text-5xl font-bold text-purple-800 mb-8">
-
-            About Grisfield Schools
-
-          </h1>
 
           <h2 className="text-3xl font-bold text-purple-500 mb-5">
 
