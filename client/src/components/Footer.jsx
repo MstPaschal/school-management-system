@@ -57,16 +57,25 @@ function Footer() {
           </h3>
 
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d253853.9180028169!2d6.54306248671875!3d6.201895900000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sgrisfield%20schools!5e0!3m2!1sen!2sng!4v1780012764190!5m2!1sen!2sng"
+            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3964.0923023926953!2d7.52!3d6.51!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x10438d0b788d4ae3%3A0x6a2d9c32a7eca17b!2sGrisfield%20Schools!5e0!3m2!1sen!2sng!4v1780159231510!5m2!1sen!2sng"
             width="100%"
             height="180"
             style={{ border: 0 }}
             allowFullScreen
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
-            className="rounded-2xl"
-            title="School Location"
+            className="rounded-2xl shadow-lg"
+            title="Grisfield Schools Location"
           />
+
+          <a
+            href="https://maps.google.com/?q=Grisfield+Schools+Nkwelle+Ezunaka+Anambra"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-block mt-4 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition"
+          >
+            Get Directions
+          </a>
         </div>
 
         {/* QUICK LINKS */}
