@@ -466,6 +466,15 @@ function Home() {
 
                   </div>
 
+                  <Link
+                    to="/about"
+                    className="inline-block mt-8 bg-purple-700 hover:bg-purple-800 text-white px-8 py-4 rounded-xl"
+                  >
+
+                    More events
+
+                  </Link>
+
                 </motion.div>
 
               ))
