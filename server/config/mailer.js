@@ -9,8 +9,6 @@ const transporter =
 
     secure: false,
 
-    requireTLS: true,
-
     auth: {
 
       user:
@@ -19,29 +17,31 @@ const transporter =
       pass:
         process.env.EMAIL_PASS
 
+    },
+
+    tls: {
+      rejectUnauthorized: false
     }
 
   });
 
-transporter.verify(
-  function (error, success) {
+transporter.verify((error) => {
 
-    if (error) {
+  if (error) {
 
-      console.log(
-        "MAIL ERROR:",
-        error
-      );
+    console.log(
+      "MAIL ERROR:",
+      error
+    );
 
-    } else {
+  } else {
 
-      console.log(
-        "MAIL SERVER READY"
-      );
-
-    }
+    console.log(
+      "MAIL SERVER READY"
+    );
 
   }
-);
+
+});
 
 module.exports = transporter;
