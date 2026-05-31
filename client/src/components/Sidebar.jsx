@@ -16,7 +16,8 @@ import {
   FaFileUpload,
   FaBars,
   FaTimes,
-  FaAddressBook
+  FaAddressBook,
+  FaCalendarAlt
 } from "react-icons/fa";
 
 import {
@@ -261,6 +262,14 @@ function Sidebar() {
                   to="/documents"
                   icon={<FaFileUpload />}
                   label="Documents"
+                  location={location}
+                  closeSidebar={closeSidebar}
+                />
+
+                <SidebarLink
+                  to="/admin/events"
+                  icon={<FaCalendarAlt />}
+                  label="Create Events"
                   location={location}
                   closeSidebar={closeSidebar}
                 />

@@ -35,6 +35,7 @@ const AdminSetting = require("./models/AdminSetting");
 const StudentPayment = require("./models/StudentPayment");
 const UploadedDocument = require("./models/UploadedDocument");
 const AdmissionApplication = require("./models/AdmissionApplication");
+const Event = require("./models/Event");
 
 // Associations
 Class.belongsToMany(Subject, {
@@ -83,6 +84,7 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 const resultCheckerRoutes = require("./routes/resultCheckerRoutes");
 const admissionRoutes = require("./routes/admissionRoutes");
 const contactRoutes = require("./routes/contactRoutes");
+const eventRoutes = require("./routes/eventRoutes");
 
 
 
@@ -106,6 +108,7 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/result-checker", resultCheckerRoutes);
 app.use("/api/admissions", admissionRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/api/events", eventRoutes);
 
 // Home route
 app.get("/", (req, res) => {

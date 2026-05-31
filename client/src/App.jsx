@@ -552,6 +552,23 @@ function App() {
   }
 />
 
+<Route
+  path="/admin/events"
+  element={
+  
+    <ProtectedRoute>
+
+      <MainLayout>
+  
+        <ManageEvents />
+  
+      </MainLayout>
+
+    </ProtectedRoute>
+  
+  }
+/>
+
 
 <Route
   path="/forgot-password"
