@@ -3,35 +3,45 @@ const nodemailer = require("nodemailer");
 const transporter =
   nodemailer.createTransport({
 
-    service: "gmail",
+    host: "smtp.gmail.com",
+
+    port: 587,
+
+    secure: false,
+
+    requireTLS: true,
 
     auth: {
+
       user:
         process.env.EMAIL_USER,
 
       pass:
         process.env.EMAIL_PASS
+
     }
 
   });
 
-transporter.verify(function(error, success) {
+transporter.verify(
+  function (error, success) {
 
-  if (error) {
+    if (error) {
 
-    console.log(
-      "MAIL ERROR:",
-      error
-    );
+      console.log(
+        "MAIL ERROR:",
+        error
+      );
 
-  } else {
+    } else {
 
-    console.log(
-      "MAIL SERVER READY"
-    );
+      console.log(
+        "MAIL SERVER READY"
+      );
+
+    }
 
   }
-
-});
+);
 
 module.exports = transporter;
