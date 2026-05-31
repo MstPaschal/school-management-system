@@ -84,13 +84,11 @@ exports.bulkAccept = async (req, res) => {
       examTime
     } = req.body;
 
-    if (
-      !ids ||
-      ids.length === 0
-    ) {
+    console.log("REQUEST BODY:", req.body);
+
+    if (!ids || ids.length === 0) {
 
       return res.status(400).json({
-        success: false,
         message: "No students selected"
       });
 
@@ -98,12 +96,15 @@ exports.bulkAccept = async (req, res) => {
 
     const applications =
       await AdmissionApplication.findAll({
-
         where: {
           id: ids
         }
-
       });
+
+    console.log(
+      "Applications Found:",
+      applications.length
+    );
 
     for (const app of applications) {
 
@@ -138,8 +139,12 @@ exports.bulkAccept = async (req, res) => {
             <p>Dear Parent,</p>
 
             <p>
-              Your child has been invited
-              for entrance examination.
+              Your child's admission application
+              has been accepted.
+            </p>
+
+            <p>
+              Entrance Examination Details:
             </p>
 
             <p>
@@ -153,44 +158,32 @@ exports.bulkAccept = async (req, res) => {
             </p>
 
             <p>
-              Endeavour to come with your
-              complete writing materials
-            </p>
-            
-            <p>
               Venue:
               Grisfield Schools Campus 2
             </p>
 
             <p>
               Plot 107 Gracious Estate,
-              Nkwelle Ezunaka,
+              Otigba Nkwelle Ezunaka,
               Anambra State.
-            </p>
-
-            <p>
-              Subjects:
-              English Language,
-              Mathematics,
-              General Knowledge.
             </p>
           `
 
         });
 
       console.log(
-        "Mail sent:",
-        info.messageId
+        "Mail Sent:",
+        info.response
       );
 
     }
 
-    return res.status(200).json({
+    res.status(200).json({
 
       success: true,
 
       message:
-        `${applications.length} invitation(s) sent successfully`
+        "Invitations sent successfully"
 
     });
 
@@ -201,12 +194,11 @@ exports.bulkAccept = async (req, res) => {
       error
     );
 
-    return res.status(500).json({
+    res.status(500).json({
 
       success: false,
 
-      message:
-        error.message
+      message: error.message
 
     });
 
