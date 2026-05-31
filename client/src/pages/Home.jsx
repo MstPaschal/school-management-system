@@ -407,65 +407,9 @@ function Home() {
 
       </section>
 
-      {/* NEWS */}
-      <section className="py-24 bg-gray-50">
-
-        <div className="max-w-7xl mx-auto px-6">
-
-          <div className="text-center mb-16">
-
-            <h2 className="text-5xl font-bold text-purple-800">
-
-              Latest News
-
-            </h2>
-
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-
-            {[1,2,3].map((item) => (
-
-              <div
-                key={item}
-                className="bg-white rounded-3xl shadow-lg overflow-hidden"
-              >
-
-                <img
-                  src="cross-section-of-pupils.jpg"
-                  alt="news"
-                  className="h-60 w-full object-cover"
-                />
-
-                <div className="p-6">
-
-                  <h3 className="text-2xl font-bold text-purple-700">
-
-                    Admission Ongoing
-
-                  </h3>
-
-                  <p className="mt-4 text-gray-600">
-
-                    Registration for new students
-                    has officially commenced.
-
-                  </p>
-
-                </div>
-
-              </div>
-
-            ))}
-
-          </div>
-
-        </div>
-
-      </section>
 
       {/* EVENTS SECTION */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-gray-50">
 
         <div className="max-w-7xl mx-auto px-6">
 
