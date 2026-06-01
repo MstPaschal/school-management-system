@@ -12,7 +12,9 @@ const {
 
   getSingleEvent,
 
-  deleteEvent
+  deleteEvent,
+
+  updateEvent
 
 } = require(
   "../controllers/eventController"
@@ -65,6 +67,13 @@ router.delete(
   verifyToken,
   isAdmin,
   deleteEvent
+);
+
+router.put(
+  "/:id",
+  verifyToken,
+  isAdmin,
+  updateEvent
 );
 
 module.exports =

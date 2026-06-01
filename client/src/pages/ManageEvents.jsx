@@ -30,6 +30,24 @@ function ManageEvents() {
 const [loadingEvents, setLoadingEvents] =
   useState(false);
 
+const [editingEvent, setEditingEvent] =
+  useState(null);
+
+const [editTitle, setEditTitle] =
+  useState("");
+
+const [editDescription, setEditDescription] =
+  useState("");
+
+const [editContent, setEditContent] =
+  useState("");
+
+const [editDate, setEditDate] =
+  useState("");
+
+const [editLoading, setEditLoading] =
+  useState(false);
+
   const handleImageChange =
     (e) => {
 
@@ -206,6 +224,79 @@ const [loadingEvents, setLoadingEvents] =
         }
 
       };
+
+  const openEditModal =
+  (event) => {
+
+    setEditingEvent(event);
+
+    setEditTitle(
+      event.title
+    );
+
+    setEditDescription(
+      event.description
+    );
+
+    setEditContent(
+      event.content
+    );
+
+    setEditDate(
+      event.eventDate
+    );
+
+  };
+
+  const handleUpdateEvent =
+  async () => {
+
+    try {
+
+      setEditLoading(true);
+
+      await api.put(
+        `/events/${editingEvent.id}`,
+        {
+          title:
+            editTitle,
+
+          description:
+            editDescription,
+
+          content:
+            editContent,
+
+          eventDate:
+            editDate
+        }
+      );
+
+      alert(
+        "Event updated successfully"
+      );
+
+      setEditingEvent(
+        null
+      );
+
+      loadEvents();
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert(
+        "Failed to update event"
+      );
+
+    } finally {
+
+      setEditLoading(false);
+
+    }
+
+  };
 
   return (
 
@@ -525,6 +616,11 @@ const [loadingEvents, setLoadingEvents] =
                       <div className="flex gap-3">
 
                         <button
+                          onClick={() =>
+                            openEditModal(
+                              event
+                            )
+                          }
                           className="bg-blue-600 text-white px-4 py-2 rounded-xl"
                         >
 
@@ -559,6 +655,106 @@ const [loadingEvents, setLoadingEvents] =
         }
 
       </div>
+
+      {
+        editingEvent && (
+
+          <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+
+            <div className="bg-white w-full max-w-3xl rounded-3xl shadow-2xl p-6 max-h-[90vh] overflow-y-auto">
+
+              <h2 className="text-2xl font-bold text-purple-800 mb-6">
+
+                Edit Event
+
+              </h2>
+
+              <div className="space-y-4">
+
+                <input
+                  type="text"
+                  value={editTitle}
+                  onChange={(e) =>
+                    setEditTitle(
+                      e.target.value
+                    )
+                  }
+                  className="w-full border px-4 py-3 rounded-xl"
+                />
+
+                <textarea
+                  rows="3"
+                  value={editDescription}
+                  onChange={(e) =>
+                    setEditDescription(
+                      e.target.value
+                    )
+                  }
+                  className="w-full border px-4 py-3 rounded-xl"
+                />
+
+                <textarea
+                  rows="8"
+                  value={editContent}
+                  onChange={(e) =>
+                    setEditContent(
+                      e.target.value
+                    )
+                  }
+                  className="w-full border px-4 py-3 rounded-xl"
+                />
+
+                <input
+                  type="date"
+                  value={editDate}
+                  onChange={(e) =>
+                    setEditDate(
+                      e.target.value
+                    )
+                  }
+                  className="border px-4 py-3 rounded-xl"
+                />
+
+              </div>
+
+              <div className="flex justify-end gap-3 mt-6">
+
+                <button
+                  onClick={() =>
+                    setEditingEvent(
+                      null
+                    )
+                  }
+                  className="bg-gray-300 px-5 py-3 rounded-xl"
+                >
+
+                  Cancel
+
+                </button>
+
+                <button
+                  onClick={
+                    handleUpdateEvent
+                  }
+                  className="bg-purple-700 text-white px-5 py-3 rounded-xl"
+                >
+
+                  {
+                    editLoading
+                      ? "Saving..."
+                      : "Save Changes"
+                  }
+
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        )
+      }
 
     </div>
 

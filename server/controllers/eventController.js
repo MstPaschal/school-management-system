@@ -171,3 +171,53 @@ exports.deleteEvent =
     }
 
   };
+
+  // =============
+  // UPDATE EVENTS
+  // =============
+  exports.updateEvent =
+  async (req, res) => {
+
+    try {
+
+      const event =
+        await Event.findByPk(
+          req.params.id
+        );
+
+      if (!event) {
+
+        return res.status(404).json({
+          message:
+            "Event not found"
+        });
+
+      }
+
+      await event.update(
+        req.body
+      );
+
+      res.json({
+
+        message:
+          "Event updated",
+
+        event
+
+      });
+
+    } catch (error) {
+
+      console.log(error);
+
+      res.status(500).json({
+
+        message:
+          error.message
+
+      });
+
+    }
+
+  };
