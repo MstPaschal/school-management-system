@@ -1,28 +1,66 @@
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
 
-const storage = multer.diskStorage({
+const uploadPath =
+  path.join(
+    __dirname,
+    "../uploads/events"
+  );
 
-  destination: (req, file, cb) => {
+// Create folder automatically
+if (
+  !fs.existsSync(
+    uploadPath
+  )
+) {
 
-    cb(null, "uploads/events");
+  fs.mkdirSync(
+    uploadPath,
+    {
+      recursive: true
+    }
+  );
 
-  },
+}
 
-  filename: (req, file, cb) => {
+const storage =
+  multer.diskStorage({
 
-    cb(
-      null,
-      Date.now() +
-      path.extname(file.originalname)
-    );
+    destination:
+      (
+        req,
+        file,
+        cb
+      ) => {
 
-  }
+        cb(
+          null,
+          uploadPath
+        );
 
-});
+      },
 
-const upload = multer({
-  storage
-});
+    filename:
+      (
+        req,
+        file,
+        cb
+      ) => {
 
-module.exports = upload;
+        cb(
+          null,
+          Date.now() +
+          path.extname(
+            file.originalname
+          )
+        );
+
+      }
+
+  });
+
+module.exports =
+  multer({
+    storage
+  });
