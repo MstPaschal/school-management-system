@@ -84,7 +84,7 @@ import ChangePassword from "./pages/ChangePassword";
 
 import AdmissionRequests from "./pages/AdmissionRequests";
 
-import ManageEvents from "./pages/admin/ManageEvents";
+import ManageEvents from "./pages/ManageEvents";
 
 
 function App() {
