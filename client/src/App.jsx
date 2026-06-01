@@ -86,8 +86,6 @@ import AdmissionRequests from "./pages/AdmissionRequests";
 
 import ManageEvents from "./pages/ManageEvents";
 
-import Events from "./pages/Events";
-
 import EventPreview from "./pages/EventPreview";
 
 
