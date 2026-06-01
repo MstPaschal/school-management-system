@@ -12,7 +12,7 @@ exports.createEvent =
 
       const images =
         req.files?.map(
-          (file) =>
+          file =>
             `/uploads/events/${file.filename}`
         ) || [];
 
@@ -22,8 +22,8 @@ exports.createEvent =
           title:
             req.body.title,
 
-          summary:
-            req.body.summary,
+          description:
+            req.body.description,
 
           content:
             req.body.content,
@@ -46,8 +46,10 @@ exports.createEvent =
       console.log(error);
 
       res.status(500).json({
+
         message:
           error.message
+
       });
 
     }
