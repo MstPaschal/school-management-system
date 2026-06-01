@@ -267,7 +267,7 @@ function Sidebar() {
                 />
 
                 <SidebarLink
-                  to="/events"
+                  to="/manage-events"
                   icon={<FaCalendarAlt />}
                   label="Create Events"
                   location={location}

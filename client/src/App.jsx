@@ -555,7 +555,7 @@ function App() {
 />
 
 <Route
-  path="/events"
+  path="/manage-events"
   element={
   
     <ProtectedRoute>
