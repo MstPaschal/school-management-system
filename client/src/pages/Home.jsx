@@ -4,6 +4,10 @@ import HeroSlider from "../components/HeroSlider";
 
 import CountUp from "react-countup";
 
+import { useEffect, useState } from "react";
+
+import api from "../services/api";
+
 import { 
   FaChild, FaHandshake, FaStar, FaBullseye 
 } from "react-icons/fa";
@@ -17,6 +21,37 @@ import {
 } from "react-router-dom";
 
 function Home() {
+
+  const [events, setEvents] =
+  useState([]);
+
+  useEffect(() => {
+
+    loadEvents();
+
+  }, []);
+
+  const loadEvents =
+    async () => {
+
+      try {
+
+        const res =
+          await api.get(
+            "/events"
+          );
+
+        setEvents(
+          res.data
+        );
+
+      } catch (error) {
+
+        console.log(error);
+
+      }
+
+    };
 
   return (
 
@@ -433,54 +468,90 @@ function Home() {
           <div className="grid md:grid-cols-3 gap-10">
 
             {
-              [1, 2, 3].map((item) => (
+              events
+                .slice(0, 3)
+                .map((event) => (
 
-                <motion.div
-                  key={item}
-                  whileHover={{
-                    y: -10
-                  }}
-                  className="bg-white rounded-3xl shadow-xl overflow-hidden"
-                >
+                  <Link
+                    key={event.id}
+                    to={`/events/${event.id}`}
+                  >
 
-                  <img
-                    src="/color-day.jpg"
-                    alt="Event"
-                    className="h-64 w-full object-cover"
-                  />
+                    <motion.div
+                      whileHover={{
+                        y: -10
+                      }}
+                      className="bg-white rounded-3xl shadow-xl overflow-hidden"
+                    >
 
-                  <div className="p-6">
+                      <img
+                        src={
+                          event.images?.length
+                            ? event.images[0]
+                            : "/color-day.jpg"
+                        }
+                        alt={event.title}
+                        className="h-64 w-full object-cover"
+                      />
 
-                    <h3 className="text-2xl font-bold text-purple-800">
+                      <div className="p-6">
 
-                      Inter-House Sports
+                        <h3 className="text-2xl font-bold text-purple-800">
 
-                    </h3>
+                          {event.title}
 
-                    <p className="mt-4 text-gray-600">
+                        </h3>
 
-                      Students showcasing excellence,
-                      teamwork and leadership.
+                        <p className="mt-4 text-gray-600">
 
-                    </p>
+                          {
+                            event.description?.slice(
+                              0,
+                              100
+                            )
+                          }...
 
-                  </div>
+                        </p>
 
-                </motion.div>
+                      </div>
 
-              ))
+                    </motion.div>
+
+                  </Link>
+
+                ))
             }
 
           </div>
 
+          {
+            events.length === 0 && (
+
+              <div className="text-center py-10">
+
+                <p className="text-gray-500">
+
+                  No events have been posted yet.
+
+                </p>
+
+              </div>
+
+            )
+          }
+
+          <div className="mt-10 text-center">
+
             <Link
               to="/events"
-              className="inline-block mt-8 bg-purple-700 hover:bg-purple-800 text-white px-8 py-4 rounded-xl"
+              className="inline-block bg-purple-700 hover:bg-purple-800 text-white px-8 py-4 rounded-xl"
             >
 
-              More events
+              View All Events
 
             </Link>
+
+          </div>
 
         </div>
 

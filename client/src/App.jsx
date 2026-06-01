@@ -86,6 +86,10 @@ import AdmissionRequests from "./pages/AdmissionRequests";
 
 import ManageEvents from "./pages/ManageEvents";
 
+import Events from "./pages/Events";
+
+import EventPreview from "./pages/EventPreview";
+
 
 function App() {
 
@@ -589,6 +593,16 @@ function App() {
       <ChangePassword />
     </ProtectedRoute>
   }
+/>
+
+<Route
+  path="/events"
+  element={<Events />}
+/>
+
+<Route
+  path="/events/:id"
+  element={<EventPreview />}
 />
 
 
