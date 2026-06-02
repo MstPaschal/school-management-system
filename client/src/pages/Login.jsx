@@ -89,7 +89,7 @@ function Login() {
 
   return (
 
-    <div className="min-h-screen flex items-center justify-center bg-slate-100 p-6">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 via-slate-200 to-slate-100 p-6">
 
       <div className="w-full max-w-6xl bg-amber-50 rounded-[40px] shadow-2xl overflow-hidden">
 
@@ -107,13 +107,13 @@ function Login() {
                 className="w-20 mx-auto mb-6"
               />
 
-              <h1 className="text-4xl font-bold text-gray-800">
+              <h1 className="text-4xl font-bold text-gray-800 align-center">
 
                 Hello!
 
               </h1>
 
-              <p className="text-gray-500 mt-2">
+              <p className="text-gray-500 mt-2 allign-center">
 
                 Sign in to your account
 
