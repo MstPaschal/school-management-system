@@ -425,303 +425,621 @@ function SetPayment() {
         </div>
 
 
-        {/* TABLE */}
-<div className="overflow-x-auto">
+        {/* TABLE DESKTOP */}
+        <div className="hidden md:block overflow-x-auto">
 
-  <table className="w-full border-collapse text-sm">
+          <table className="w-full border-collapse text-sm">
 
-    <thead>
+            <thead>
 
-      <tr className="bg-gray-100 text-left">
+              <tr className="bg-gray-100 text-left">
 
-        <th className="p-3">
-          Student
-        </th>
+                <th className="p-3">
+                  Student
+                </th>
 
-        <th className="p-3">
-          Tuition
-        </th>
+                <th className="p-3">
+                  Tuition
+                </th>
 
-        <th className="p-3">
-          Saturday
-        </th>
+                <th className="p-3">
+                  Saturday
+                </th>
 
-        <th className="p-3">
-          Scratch
-        </th>
+                <th className="p-3">
+                  Scratch
+                </th>
 
-        <th className="p-3">
-          Activities
-        </th>
+                <th className="p-3">
+                  Activities
+                </th>
 
-        <th className="p-3">
-          Books
-        </th>
+                <th className="p-3">
+                  Books
+                </th>
 
-        <th className="p-3">
-          Bus
-        </th>
+                <th className="p-3">
+                  Bus
+                </th>
 
-        <th className="p-3">
-          Outstanding
-        </th>
+                <th className="p-3">
+                  Outstanding
+                </th>
 
-        <th className="p-3">
-          Graduation
-        </th>
+                <th className="p-3">
+                  Graduation
+                </th>
 
-        <th className="p-3">
-          Excursion
-        </th>
+                <th className="p-3">
+                  Excursion
+                </th>
 
-        <th className="p-3">
-          Practicals
-        </th>
+                <th className="p-3">
+                  Practicals
+                </th>
 
-        <th className="p-3">
-          Total
-        </th>
+                <th className="p-3">
+                  Total
+                </th>
 
-        <th className="p-3">
-          Action
-        </th>
+                <th className="p-3">
+                  Action
+                </th>
 
-      </tr>
+              </tr>
 
-    </thead>
+            </thead>
 
+            <tbody>
 
-    <tbody>
+              {
+                students.map((item, index) => {
 
-  {
-    students.map((item, index) => {
+                  const admin =
+                    item.adminSetting || {};
 
-      const admin =
-        item.adminSetting || {};
+                  const payment =
+                    item.payment || {};
 
-      const payment =
-        item.payment || {};
+                  const total =
 
-      const total =
+                    Number(admin.tuitionFee || 0) +
 
-        Number(admin.tuitionFee || 0) +
+                    Number(admin.saturdayLesson || 0) +
 
-        Number(admin.saturdayLesson || 0) +
+                    Number(admin.scratchCard || 0) +
 
-        Number(admin.scratchCard || 0) +
+                    Number(admin.termlyActivities || 0) +
 
-        Number(admin.termlyActivities || 0) +
+                    Number(admin.books || 0) +
 
-        Number(admin.books || 0) +
+                    Number(payment.schoolBus || 0) +
 
-        Number(payment.schoolBus || 0) +
+                    Number(payment.outstanding || 0) +
 
-        Number(payment.outstanding || 0) +
+                    Number(payment.graduation || 0) +
 
-        Number(payment.graduation || 0) +
+                    Number(payment.excursion || 0) +
 
-        Number(payment.excursion || 0) +
+                    Number(payment.practicals || 0);
 
-        Number(payment.practicals || 0);
+                  return (
 
-      return (
+                    <tr
+                      key={item.student.id}
+                      className="border-b"
+                    >
 
-        <tr
-          key={item.student.id}
-          className="border-b"
-        >
+                      {/* STUDENT */}
+                      <td className="p-3 font-medium whitespace-nowrap">
 
-          {/* STUDENT */}
-          <td className="p-3 font-medium whitespace-nowrap">
-            {item.student.fullName}
-          </td>
+                        {item.student.fullName}
 
-          {/* TUITION */}
-          <td className="p-3 whitespace-nowrap">
-            ₦
-            {
-              Number(
-                admin.tuitionFee || 0
-              ).toLocaleString()
-            }
-          </td>
+                      </td>
 
-          {/* SATURDAY */}
-          <td className="p-3 whitespace-nowrap">
-            ₦
-            {
-              Number(
-                admin.saturdayLesson || 0
-              ).toLocaleString()
-            }
-          </td>
+                      {/* TUITION */}
+                      <td className="p-3 whitespace-nowrap">
 
-          {/* SCRATCH */}
-          <td className="p-3 whitespace-nowrap">
-            ₦
-            {
-              Number(
-                admin.scratchCard || 0
-              ).toLocaleString()
-            }
-          </td>
+                        ₦
+                        {
+                          Number(
+                            admin.tuitionFee || 0
+                          ).toLocaleString()
+                        }
 
-          {/* ACTIVITIES */}
-          <td className="p-3 whitespace-nowrap">
-            ₦
-            {
-              Number(
-                admin.termlyActivities || 0
-              ).toLocaleString()
-            }
-          </td>
+                      </td>
 
-          {/* BOOKS */}
-          <td className="p-3 whitespace-nowrap">
-            ₦
-            {
-              Number(
-                admin.books || 0
-              ).toLocaleString()
-            }
-          </td>
+                      {/* SATURDAY */}
+                      <td className="p-3 whitespace-nowrap">
 
-          {/* BUS */}
-          <td className="p-3">
+                        ₦
+                        {
+                          Number(
+                            admin.saturdayLesson || 0
+                          ).toLocaleString()
+                        }
 
-            <input
-              type="number"
-              value={
-                payment.schoolBus || ""
+                      </td>
+
+                      {/* SCRATCH */}
+                      <td className="p-3 whitespace-nowrap">
+
+                        ₦
+                        {
+                          Number(
+                            admin.scratchCard || 0
+                          ).toLocaleString()
+                        }
+
+                      </td>
+
+                      {/* ACTIVITIES */}
+                      <td className="p-3 whitespace-nowrap">
+
+                        ₦
+                        {
+                          Number(
+                            admin.termlyActivities || 0
+                          ).toLocaleString()
+                        }
+
+                      </td>
+
+                      {/* BOOKS */}
+                      <td className="p-3 whitespace-nowrap">
+
+                        ₦
+                        {
+                          Number(
+                            admin.books || 0
+                          ).toLocaleString()
+                        }
+
+                      </td>
+
+                      {/* BUS */}
+                      <td className="p-3">
+
+                        <input
+                          type="number"
+                          value={
+                            payment.schoolBus || ""
+                          }
+                          onChange={(e) =>
+                            handlePaymentChange(
+                              index,
+                              "schoolBus",
+                              e.target.value
+                            )
+                          }
+                          className="border rounded px-2 py-1 w-24"
+                        />
+
+                      </td>
+
+                      {/* OUTSTANDING */}
+                      <td className="p-3">
+
+                        <input
+                          type="number"
+                          value={
+                            payment.outstanding || ""
+                          }
+                          onChange={(e) =>
+                            handlePaymentChange(
+                              index,
+                              "outstanding",
+                              e.target.value
+                            )
+                          }
+                          className="border rounded px-2 py-1 w-24"
+                        />
+
+                      </td>
+
+                      {/* GRADUATION */}
+                      <td className="p-3">
+
+                        <input
+                          type="number"
+                          value={
+                            payment.graduation || ""
+                          }
+                          onChange={(e) =>
+                            handlePaymentChange(
+                              index,
+                              "graduation",
+                              e.target.value
+                            )
+                          }
+                          className="border rounded px-2 py-1 w-24"
+                        />
+
+                      </td>
+
+                      {/* EXCURSION */}
+                      <td className="p-3">
+
+                        <input
+                          type="number"
+                          value={
+                            payment.excursion || ""
+                          }
+                          onChange={(e) =>
+                            handlePaymentChange(
+                              index,
+                              "excursion",
+                              e.target.value
+                            )
+                          }
+                          className="border rounded px-2 py-1 w-24"
+                        />
+
+                      </td>
+
+                      {/* PRACTICALS */}
+                      <td className="p-3">
+
+                        <input
+                          type="number"
+                          value={
+                            payment.practicals || ""
+                          }
+                          onChange={(e) =>
+                            handlePaymentChange(
+                              index,
+                              "practicals",
+                              e.target.value
+                            )
+                          }
+                          className="border rounded px-2 py-1 w-24"
+                        />
+
+                      </td>
+
+                      {/* TOTAL */}
+                      <td className="p-3 font-bold whitespace-nowrap">
+
+                        ₦
+                        {total.toLocaleString()}
+
+                      </td>
+
+                      {/* SAVE */}
+                      <td className="p-3">
+
+                        <button
+                          onClick={() =>
+                            savePayment(item)
+                          }
+                          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
+                        >
+
+                          Save
+
+                        </button>
+
+                      </td>
+
+                    </tr>
+
+                  );
+
+                })
               }
-              onChange={(e) =>
-                handlePaymentChange(
-                  index,
-                  "schoolBus",
-                  e.target.value
-                )
-              }
-              className="border rounded px-2 py-1 w-24"
-            />
 
-          </td>
+            </tbody>
 
-          {/* OUTSTANDING */}
-          <td className="p-3">
+          </table>
 
-            <input
-              type="number"
-              value={
-                payment.outstanding || ""
-              }
-              onChange={(e) =>
-                handlePaymentChange(
-                  index,
-                  "outstanding",
-                  e.target.value
-                )
-              }
-              className="border rounded px-2 py-1 w-24"
-            />
+        </div>
 
-          </td>
 
-          {/* GRADUATION */}
-          <td className="p-3">
+        {/* MOBILE CARDS */}
+        <div className="md:hidden space-y-4">
 
-            <input
-              type="number"
-              value={
-                payment.graduation || ""
-              }
-              onChange={(e) =>
-                handlePaymentChange(
-                  index,
-                  "graduation",
-                  e.target.value
-                )
-              }
-              className="border rounded px-2 py-1 w-24"
-            />
+          {
+            students.map((item, index) => {
 
-          </td>
+              const admin =
+                item.adminSetting || {};
 
-          {/* EXCURSION */}
-          <td className="p-3">
+              const payment =
+                item.payment || {};
 
-            <input
-              type="number"
-              value={
-                payment.excursion || ""
-              }
-              onChange={(e) =>
-                handlePaymentChange(
-                  index,
-                  "excursion",
-                  e.target.value
-                )
-              }
-              className="border rounded px-2 py-1 w-24"
-            />
+              const total =
 
-          </td>
+                Number(admin.tuitionFee || 0) +
 
-          {/* PRACTICALS */}
-          <td className="p-3">
+                Number(admin.saturdayLesson || 0) +
 
-            <input
-              type="number"
-              value={
-                payment.practicals || ""
-              }
-              onChange={(e) =>
-                handlePaymentChange(
-                  index,
-                  "practicals",
-                  e.target.value
-                )
-              }
-              className="border rounded px-2 py-1 w-24"
-            />
+                Number(admin.scratchCard || 0) +
 
-          </td>
+                Number(admin.termlyActivities || 0) +
 
-          {/* TOTAL */}
-          <td className="p-3 font-bold whitespace-nowrap">
+                Number(admin.books || 0) +
 
-            ₦
-            {total.toLocaleString()}
+                Number(payment.schoolBus || 0) +
 
-          </td>
+                Number(payment.outstanding || 0) +
 
-          {/* SAVE */}
-          <td className="p-3">
+                Number(payment.graduation || 0) +
 
-            <button
-              onClick={() =>
-                savePayment(item)
-              }
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
-            >
+                Number(payment.excursion || 0) +
 
-              Save
+                Number(payment.practicals || 0);
 
-            </button>
+              return (
 
-          </td>
+                <div
+                  key={item.student.id}
+                  className="bg-white border rounded-xl p-4 shadow-sm"
+                >
 
-        </tr>
+                  <h3 className="font-bold text-lg mb-4">
 
-            );
+                    {item.student.fullName}
 
-          })
-        }
+                  </h3>
 
-      </tbody>
+                  {/* FIXED FEES */}
+                  <div className="space-y-2 mb-4 text-sm">
 
-        </table>
+                    <div className="flex justify-between">
 
-      </div>
+                      <span>
+                        Tuition
+                      </span>
+
+                      <span className="font-medium">
+
+                        ₦
+                        {Number(
+                          admin.tuitionFee || 0
+                        ).toLocaleString()}
+
+                      </span>
+
+                    </div>
+
+                    <div className="flex justify-between">
+
+                      <span>
+                        Saturday
+                      </span>
+
+                      <span className="font-medium">
+
+                        ₦
+                        {Number(
+                          admin.saturdayLesson || 0
+                        ).toLocaleString()}
+
+                      </span>
+
+                    </div>
+
+                    <div className="flex justify-between">
+
+                      <span>
+                        Scratch Card
+                      </span>
+
+                      <span className="font-medium">
+
+                        ₦
+                        {Number(
+                          admin.scratchCard || 0
+                        ).toLocaleString()}
+
+                      </span>
+
+                    </div>
+
+                    <div className="flex justify-between">
+
+                      <span>
+                        Activities
+                      </span>
+
+                      <span className="font-medium">
+
+                        ₦
+                        {Number(
+                          admin.termlyActivities || 0
+                        ).toLocaleString()}
+
+                      </span>
+
+                    </div>
+
+                    <div className="flex justify-between">
+
+                      <span>
+                        Books
+                      </span>
+
+                      <span className="font-medium">
+
+                        ₦
+                        {Number(
+                          admin.books || 0
+                        ).toLocaleString()}
+
+                      </span>
+
+                    </div>
+
+                  </div>
+
+                  {/* EXTRA PAYMENTS */}
+                  <div className="grid grid-cols-2 gap-3">
+
+                    <div>
+
+                      <label className="text-sm block mb-1">
+
+                        Bus
+
+                      </label>
+
+                      <input
+                        type="number"
+                        value={
+                          payment.schoolBus || ""
+                        }
+                        onChange={(e) =>
+                          handlePaymentChange(
+                            index,
+                            "schoolBus",
+                            e.target.value
+                          )
+                        }
+                        className="w-full border rounded-lg px-3 py-2"
+                      />
+
+                    </div>
+
+                    <div>
+
+                      <label className="text-sm block mb-1">
+
+                        Outstanding
+
+                      </label>
+
+                      <input
+                        type="number"
+                        value={
+                          payment.outstanding || ""
+                        }
+                        onChange={(e) =>
+                          handlePaymentChange(
+                            index,
+                            "outstanding",
+                            e.target.value
+                          )
+                        }
+                        className="w-full border rounded-lg px-3 py-2"
+                      />
+
+                    </div>
+
+                    <div>
+
+                      <label className="text-sm block mb-1">
+
+                        Graduation
+
+                      </label>
+
+                      <input
+                        type="number"
+                        value={
+                          payment.graduation || ""
+                        }
+                        onChange={(e) =>
+                          handlePaymentChange(
+                            index,
+                            "graduation",
+                            e.target.value
+                          )
+                        }
+                        className="w-full border rounded-lg px-3 py-2"
+                      />
+
+                    </div>
+
+                    <div>
+
+                      <label className="text-sm block mb-1">
+
+                        Excursion
+
+                      </label>
+
+                      <input
+                        type="number"
+                        value={
+                          payment.excursion || ""
+                        }
+                        onChange={(e) =>
+                          handlePaymentChange(
+                            index,
+                            "excursion",
+                            e.target.value
+                          )
+                        }
+                        className="w-full border rounded-lg px-3 py-2"
+                      />
+
+                    </div>
+
+                    <div className="col-span-2">
+
+                      <label className="text-sm block mb-1">
+
+                        Practicals
+
+                      </label>
+
+                      <input
+                        type="number"
+                        value={
+                          payment.practicals || ""
+                        }
+                        onChange={(e) =>
+                          handlePaymentChange(
+                            index,
+                            "practicals",
+                            e.target.value
+                          )
+                        }
+                        className="w-full border rounded-lg px-3 py-2"
+                      />
+
+                    </div>
+
+                  </div>
+
+                  {/* TOTAL */}
+                  <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-3 flex justify-between">
+
+                    <span className="font-medium">
+
+                      Total
+
+                    </span>
+
+                    <span className="font-bold text-green-700">
+
+                      ₦
+                      {total.toLocaleString()}
+
+                    </span>
+
+                  </div>
+
+                  {/* SAVE BUTTON */}
+                  <button
+                    onClick={() =>
+                      savePayment(item)
+                    }
+                    className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg"
+                  >
+
+                    Save Payment
+
+                  </button>
+
+                </div>
+
+              );
+
+            })
+          }
+
+        </div>
 
       </div>
 
