@@ -10,6 +10,13 @@ exports.createEvent =
 
     try {
 
+      console.log("BODY:", req.body);
+
+      console.log(
+        "FILES:",
+        req.files
+      );
+
       const images =
         req.files?.map(
           file =>
@@ -28,6 +35,9 @@ exports.createEvent =
           content:
             req.body.content,
 
+          eventDate:
+            req.body.eventDate,
+
           images
 
         });
@@ -42,6 +52,10 @@ exports.createEvent =
       });
 
     } catch (error) {
+
+      console.log(
+        "CREATE EVENT ERROR:"
+      );
 
       console.log(error);
 
