@@ -102,7 +102,7 @@ function Login() {
             <div className="mb-10">
 
               <img
-                src="/logo.png"
+                src="/Logo.png"
                 alt="School Logo"
                 className="w-20 mx-auto mb-6"
               />
