@@ -454,7 +454,7 @@ function ScoreEntry() {
 
 
         {/* FILTERS */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
 
           {/* CLASS */}
           <select
@@ -602,211 +602,306 @@ function ScoreEntry() {
 
 
         {/* TABLE */}
-        <div className="overflow-x-auto">
+        {/* DESKTOP TABLE */}
+<div className="hidden md:block overflow-x-auto">
 
-          <table className="w-full border-collapse">
+  <table className="w-full border-collapse">
 
-            <thead>
+    <thead>
 
-              <tr className="bg-gray-100">
+      <tr className="bg-gray-100">
 
-                <th className="p-3 text-left">
-                  Student
-                </th>
+        <th className="p-3 text-left">
+          Student
+        </th>
 
-                <th className="p-3 text-left">
-                  1st CA
-                </th>
+        <th className="p-3 text-left">
+          1st CA
+        </th>
 
-                <th className="p-3 text-left">
-                  2nd CA
-                </th>
+        <th className="p-3 text-left">
+          2nd CA
+        </th>
 
-                <th className="p-3 text-left">
-                  Project
-                </th>
+        <th className="p-3 text-left">
+          Project
+        </th>
 
-                <th className="p-3 text-left">
-                  Exam
-                </th>
+        <th className="p-3 text-left">
+          Exam
+        </th>
 
-                <th className="p-3 text-left">
-                  Total
-                </th>
+        <th className="p-3 text-left">
+          Total
+        </th>
 
-              </tr>
+      </tr>
 
-            </thead>
+    </thead>
 
+    <tbody>
 
-            <tbody>
+      {students.map((item, index) => (
 
-              {
-                students.map(
-                  (item, index) => (
+        <tr
+          key={item.student.id}
+          className="border-b"
+        >
 
-                    <tr
-                      key={item.student.id}
-                      className="border-b"
-                    >
+          <td className="p-3">
 
-                      {/* NAME */}
-                      <td className="p-3">
+            {item.student.fullName}
 
-                        {
-                          item.student.fullName
-                        }
+          </td>
 
-                      </td>
+          <td className="p-3">
 
-
-                      {/* FIRST CA */}
-                      <td className="p-3">
-
-                        <input
-                          type="number"
-                          max="15"
-                          value={
-                            item.score.firstCA
-                          }
-                          onChange={(e) =>
-                            handleScoreChange(
-
-                              index,
-
-                              "firstCA",
-
-                              e.target.value
-
-                            )
-                          }
-                          className="border rounded px-3 py-2 w-20"
-                        />
-
-                      </td>
-
-
-                      {/* SECOND CA */}
-                      <td className="p-3">
-
-                        <input
-                          type="number"
-                          max="15"
-                          value={
-                            item.score.secondCA
-                          }
-                          onChange={(e) =>
-                            handleScoreChange(
-
-                              index,
-
-                              "secondCA",
-
-                              e.target.value
-
-                            )
-                          }
-                          className="border rounded px-3 py-2 w-20"
-                        />
-
-                      </td>
-
-
-                      {/* PROJECT */}
-                      <td className="p-3">
-
-                        <input
-                          type="number"
-                          max="10"
-                          value={
-                            item.score.project
-                          }
-                          onChange={(e) =>
-                            handleScoreChange(
-
-                              index,
-
-                              "project",
-
-                              e.target.value
-
-                            )
-                          }
-                          className="border rounded px-3 py-2 w-20"
-                        />
-
-                      </td>
-
-
-                      {/* EXAM */}
-                      <td className="p-3">
-
-                        <input
-                          type="number"
-                          max="60"
-                          value={
-                            item.score.exam
-                          }
-                          onChange={(e) =>
-                            handleScoreChange(
-
-                              index,
-
-                              "exam",
-
-                              e.target.value
-
-                            )
-                          }
-                          className="border rounded px-3 py-2 w-20"
-                        />
-
-                      </td>
-
-
-                      {/* TOTAL */}
-                      <td className="p-3 font-bold">
-
-                        {
-                          item.score.total
-                        }
-
-                      </td>
-
-                    </tr>
-
-                  )
+            <input
+              type="number"
+              max="15"
+              value={item.score.firstCA}
+              onChange={(e) =>
+                handleScoreChange(
+                  index,
+                  "firstCA",
+                  e.target.value
                 )
               }
+              className="border rounded px-3 py-2 w-20"
+            />
 
-            </tbody>
+          </td>
 
-          </table>
+          <td className="p-3">
 
-          {/* SAVE */}
-            <div className="mt-6">
+            <input
+              type="number"
+              max="15"
+              value={item.score.secondCA}
+              onChange={(e) =>
+                handleScoreChange(
+                  index,
+                  "secondCA",
+                  e.target.value
+                )
+              }
+              className="border rounded px-3 py-2 w-20"
+            />
 
-                <button
-                    onClick={saveScores}
-                    disabled={loading}
-                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg"
-                >
+          </td>
 
-                    {
-                        loading
-                            ? "Saving..."
-                            : "Save All Scores"
-                    }
+          <td className="p-3">
 
-                </button>
+            <input
+              type="number"
+              max="10"
+              value={item.score.project}
+              onChange={(e) =>
+                handleScoreChange(
+                  index,
+                  "project",
+                  e.target.value
+                )
+              }
+              className="border rounded px-3 py-2 w-20"
+            />
 
-            </div>
+          </td>
+
+          <td className="p-3">
+
+            <input
+              type="number"
+              max="60"
+              value={item.score.exam}
+              onChange={(e) =>
+                handleScoreChange(
+                  index,
+                  "exam",
+                  e.target.value
+                )
+              }
+              className="border rounded px-3 py-2 w-20"
+            />
+
+          </td>
+
+          <td className="p-3 font-bold">
+
+            {item.score.total}
+
+          </td>
+
+        </tr>
+
+      ))}
+
+    </tbody>
+
+  </table>
+
+</div>
+
+
+{/* MOBILE CARDS */}
+<div className="md:hidden space-y-4">
+
+  {students.map((item, index) => (
+
+    <div
+      key={item.student.id}
+      className="bg-white border rounded-xl p-4 shadow-sm"
+    >
+
+      <h3 className="font-bold text-lg mb-4">
+
+        {item.student.fullName}
+
+      </h3>
+
+      <div className="grid grid-cols-2 gap-3">
+
+        <div>
+
+          <label className="text-sm text-gray-600 block mb-1">
+
+            1st CA
+
+          </label>
+
+          <input
+            type="number"
+            max="15"
+            value={item.score.firstCA}
+            onChange={(e) =>
+              handleScoreChange(
+                index,
+                "firstCA",
+                e.target.value
+              )
+            }
+            className="w-full border rounded-lg px-3 py-2"
+          />
+
+        </div>
+
+        <div>
+
+          <label className="text-sm text-gray-600 block mb-1">
+
+            2nd CA
+
+          </label>
+
+          <input
+            type="number"
+            max="15"
+            value={item.score.secondCA}
+            onChange={(e) =>
+              handleScoreChange(
+                index,
+                "secondCA",
+                e.target.value
+              )
+            }
+            className="w-full border rounded-lg px-3 py-2"
+          />
+
+        </div>
+
+        <div>
+
+          <label className="text-sm text-gray-600 block mb-1">
+
+            Project
+
+          </label>
+
+          <input
+            type="number"
+            max="10"
+            value={item.score.project}
+            onChange={(e) =>
+              handleScoreChange(
+                index,
+                "project",
+                e.target.value
+              )
+            }
+            className="w-full border rounded-lg px-3 py-2"
+          />
+
+        </div>
+
+        <div>
+
+          <label className="text-sm text-gray-600 block mb-1">
+
+            Exam
+
+          </label>
+
+          <input
+            type="number"
+            max="60"
+            value={item.score.exam}
+            onChange={(e) =>
+              handleScoreChange(
+                index,
+                "exam",
+                e.target.value
+              )
+            }
+            className="w-full border rounded-lg px-3 py-2"
+          />
 
         </div>
 
       </div>
 
+      <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-3 flex justify-between">
+
+        <span className="font-medium">
+
+          Total Score
+
+        </span>
+
+        <span className="font-bold text-green-700">
+
+          {item.score.total}
+
+        </span>
+
+      </div>
+
     </div>
+
+  ))}
+
+</div>
+
+
+{/* SAVE BUTTON */}
+<div className="mt-6">
+
+  <button
+    onClick={saveScores}
+    disabled={saving}
+    className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg"
+  >
+
+    {saving
+      ? "Saving..."
+      : "Save All Scores"}
+
+  </button>
+
+</div>
+
+        </div>
+
+      </div>
 
   );
 
