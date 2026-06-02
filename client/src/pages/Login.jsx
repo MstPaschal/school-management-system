@@ -91,7 +91,7 @@ function Login() {
 
     <div className="min-h-screen flex items-center justify-center bg-slate-100 p-6">
 
-      <div className="w-full max-w-6xl bg-white rounded-[40px] shadow-2xl overflow-hidden">
+      <div className="w-full max-w-6xl bg-amber-50 rounded-[40px] shadow-2xl overflow-hidden">
 
         <div className="grid md:grid-cols-2">
 
