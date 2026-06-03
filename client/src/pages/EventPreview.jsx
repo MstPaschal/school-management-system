@@ -3,6 +3,9 @@ import { useParams } from "react-router-dom";
 import PublicLayout from "../layouts/PublicLayout";
 import api from "../services/api";
 
+const API_URL =
+  "https://portal-grisfield-schools.onrender.com";
+
 function EventPreview() {
 
   const { id } =
@@ -15,7 +18,7 @@ function EventPreview() {
 
     loadEvent();
 
-  }, []);
+  }, [id]);
 
   const loadEvent =
     async () => {
@@ -86,7 +89,7 @@ function EventPreview() {
 
                   <img
                     key={index}
-                    src={image}
+                    src={`${API_URL}${image}`}
                     alt=""
                     className="rounded-2xl shadow-lg"
                   />

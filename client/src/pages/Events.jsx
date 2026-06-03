@@ -111,7 +111,7 @@ function Events() {
                     <img
                       src={
                         event.images?.length
-                          ? event.images[0]
+                          ? `https://portal-grisfield-schools.onrender.com${event.images[0]}`
                           : "/event.jpg"
                       }
                       alt={event.title}
