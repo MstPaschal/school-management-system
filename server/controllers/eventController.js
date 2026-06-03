@@ -28,6 +28,9 @@ exports.createEvent =
           content:
             req.body.content,
 
+          eventDate:
+            req.body.eventDate,
+
           images
 
         });
