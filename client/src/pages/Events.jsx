@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import PublicLayout from "../layouts/PublicLayout";
 import api from "../services/api";
+import { SERVER_BASE_URL } from "../config/apiConfig";
 
 function Events() {
 
@@ -111,7 +112,7 @@ function Events() {
                     <img
                       src={
                         event.images?.length
-                          ? `https://portal-grisfield-schools.onrender.com${event.images[0]}`
+                          ? `${SERVER_BASE_URL}${event.images[0]}`
                           : "/event.jpg"
                       }
                       alt={event.title}

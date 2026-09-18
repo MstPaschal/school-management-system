@@ -7,6 +7,8 @@ import {
   useNavigate
 } from "react-router-dom";
 
+import { SERVER_BASE_URL } from "../config/apiConfig";
+
 import api from "../services/api";
 
 
@@ -651,7 +653,7 @@ function CreateTeacher() {
                           ? (
 
                             <img
-                              src={`https://portal-grisfield-schools.onrender.com/uploads/${teacher.passport}`}
+                              src={`${SERVER_BASE_URL}/uploads/${teacher.passport}`}
                               alt="passport"
                               className="w-16 h-16 rounded-full object-cover"
                             />
@@ -819,7 +821,7 @@ function CreateTeacher() {
                           ? (
 
                             <img
-                              src={`https://portal-grisfield-schools.onrender.com/uploads/${selectedTeacher.passport}`}
+                              src={`${SERVER_BASE_URL}/uploads/${selectedTeacher.passport}`}
                               alt="passport"
                               className="w-44 h-44 rounded-xl object-cover border"
                             />

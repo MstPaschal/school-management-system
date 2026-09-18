@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import PublicLayout from "../layouts/PublicLayout";
 import api from "../services/api";
+import { SERVER_BASE_URL } from "../config/apiConfig";
 
-const API_URL =
-  "https://portal-grisfield-schools.onrender.com";
 
 function EventPreview() {
 
@@ -89,7 +88,7 @@ function EventPreview() {
 
                   <img
                     key={index}
-                    src={`${API_URL}${image}`}
+                    src={`${SERVER_BASE_URL}${image}`}
                     alt=""
                     className="rounded-2xl shadow-lg"
                   />

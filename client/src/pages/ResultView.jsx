@@ -1,5 +1,6 @@
 import html2pdf from "html2pdf.js";
 import { useEffect, useState } from "react";
+import { SERVER_BASE_URL } from "../config/apiConfig";
 
 function ResultView() {
 
@@ -307,7 +308,7 @@ function ResultView() {
                 <img
                   src={
                     data.student.passport
-                      ? `https://portal-grisfield-schools.onrender.com/uploads/${data.student.passport}`
+                      ? `${SERVER_BASE_URL}/uploads/${data.student.passport}`
                       : "/avatar.png"
                   }
                   alt="Passport"
@@ -1033,7 +1034,7 @@ function ResultView() {
                         </p>
 
                         <a
-                          href={`https://portal-grisfield-schools.onrender.com/uploads/${doc.fileName}`}
+                          href={`${SERVER_BASE_URL}/uploads/${doc.fileName}`}
                           target="_blank"
                           rel="noreferrer"
                           className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg"

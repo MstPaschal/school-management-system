@@ -13,6 +13,7 @@ import {
 } from "react-router-dom";
 
 import api from "../services/api";
+import { SERVER_BASE_URL } from "../config/apiConfig";
 
 
 function StudentProfile() {
@@ -87,7 +88,7 @@ function StudentProfile() {
               student.passport ? (
 
                 <img
-                  src={`https://portal-grisfield-schools.onrender.com/uploads/${student.passport}`}
+                  src={`${SERVER_BASE_URL}/uploads/${student.passport}`}
                   alt="passport"
                   className="w-40 h-40 rounded-2xl object-cover border"
                 />

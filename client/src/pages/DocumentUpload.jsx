@@ -5,6 +5,7 @@ import {
 
 import api from "../services/api";
 
+import { SERVER_BASE_URL } from "../config/apiConfig";
 
 function DocumentUpload() {
 
@@ -466,7 +467,7 @@ function DocumentUpload() {
                       <div className="flex gap-2">
 
                         <a
-                          href={`https://portal-grisfield-schools.onrender.com/uploads/${doc.fileName}`}
+                          href={`${SERVER_BASE_URL}/uploads/${doc.fileName}`}
                           target="_blank"
                           rel="noreferrer"
                           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"

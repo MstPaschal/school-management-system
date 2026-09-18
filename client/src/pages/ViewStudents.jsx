@@ -9,6 +9,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import api from "../services/api";
+import { SERVER_BASE_URL } from "../config/apiConfig";
 
 
 function ViewStudents() {
@@ -328,7 +329,7 @@ function ViewStudents() {
                             ? (
 
                               <img
-                                src={`https://portal-grisfield-schools.onrender.com/uploads/${student.passport}`}
+                                src={`${SERVER_BASE_URL}/uploads/${student.passport}`}
                                 alt="passport"
                                 className="w-14 h-14 rounded-full object-cover"
                               />
@@ -502,7 +503,7 @@ function ViewStudents() {
                             ? (
 
                               <img
-                                src={`https://portal-grisfield-schools.onrender.com/uploads/${selectedStudent.passport}`}
+                                src={`${SERVER_BASE_URL}/uploads/${selectedStudent.passport}`}
                                 alt="passport"
                                 className="w-40 h-40 rounded-xl object-cover border"
                               />

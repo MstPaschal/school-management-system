@@ -1,10 +1,11 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://portal-grisfield-schools.onrender.com/api"
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
 // ADD TOKEN AUTOMATICALLY
+
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");

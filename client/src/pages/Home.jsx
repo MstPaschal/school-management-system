@@ -8,8 +8,7 @@ import { useEffect, useState } from "react";
 
 import api from "../services/api";
 
-const API_URL =
-  "https://portal-grisfield-schools.onrender.com";
+import { SERVER_BASE_URL } from "../config/apiConfig";
 
 import { 
   FaChild, FaHandshake, FaStar, FaBullseye 
@@ -490,7 +489,7 @@ function Home() {
                       <img
                         src={
                           event.images?.length
-                            ? `${API_URL}${event.images[0]}`
+                            ? `${SERVER_BASE_URL}${event.images[0]}`
                             : "/color-day.jpg"
                         }
                         alt={event.title}
