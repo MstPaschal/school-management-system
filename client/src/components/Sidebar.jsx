@@ -17,7 +17,8 @@ import {
   FaBars,
   FaTimes,
   FaAddressBook,
-  FaCalendarAlt
+  FaCalendarAlt,
+  FaMoneyBillWave
 } from "react-icons/fa";
 
 import {
@@ -262,6 +263,22 @@ function Sidebar() {
                   to="/documents"
                   icon={<FaFileUpload />}
                   label="Documents"
+                  location={location}
+                  closeSidebar={closeSidebar}
+                />
+
+                <SidebarLink
+                  to="/comment-manager"
+                  icon={<FaComment />}
+                  label="Comment Templates"
+                  location={location}
+                  closeSidebar={closeSidebar}
+                />
+
+                <SidebarLink
+                  to="/admin-settings"
+                  icon={<FaMoneyBillWave />}
+                  label="Set Payment"
                   location={location}
                   closeSidebar={closeSidebar}
                 />
