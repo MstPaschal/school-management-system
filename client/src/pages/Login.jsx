@@ -65,6 +65,12 @@ function Login() {
 
           navigate("/teacher-dashboard");
 
+        } else if (
+          result.user.role === "student"
+        ) {
+
+          navigate("/student-portal");
+
         }
 
       } else {

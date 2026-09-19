@@ -22,6 +22,8 @@ import ApplyNow from "./pages/ApplyNow";
 
 import Login from "./pages/Login";
 
+import StudentPortal from "./pages/StudentPortal";
+
 import Dashboard from "./pages/Dashboard";
 
 import MainLayout from "./layouts/MainLayout";
@@ -31,6 +33,8 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import CreateStudent from "./pages/CreateStudent";
 
 import ViewStudents from "./pages/ViewStudents";
+
+import StudentCredentials from "./pages/StudentCredentials";
 
 import EditStudent from "./pages/EditStudent";
 
@@ -88,6 +92,10 @@ import ManageEvents from "./pages/ManageEvents";
 
 import EventPreview from "./pages/EventPreview";
 
+import StudentResults from "./pages/StudentResults";
+
+import StudentResultView from "./pages/StudentResultView";
+
 
 function App() {
 
@@ -133,6 +141,33 @@ function App() {
         />
 
         <Route
+          path="/student-portal"
+          element={
+            <ProtectedRoute>
+              <StudentPortal />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/student-results"
+          element={
+            <ProtectedRoute>
+              <StudentResults />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/student-results/:accessId"
+          element={
+            <ProtectedRoute>
+              <StudentResultView />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
         path="/dashboard"
         element={
 
@@ -167,19 +202,31 @@ function App() {
       />
 
       <Route
-  path="/students/view"
-  element={
+      path="/students/view"
+      element={
 
-    <ProtectedRoute>
+      <ProtectedRoute>
 
-      <MainLayout>
+        <MainLayout>
 
-        <ViewStudents />
+          <ViewStudents />
 
-      </MainLayout>
+        </MainLayout>
 
-    </ProtectedRoute>
+      </ProtectedRoute>
 
+        }
+      />
+
+
+    <Route
+      path="/students/credentials"
+      element={
+        <ProtectedRoute>
+          <MainLayout>
+            <StudentCredentials />
+          </MainLayout>
+        </ProtectedRoute>
       }
     />
 

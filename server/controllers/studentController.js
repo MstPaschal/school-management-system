@@ -1,15 +1,25 @@
+const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
+
 const Student = require("../models/Student");
+const User = require("../models/user");
+
+const sequelize = require("../config/db");
 
 const generateStudentRegNumber = require(
   "../utils/generateStudentRegNumber"
 );
 
+const {
+  encryptCredential
+} = require("../utils/credentialEncryption");
+
 
 // CREATE STUDENT
 exports.createStudent = async (req, res) => {
+  const transaction = await sequelize.transaction();
 
   try {
-
     const {
       fullName,
       admissionNumber,
@@ -21,91 +31,104 @@ exports.createStudent = async (req, res) => {
       currentClass
     } = req.body;
 
-
-    const passport =
-
-      req.file
-
-    ? req.file.filename
-
-    : null;
-
+    const passport = req.file
+      ? req.file.filename
+      : null;
 
     // GET LAST STUDENT
-const lastStudent =
-  await Student.findOne({
+    const lastStudent = await Student.findOne({
+      order: [["id", "DESC"]],
+      transaction
+    });
 
-    order: [["id", "DESC"]]
+    // NEXT NUMBER
+    let nextNumber = 1;
 
-  });
+    if (lastStudent) {
+      nextNumber = lastStudent.id + 1;
+    }
 
+    // FORMAT NUMBER
+    const paddedNumber = String(nextNumber).padStart(4, "0");
 
-// NEXT NUMBER
-let nextNumber = 1;
+    // GENERATE REG NUMBER
+    const regNumber = `GFS-STD-2026-${paddedNumber}`;
 
-if (lastStudent) {
+    // STUDENT PORTAL USERNAME
+    const username = regNumber;
 
-  nextNumber =
-    lastStudent.id + 1;
+    // GENERATE RANDOM PORTAL PASSWORD
+    const portalPassword =
+      crypto.randomBytes(6).toString("base64url");
 
-}
+    // HASH PASSWORD FOR LOGIN
+    const hashedPassword = await bcrypt.hash(
+      portalPassword,
+      10
+    );
 
+    // ENCRYPT PASSWORD FOR AUTHORIZED ADMIN VIEWING
+    const encryptedCredential =
+      encryptCredential(portalPassword);
 
-// FORMAT NUMBER
-const paddedNumber =
-  String(nextNumber)
-    .padStart(4, "0");
+    // CREATE USER ACCOUNT
+    const user = await User.create(
+      {
+        username,
+        password: hashedPassword,
+        role: "student",
+        portalCredential: encryptedCredential
+      },
+      {
+        transaction
+      }
+    );
 
+    // CREATE STUDENT
+    const student = await Student.create(
+      {
+        userId: user.id,
+        regNumber,
+        admissionNumber,
+        passport,
+        fullName,
+        dob,
+        gender,
+        address,
+        contact1,
+        contact2,
+        currentClass
+      },
+      {
+        transaction
+      }
+    );
 
-// GENERATE REG NUMBER
-const regNumber =
+    // COMPLETE BOTH CREATIONS
+    await transaction.commit();
 
-  `GFS-STD-2026-${paddedNumber}`;
+    return res.status(201).json({
+      message: "Student and portal account created successfully",
 
+      student,
 
-  const student = await Student.create({
-
-  regNumber,
-
-  admissionNumber,
-
-  passport,
-
-  fullName,
-
-  dob,
-
-  gender,
-
-  address,
-
-  contact1,
-
-  contact2,
-
-  currentClass
-
-});
-
-
-    res.status(201).json({
-
-      message: "Student created successfully",
-
-      student
-
+      credentials: {
+        username,
+        password: portalPassword
+      }
     });
 
   } catch (error) {
+    await transaction.rollback();
 
     console.log(error);
 
-    res.status(500).json({
-      message: "Server Error"
+    return res.status(500).json({
+      message:
+        error.message ||
+        "Failed to create student account"
     });
-
   }
-
 };
 
 

@@ -14,6 +14,20 @@ const {
 } = require("../controllers/studentController");
 
 const {
+  getStudentCredentialsByClass,
+  getStudentCredential
+} = require("../controllers/studentCredentialController");
+
+const {
+  getMyStudentProfile
+} = require("../controllers/studentPortalController");
+
+const {
+  getMyReleasedResults,
+  getMyReleasedResult
+} = require("../controllers/studentResultController");
+
+const {
   loadStudentStatus,
   changeStudentStatus
 } = require("../controllers/studentStatusController");
@@ -52,6 +66,59 @@ router.get(
   "/class/:classId",
   verifyToken,
   getStudentsByClass
+);
+
+
+// ==========================================
+// AUTHENTICATED STUDENT PROFILE
+// STUDENT ONLY
+// ==========================================
+
+router.get(
+  "/me",
+  verifyToken,
+  getMyStudentProfile
+);
+
+
+// ==========================================
+// RELEASED RESULTS
+// STUDENT ONLY
+// ==========================================
+
+router.get(
+  "/my-results",
+  verifyToken,
+  getMyReleasedResults
+);
+
+router.get(
+  "/my-results/:accessId",
+  verifyToken,
+  getMyReleasedResult
+);
+
+
+// ==========================================
+// STUDENT PORTAL CREDENTIALS
+// ADMIN ONLY
+// ==========================================
+
+// GET STUDENTS WITH PORTAL ACCOUNTS BY CLASS
+router.get(
+  "/credentials/class/:classId",
+  verifyToken,
+  isAdmin,
+  getStudentCredentialsByClass
+);
+
+
+// GET ONE STUDENT'S PORTAL CREDENTIAL
+router.get(
+  "/credentials/:studentId",
+  verifyToken,
+  isAdmin,
+  getStudentCredential
 );
 
 

@@ -18,7 +18,8 @@ import {
   FaTimes,
   FaAddressBook,
   FaCalendarAlt,
-  FaMoneyBillWave
+  FaMoneyBillWave,
+  FaLock
 } from "react-icons/fa";
 
 import {
@@ -192,6 +193,14 @@ function Sidebar() {
                   location={location}
                   closeSidebar={closeSidebar}
                   badge={340}
+                />
+
+                <SidebarLink
+                  to="/students/credentials"
+                  icon={<FaLock />}
+                  label="Student Credentials"
+                  location={location}
+                  closeSidebar={closeSidebar}
                 />
 
                 <SidebarLink

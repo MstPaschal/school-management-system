@@ -2,6 +2,10 @@ const crypto = require("crypto");
 
 const Student = require("../models/Student");
 
+const StudentResultAccess = require(
+  "../models/StudentResultAccess"
+);
+
 const ResultPin = require(
   "../models/ResultPin"
 );
@@ -897,6 +901,23 @@ exports.checkResult =
 
 
       // =========================
+      // RELEASE RESULT TO STUDENT PORTAL
+      // =========================
+      await StudentResultAccess.findOrCreate({
+        where: {
+          studentId: student.id,
+          sessionId,
+          term
+        },
+        defaults: {
+          classId: student.currentClass,
+          releasedAt: new Date(),
+          releaseMethod: "RESULT_PIN"
+        }
+      });
+
+
+      // =========================
       // RESPONSE
       // =========================
       res.status(200).json({
@@ -980,3 +1001,754 @@ exports.checkResult =
     }
 
   };
+
+
+  // =====================================================
+  // BUILD STUDENT ACADEMIC RESULT
+  // Shared result calculation for Student Portal
+  // =====================================================
+
+  exports.buildStudentAcademicResult =
+    async ({
+      studentId,
+      classId,
+      sessionId,
+      term
+    }) => {
+
+      // =========================
+      // STUDENT
+      // =========================
+
+      const student =
+        await Student.findByPk(studentId);
+
+      if (!student) {
+        throw new Error("Student not found");
+      }
+
+
+      // =========================
+      // SCORES
+      // =========================
+
+      const scores =
+        await Score.findAll({
+
+          where: {
+            studentId,
+            classId,
+            sessionId,
+            term
+          }
+
+        });
+
+
+      let grandTotal = 0;
+
+      const subjects = [];
+
+
+      // =========================
+      // SUBJECT RESULTS
+      // =========================
+
+      for (const score of scores) {
+
+        const subject =
+          await Subject.findByPk(
+            score.subjectId
+          );
+
+        if (!subject) {
+          continue;
+        }
+
+
+        const total =
+          Number(score.total || 0);
+
+        grandTotal += total;
+
+
+        // =========================
+        // CLASS SUBJECT SCORES
+        // =========================
+
+        const classSubjectScores =
+          await Score.findAll({
+
+            where: {
+
+              subjectId:
+                score.subjectId,
+
+              classId,
+
+              sessionId,
+
+              term
+
+            }
+
+          });
+
+
+        const totals =
+          classSubjectScores.map(
+            (item) =>
+              Number(item.total || 0)
+          );
+
+
+        // =========================
+        // HIGHEST / LOWEST
+        // =========================
+
+        const classHighest =
+          totals.length > 0
+            ? Math.max(...totals)
+            : 0;
+
+        const classLowest =
+          totals.length > 0
+            ? Math.min(...totals)
+            : 0;
+
+
+        // =========================
+        // SUBJECT AVERAGE
+        // =========================
+
+        const subjectAverage =
+          Number(
+
+            (
+              (classHighest +
+                classLowest) / 2
+            ).toFixed(2)
+
+          );
+
+
+        // =========================
+        // SUBJECT POSITION
+        // =========================
+
+        const subjectRanking = [];
+
+
+        for (
+          const clsScore
+          of classSubjectScores
+        ) {
+
+          subjectRanking.push({
+
+            studentId:
+              clsScore.studentId,
+
+            total:
+              Number(
+                clsScore.total || 0
+              )
+
+          });
+
+        }
+
+
+        subjectRanking.sort(
+          (a, b) =>
+            b.total - a.total
+        );
+
+
+        for (
+          let i = 0;
+          i < subjectRanking.length;
+          i++
+        ) {
+
+          if (i === 0) {
+
+            subjectRanking[i]
+              .position = 1;
+
+          }
+
+          else if (
+            subjectRanking[i].total ===
+            subjectRanking[i - 1].total
+          ) {
+
+            subjectRanking[i]
+              .position =
+              subjectRanking[
+                i - 1
+              ].position;
+
+          }
+
+          else {
+
+            subjectRanking[i]
+              .position = i + 1;
+
+          }
+
+        }
+
+
+        const currentSubjectPosition =
+          subjectRanking.find(
+
+            (item) =>
+              item.studentId ===
+              studentId
+
+          );
+
+
+        const subjectPosition =
+          getPosition(
+            currentSubjectPosition
+              ?.position || 0
+          );
+
+
+        // =========================
+        // SUBJECT OBJECT
+        // =========================
+
+        subjects.push({
+
+          subject:
+            subject.subjectName,
+
+          firstCA:
+            Number(
+              score.firstCA || 0
+            ),
+
+          secondCA:
+            Number(
+              score.secondCA || 0
+            ),
+
+          project:
+            Number(
+              score.project || 0
+            ),
+
+          exam:
+            Number(
+              score.exam || 0
+            ),
+
+          total,
+
+          classHighest,
+
+          classLowest,
+
+          subjectAverage,
+
+          subjectPosition,
+
+          grade:
+            getGrade(total),
+
+          remark:
+            getRemark(total)
+
+        });
+
+      }
+
+
+      // =========================
+      // OVERALL AVERAGE
+      // =========================
+
+      const average =
+        subjects.length > 0
+
+          ? Number(
+
+              (
+                grandTotal /
+                subjects.length
+              ).toFixed(2)
+
+            )
+
+          : 0;
+
+
+      // =========================
+      // CLASS POSITION
+      // =========================
+
+      const classStudents =
+        await Student.findAll({
+
+          where: {
+
+            currentClass:
+              classId,
+
+            status:
+              "ACTIVE"
+
+          }
+
+        });
+
+
+      const ranking = [];
+
+
+      for (
+        const clsStudent
+        of classStudents
+      ) {
+
+        const clsScores =
+          await Score.findAll({
+
+            where: {
+
+              studentId:
+                clsStudent.id,
+
+              classId,
+
+              sessionId,
+
+              term
+
+            }
+
+          });
+
+
+        let total = 0;
+
+
+        for (
+          const item
+          of clsScores
+        ) {
+
+          total +=
+            Number(
+              item.total || 0
+            );
+
+        }
+
+
+        const avg =
+          clsScores.length > 0
+
+            ? total /
+              clsScores.length
+
+            : 0;
+
+
+        ranking.push({
+
+          studentId:
+            clsStudent.id,
+
+          average:
+            avg
+
+        });
+
+      }
+
+
+      ranking.sort(
+        (a, b) =>
+          b.average -
+          a.average
+      );
+
+
+      for (
+        let i = 0;
+        i < ranking.length;
+        i++
+      ) {
+
+        if (i === 0) {
+
+          ranking[i]
+            .position = 1;
+
+        }
+
+        else if (
+          ranking[i].average ===
+          ranking[i - 1].average
+        ) {
+
+          ranking[i]
+            .position =
+            ranking[
+              i - 1
+            ].position;
+
+        }
+
+        else {
+
+          ranking[i]
+            .position = i + 1;
+
+        }
+
+      }
+
+
+      const currentStudent =
+        ranking.find(
+
+          (item) =>
+            item.studentId ===
+            studentId
+
+        );
+
+
+      const position =
+        getPosition(
+          currentStudent
+            ?.position || 0
+        );
+
+
+      const totalStudentsInClass =
+        classStudents.length;
+
+
+      // =========================
+      // COMMENTS
+      // =========================
+
+      const studentComment =
+        await StudentComment.findOne({
+
+          where: {
+
+            studentId,
+
+            classId,
+
+            sessionId,
+
+            term
+
+          }
+
+        });
+
+
+      // =========================
+      // SESSION
+      // =========================
+
+      const session =
+        await Session.findByPk(
+          sessionId
+        );
+
+
+      // =========================
+      // CLASS
+      // =========================
+
+      const currentClass =
+        await Class.findByPk(
+          classId
+        );
+
+
+      // =========================
+      // SETTINGS
+      // =========================
+
+      const settings =
+        await AdminSetting.findOne({
+
+          where: {
+
+            classId,
+
+            sessionId,
+
+            term
+
+          }
+
+        });
+
+
+      // =========================
+      // CUMULATIVE RESULT
+      // =========================
+
+      let cumulativeResult =
+        null;
+
+
+      if (
+        term === "3rd Term"
+      ) {
+
+        const firstTermScores =
+          await Score.findAll({
+
+            where: {
+
+              studentId,
+
+              classId,
+
+              sessionId,
+
+              term:
+                "1st Term"
+
+            }
+
+          });
+
+
+        const secondTermScores =
+          await Score.findAll({
+
+            where: {
+
+              studentId,
+
+              classId,
+
+              sessionId,
+
+              term:
+                "2nd Term"
+
+            }
+
+          });
+
+
+        const thirdTermScores =
+          await Score.findAll({
+
+            where: {
+
+              studentId,
+
+              classId,
+
+              sessionId,
+
+              term:
+                "3rd Term"
+
+            }
+
+          });
+
+
+        const calcAverage =
+          (scores) => {
+
+            if (
+              scores.length === 0
+            ) {
+
+              return 0;
+
+            }
+
+
+            let total = 0;
+
+
+            scores.forEach(
+              (score) => {
+
+                total +=
+                  Number(
+                    score.total
+                  );
+
+              }
+            );
+
+
+            return Number(
+
+              (
+                total /
+                scores.length
+              ).toFixed(2)
+
+            );
+
+          };
+
+
+        const firstTermAverage =
+          calcAverage(
+            firstTermScores
+          );
+
+
+        const secondTermAverage =
+          calcAverage(
+            secondTermScores
+          );
+
+
+        const thirdTermAverage =
+          calcAverage(
+            thirdTermScores
+          );
+
+
+        const cumulativeAverage =
+          Number(
+
+            (
+
+              (
+                firstTermAverage +
+                secondTermAverage +
+                thirdTermAverage
+              ) / 3
+
+            ).toFixed(2)
+
+          );
+
+
+        const cumulativeGrade =
+          getGrade(
+            cumulativeAverage
+          );
+
+
+        const promotionStatus =
+          cumulativeAverage >= 50
+
+            ? "PROMOTED"
+
+            : "NOT PROMOTED";
+
+
+        cumulativeResult = {
+
+          firstTermAverage,
+
+          secondTermAverage,
+
+          thirdTermAverage,
+
+          cumulativeAverage,
+
+          cumulativeGrade,
+
+          promotionStatus
+
+        };
+
+      }
+
+
+      // =========================
+      // RETURN ACADEMIC RESULT
+      // =========================
+
+      return {
+
+        student: {
+
+          ...student.toJSON(),
+
+          currentClassName:
+            currentClass
+              ?.className ||
+            "N/A"
+
+        },
+
+        sessionName:
+          session
+            ?.sessionName ||
+          "",
+
+        term,
+
+        result: {
+
+          subjects,
+
+          total:
+            grandTotal,
+
+          average,
+
+          totalStudentsInClass,
+
+          mainGrade:
+            getGrade(
+              average
+            ),
+
+          position,
+
+          teacherComment:
+            studentComment
+              ?.teacherComment ||
+            "",
+
+          proprietorComment:
+            studentComment
+              ?.proprietorComment ||
+            "",
+
+          nextTermResumptionDate:
+            settings
+              ?.nextTermResumes ||
+            "",
+
+          cumulativeResult,
+
+          schoolName:
+            "GRISFIELD SCHOOLS",
+
+          schoolAddress:
+            "Plot 107 Gracious Estate, Nkwelle Ezunaka",
+
+          schoolPhone:
+            "",
+
+          principalSignature:
+            "",
+
+          schoolStamp:
+            ""
+
+        }
+
+      };
+
+    };

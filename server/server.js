@@ -36,6 +36,7 @@ const StudentPayment = require("./models/StudentPayment");
 const UploadedDocument = require("./models/UploadedDocument");
 const AdmissionApplication = require("./models/AdmissionApplication");
 const Event = require("./models/Event");
+const StudentResultAccess = require("./models/StudentResultAccess");
 
 // Associations
 Class.belongsToMany(Subject, {
@@ -56,11 +57,27 @@ Score.belongsTo(Student, {
   foreignKey: "studentId"
 });
 
+Student.hasMany(StudentResultAccess, {
+  foreignKey: "studentId"
+});
+
+StudentResultAccess.belongsTo(Student, {
+  foreignKey: "studentId"
+});
+
 User.hasOne(Teacher, {
   foreignKey: "userId"
 });
 
 Teacher.belongsTo(User, {
+  foreignKey: "userId"
+});
+
+User.hasOne(Student, {
+  foreignKey: "userId"
+});
+
+Student.belongsTo(User, {
   foreignKey: "userId"
 });
 

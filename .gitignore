@@ -14,3 +14,7 @@ build
 dist
 
 client/.env.production
+
+server/uploads/
+server/stderr.log
+server/tmp/
