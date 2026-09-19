@@ -12,3 +12,5 @@ server/dist
 
 build
 dist
+
+client/.env.production
