@@ -1,52 +1,56 @@
 const { DataTypes } = require("sequelize");
-
 const sequelize = require("../config/db");
 
 const Student = sequelize.define("Student", {
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    unique: true
+  },
 
   regNumber: {
     type: DataTypes.STRING,
-    unique: true,
+    unique: true
   },
 
   admissionNumber: {
     type: DataTypes.STRING,
     unique: true,
-    allowNull: true,
+    allowNull: true
   },
 
   fullName: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: false
   },
 
   dob: {
-    type: DataTypes.DATEONLY,
+    type: DataTypes.DATEONLY
   },
 
   gender: {
-    type: DataTypes.ENUM("Male", "Female"),
+    type: DataTypes.ENUM("Male", "Female")
   },
 
   address: {
-    type: DataTypes.TEXT,
+    type: DataTypes.TEXT
   },
 
   contact1: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING
   },
 
   contact2: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING
   },
 
   currentClass: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: false
   },
 
   passport: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING
   },
 
   status: {
@@ -55,9 +59,8 @@ const Student = sequelize.define("Student", {
       "INACTIVE",
       "GRADUATED"
     ),
-    defaultValue: "ACTIVE",
+    defaultValue: "ACTIVE"
   }
-
 });
 
 module.exports = Student;
