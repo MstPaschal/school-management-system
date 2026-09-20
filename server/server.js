@@ -112,6 +112,13 @@ app.use("/api/classes", classRoutes);
 app.use("/api/subjects", subjectRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/teachers", teacherRoutes);
+
+console.log(
+  "STUDENT ROUTES:",
+  studentRoutes.stack
+    .map((layer) => layer.route?.path)
+    .filter(Boolean)
+);
 app.use("/api/students", studentRoutes);
 app.use("/api/class-subjects", classSubjectRoutes);
 app.use("/api/scores", scoreRoutes);
