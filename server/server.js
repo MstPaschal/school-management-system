@@ -157,7 +157,7 @@ transporter.verify(function(error, success) {
 });
 
 // Start server
-sequelize.sync({ alter: true })
+sequelize.sync()
   .then(() => {
     console.log("Database Synced");
 
