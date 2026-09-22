@@ -1,20 +1,16 @@
 import {
-
   useEffect,
-
   useState
-
 } from "react";
 
 import {
-
   useNavigate,
-
   useParams
-
 } from "react-router-dom";
 
 import api from "../services/api";
+
+import { useNotification } from "../context/NotificationContext";
 
 
 function EditStudent() {
@@ -24,6 +20,10 @@ function EditStudent() {
 
   const navigate =
     useNavigate();
+
+  const {
+    notify
+  } = useNotification();
 
 
   const [classes, setClasses] =
@@ -78,6 +78,7 @@ function EditStudent() {
             `/students/${id}`
           );
 
+
         setFormData({
 
           fullName:
@@ -110,6 +111,12 @@ function EditStudent() {
 
         console.log(error);
 
+        notify(
+          error.response?.data?.message ||
+          "Failed to load student details.",
+          "error"
+        );
+
       }
 
     };
@@ -126,11 +133,19 @@ function EditStudent() {
             "/classes"
           );
 
-        setClasses(res.data);
+        setClasses(
+          res.data
+        );
 
       } catch (error) {
 
         console.log(error);
+
+        notify(
+          error.response?.data?.message ||
+          "Failed to load classes.",
+          "error"
+        );
 
       }
 
@@ -158,7 +173,7 @@ function EditStudent() {
     (e) => {
 
       setPassport(
-        e.target.files[0]
+        e.target.files[0] || null
       );
 
     };
@@ -170,9 +185,58 @@ function EditStudent() {
 
       e.preventDefault();
 
+
+      const fullName =
+        formData.fullName.trim();
+
+      const admissionNumber =
+        formData.admissionNumber.trim();
+
+      const currentClass =
+        formData.currentClass;
+
+
+      // VALIDATION
+      if (!fullName) {
+
+        notify(
+          "Please enter the student's full name.",
+          "warning"
+        );
+
+        return;
+
+      }
+
+
+      if (!admissionNumber) {
+
+        notify(
+          "Please enter the admission number.",
+          "warning"
+        );
+
+        return;
+
+      }
+
+
+      if (!currentClass) {
+
+        notify(
+          "Please select the student's class.",
+          "warning"
+        );
+
+        return;
+
+      }
+
+
       try {
 
         setLoading(true);
+
 
         const data =
           new FormData();
@@ -182,8 +246,19 @@ function EditStudent() {
           .forEach((key) => {
 
             data.append(
+
               key,
-              formData[key]
+
+              key === "fullName" ||
+              key === "admissionNumber" ||
+              key === "address" ||
+              key === "contact1" ||
+              key === "contact2"
+
+                ? formData[key].trim()
+
+                : formData[key]
+
             );
 
           });
@@ -220,24 +295,29 @@ function EditStudent() {
           );
 
 
-        alert(
-          res.data.message
+        notify(
+          res.data.message ||
+          "Student updated successfully.",
+          "success"
         );
 
-        navigate(
-          "/students/view"
-        );
+
+        setTimeout(() => {
+
+          navigate(
+            "/students/view"
+          );
+
+        }, 700);
 
       } catch (error) {
 
         console.log(error);
 
-        alert(
-
+        notify(
           error.response?.data?.message ||
-
-          "Update failed"
-
+          "Update failed.",
+          "error"
         );
 
       } finally {
@@ -251,11 +331,11 @@ function EditStudent() {
 
   return (
 
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
 
-      <div className="bg-white rounded-2xl shadow p-6 max-w-4xl">
+      <div className="bg-white rounded-2xl shadow p-4 sm:p-6 max-w-4xl">
 
-        <h1 className="text-3xl font-bold mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6">
 
           Edit Student
 
@@ -267,10 +347,11 @@ function EditStudent() {
           className="grid grid-cols-1 md:grid-cols-2 gap-5"
         >
 
+
           {/* FULL NAME */}
           <div>
 
-            <label className="block mb-1 font-medium">
+            <label className="block mb-1.5 font-medium text-slate-700">
 
               Full Name
 
@@ -281,8 +362,8 @@ function EditStudent() {
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
-              required
-              className="w-full border rounded-lg px-4 py-3"
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+              placeholder="Enter student's full name"
             />
 
           </div>
@@ -291,7 +372,7 @@ function EditStudent() {
           {/* ADMISSION NUMBER */}
           <div>
 
-            <label className="block mb-1 font-medium">
+            <label className="block mb-1.5 font-medium text-slate-700">
 
               Admission Number
 
@@ -302,8 +383,8 @@ function EditStudent() {
               name="admissionNumber"
               value={formData.admissionNumber}
               onChange={handleChange}
-              required
-              className="w-full border rounded-lg px-4 py-3"
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+              placeholder="Enter admission number"
             />
 
           </div>
@@ -312,7 +393,7 @@ function EditStudent() {
           {/* DOB */}
           <div>
 
-            <label className="block mb-1 font-medium">
+            <label className="block mb-1.5 font-medium text-slate-700">
 
               Date of Birth
 
@@ -323,7 +404,7 @@ function EditStudent() {
               name="dob"
               value={formData.dob}
               onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-3"
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
             />
 
           </div>
@@ -332,7 +413,7 @@ function EditStudent() {
           {/* GENDER */}
           <div>
 
-            <label className="block mb-1 font-medium">
+            <label className="block mb-1.5 font-medium text-slate-700">
 
               Gender
 
@@ -342,7 +423,7 @@ function EditStudent() {
               name="gender"
               value={formData.gender}
               onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-3"
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
             >
 
               <option value="">
@@ -365,7 +446,7 @@ function EditStudent() {
           {/* CONTACT 1 */}
           <div>
 
-            <label className="block mb-1 font-medium">
+            <label className="block mb-1.5 font-medium text-slate-700">
 
               Contact 1
 
@@ -376,7 +457,8 @@ function EditStudent() {
               name="contact1"
               value={formData.contact1}
               onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-3"
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+              placeholder="Enter primary contact"
             />
 
           </div>
@@ -385,7 +467,7 @@ function EditStudent() {
           {/* CONTACT 2 */}
           <div>
 
-            <label className="block mb-1 font-medium">
+            <label className="block mb-1.5 font-medium text-slate-700">
 
               Contact 2
 
@@ -396,7 +478,8 @@ function EditStudent() {
               name="contact2"
               value={formData.contact2}
               onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-3"
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+              placeholder="Enter secondary contact"
             />
 
           </div>
@@ -405,7 +488,7 @@ function EditStudent() {
           {/* CLASS */}
           <div>
 
-            <label className="block mb-1 font-medium">
+            <label className="block mb-1.5 font-medium text-slate-700">
 
               Class
 
@@ -415,8 +498,7 @@ function EditStudent() {
               name="currentClass"
               value={formData.currentClass}
               onChange={handleChange}
-              required
-              className="w-full border rounded-lg px-4 py-3"
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
             >
 
               <option value="">
@@ -446,7 +528,7 @@ function EditStudent() {
           {/* ADDRESS */}
           <div className="md:col-span-2">
 
-            <label className="block mb-1 font-medium">
+            <label className="block mb-1.5 font-medium text-slate-700">
 
               Address
 
@@ -456,7 +538,9 @@ function EditStudent() {
               name="address"
               value={formData.address}
               onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-3"
+              rows="3"
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 resize-none outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+              placeholder="Enter address"
             />
 
           </div>
@@ -465,17 +549,31 @@ function EditStudent() {
           {/* PASSPORT */}
           <div className="md:col-span-2">
 
-            <label className="block mb-1 font-medium">
+            <label className="block mb-1.5 font-medium text-slate-700">
 
               Passport
 
             </label>
 
             <input
+              id="student-passport"
               type="file"
+              accept="image/*"
               onChange={handleFileChange}
-              className="w-full border rounded-lg px-4 py-3"
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm"
             />
+
+            {
+              passport && (
+
+                <p className="mt-2 text-sm text-slate-500 break-words">
+
+                  Selected: {passport.name}
+
+                </p>
+
+              )
+            }
 
           </div>
 
@@ -484,8 +582,9 @@ function EditStudent() {
           <div className="md:col-span-2">
 
             <button
+              type="submit"
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold"
+              className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-semibold transition"
             >
 
               {

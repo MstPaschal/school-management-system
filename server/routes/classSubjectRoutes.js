@@ -6,9 +6,7 @@ const {
   assignSubject,
   getClassSubjects,
   removeSubject
-} = require(
-  "../controllers/classSubjectController"
-);
+} = require("../controllers/classSubjectController");
 
 const {
   verifyToken
@@ -19,7 +17,11 @@ const {
 } = require("../middleware/roleMiddleware");
 
 
+// =========================
 // ASSIGN SUBJECT
+// ADMIN + SUPERADMIN
+// =========================
+
 router.post(
   "/assign",
   verifyToken,
@@ -28,20 +30,30 @@ router.post(
 );
 
 
+// =========================
 // GET CLASS SUBJECTS
+// ADMIN + SUPERADMIN
+// =========================
+
 router.get(
   "/:classId",
   verifyToken,
+  isAdmin,
   getClassSubjects
 );
 
 
+// =========================
 // REMOVE SUBJECT
+// ADMIN + SUPERADMIN
+// =========================
+
 router.delete(
   "/:classId/:subjectId",
   verifyToken,
   isAdmin,
   removeSubject
 );
+
 
 module.exports = router;

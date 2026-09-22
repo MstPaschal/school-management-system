@@ -11,11 +11,19 @@ import { SERVER_BASE_URL } from "../config/apiConfig";
 
 import api from "../services/api";
 
+import { useNotification } from "../context/NotificationContext";
+
 
 function CreateTeacher() {
 
   const navigate =
-  useNavigate();
+    useNavigate();
+
+  const {
+    notify,
+    confirmAction
+  } = useNotification();
+
 
   const [selectedTeacher,
     setSelectedTeacher] =
@@ -33,6 +41,9 @@ function CreateTeacher() {
 
   const [loading, setLoading] =
     useState(false);
+
+  const [deletingId, setDeletingId] =
+    useState(null);
 
   const [passport, setPassport] =
     useState(null);
@@ -93,31 +104,43 @@ function CreateTeacher() {
 
         console.log(error);
 
+        notify(
+          error.response?.data?.message ||
+          "Unable to load teachers.",
+          "error"
+        );
+
       }
 
     };
 
 
-    // FETCH CLASSES
-    const fetchClasses =
-      async () => {
+  // FETCH CLASSES
+  const fetchClasses =
+    async () => {
 
-        try {
+      try {
 
-          const res =
-            await api.get(
-              "/classes"
-            );
+        const res =
+          await api.get(
+            "/classes"
+          );
 
-          setClasses(res.data);
+        setClasses(res.data);
 
-        } catch (error) {
+      } catch (error) {
 
-          console.log(error);
+        console.log(error);
 
-        }
+        notify(
+          error.response?.data?.message ||
+          "Unable to load classes.",
+          "error"
+        );
 
-      };
+      }
+
+    };
 
 
   // INPUT CHANGE
@@ -141,7 +164,7 @@ function CreateTeacher() {
     (e) => {
 
       setPassport(
-        e.target.files[0]
+        e.target.files[0] || null
       );
 
     };
@@ -153,22 +176,51 @@ function CreateTeacher() {
 
       e.preventDefault();
 
+
+      // REQUIRED FIELD VALIDATION
+      const requiredFields = [
+        ["fullName", "Full Name"],
+        ["username", "Username"],
+        ["email", "Email"],
+        ["password", "Password"]
+      ];
+
+
+      for (const [field, label] of requiredFields) {
+
+        if (!formData[field].trim()) {
+
+          notify(
+            `${label} is required.`,
+            "warning"
+          );
+
+          return;
+
+        }
+
+      }
+
+
       try {
 
         setLoading(true);
 
+
         const data =
           new FormData();
+
 
         Object.keys(formData)
           .forEach((key) => {
 
             data.append(
               key,
-              formData[key]
+              formData[key].trim()
             );
 
           });
+
 
         if (passport) {
 
@@ -178,6 +230,7 @@ function CreateTeacher() {
           );
 
         }
+
 
         const res =
           await api.post(
@@ -199,7 +252,13 @@ function CreateTeacher() {
 
           );
 
-        alert(res.data.message);
+
+        notify(
+          res.data.message ||
+          "Teacher created successfully.",
+          "success"
+        );
+
 
         setFormData({
 
@@ -227,7 +286,21 @@ function CreateTeacher() {
 
         });
 
+
         setPassport(null);
+
+
+        const fileInput =
+          document.getElementById(
+            "teacher-passport"
+          );
+
+        if (fileInput) {
+
+          fileInput.value = "";
+
+        }
+
 
         fetchTeachers();
 
@@ -235,11 +308,13 @@ function CreateTeacher() {
 
         console.log(error);
 
-        alert(
+        notify(
 
           error.response?.data?.message ||
 
-          "Teacher creation failed"
+          "Teacher creation failed.",
+
+          "error"
 
         );
 
@@ -256,21 +331,37 @@ function CreateTeacher() {
   const handleDelete =
     async (id) => {
 
-      const confirmDelete =
-        window.confirm(
-          "Delete this teacher?"
+      const confirmed =
+        await confirmAction(
+          "This teacher will be permanently deleted. Do you want to continue?",
+          {
+            title: "Delete Teacher",
+            confirmText: "Delete",
+            cancelText: "Cancel"
+          }
         );
 
-      if (!confirmDelete) return;
+
+      if (!confirmed) return;
+
 
       try {
+
+        setDeletingId(id);
+
 
         const res =
           await api.delete(
             `/teachers/${id}`
           );
 
-        alert(res.data.message);
+
+        notify(
+          res.data.message ||
+          "Teacher deleted successfully.",
+          "success"
+        );
+
 
         fetchTeachers();
 
@@ -278,13 +369,19 @@ function CreateTeacher() {
 
         console.log(error);
 
-        alert(
+        notify(
 
           error.response?.data?.message ||
 
-          "Delete failed"
+          "Delete failed.",
+
+          "error"
 
         );
+
+      } finally {
+
+        setDeletingId(null);
 
       }
 
@@ -293,11 +390,11 @@ function CreateTeacher() {
 
   return (
 
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
 
-      <div className="bg-white rounded-2xl shadow p-6">
+      <div className="bg-white rounded-2xl shadow p-4 sm:p-6">
 
-        <h1 className="text-3xl font-bold mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6">
 
           Create Teacher
 
@@ -324,8 +421,8 @@ function CreateTeacher() {
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
-              required
               className="w-full border rounded-lg px-4 py-3"
+              placeholder="Enter full name"
             />
 
           </div>
@@ -345,8 +442,8 @@ function CreateTeacher() {
               name="username"
               value={formData.username}
               onChange={handleChange}
-              required
               className="w-full border rounded-lg px-4 py-3"
+              placeholder="Enter username"
             />
 
           </div>
@@ -366,8 +463,8 @@ function CreateTeacher() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              required
               className="w-full border rounded-lg px-4 py-3"
+              placeholder="Enter email address"
             />
 
           </div>
@@ -387,8 +484,8 @@ function CreateTeacher() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              required
               className="w-full border rounded-lg px-4 py-3"
+              placeholder="Enter password"
             />
 
           </div>
@@ -429,6 +526,7 @@ function CreateTeacher() {
               value={formData.contact}
               onChange={handleChange}
               className="w-full border rounded-lg px-4 py-3"
+              placeholder="Enter phone number"
             />
 
           </div>
@@ -449,6 +547,7 @@ function CreateTeacher() {
               value={formData.nextOfKin}
               onChange={handleChange}
               className="w-full border rounded-lg px-4 py-3"
+              placeholder="Enter next of kin"
             />
 
           </div>
@@ -507,7 +606,9 @@ function CreateTeacher() {
               name="address"
               value={formData.address}
               onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-3"
+              rows="3"
+              className="w-full border rounded-lg px-4 py-3 resize-none"
+              placeholder="Enter address"
             />
 
           </div>
@@ -528,6 +629,7 @@ function CreateTeacher() {
               value={formData.nokContact}
               onChange={handleChange}
               className="w-full border rounded-lg px-4 py-3"
+              placeholder="Enter NOK contact"
             />
 
           </div>
@@ -548,6 +650,7 @@ function CreateTeacher() {
               value={formData.nokAddress}
               onChange={handleChange}
               className="w-full border rounded-lg px-4 py-3"
+              placeholder="Enter NOK address"
             />
 
           </div>
@@ -563,10 +666,24 @@ function CreateTeacher() {
             </label>
 
             <input
+              id="teacher-passport"
               type="file"
+              accept="image/*"
               onChange={handleFileChange}
-              className="w-full border rounded-lg px-4 py-3"
+              className="w-full border rounded-lg px-4 py-3 text-sm"
             />
+
+            {
+              passport && (
+
+                <p className="mt-2 text-sm text-slate-500 break-words">
+
+                  Selected: {passport.name}
+
+                </p>
+
+              )
+            }
 
           </div>
 
@@ -577,7 +694,7 @@ function CreateTeacher() {
             <button
               type="submit"
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold"
+              className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-semibold transition"
             >
 
               {
@@ -594,438 +711,417 @@ function CreateTeacher() {
 
 
         {/* TEACHERS TABLE */}
-        <div className="overflow-x-auto">
+        {/* TEACHERS TABLE */}
+<div className="mt-4">
 
-          <table className="w-full border-collapse">
+  <div className="mb-4">
 
-            <thead>
+    <h2 className="text-xl sm:text-2xl font-bold text-slate-800">
+      Teachers
+    </h2>
 
-              <tr className="bg-gray-100 text-left">
+    <p className="text-sm text-slate-500 mt-1">
+      Manage registered teachers and view their profiles.
+    </p>
 
-                <th className="p-3">
-                  Passport
-                </th>
+  </div>
 
-                <th className="p-3">
-                  Reg Number
-                </th>
 
-                <th className="p-3">
-                  Full Name
-                </th>
+  <div className="w-full overflow-hidden">
 
-                <th className="p-3">
-                  Username
-                </th>
+    <table className="w-full border-collapse">
 
-                <th className="p-3">
-                  Assigned Class
-                </th>
-                
-                <th className="p-3">
-                  Contact
-                </th>
+      <thead>
 
-                <th className="p-3">
-                  Action
-                </th>
+        <tr className="bg-gray-100 text-left">
 
-              </tr>
+          <th className="p-2 sm:p-3 text-sm sm:text-base">
+            Passport
+          </th>
 
-            </thead>
+          <th className="p-2 sm:p-3 text-sm sm:text-base hidden md:table-cell">
+            Reg Number
+          </th>
 
+          <th className="p-2 sm:p-3 text-sm sm:text-base">
+            Full Name
+          </th>
 
-            <tbody>
+          <th className="p-2 sm:p-3 text-sm sm:text-base hidden md:table-cell">
+            Username
+          </th>
 
-              {
-                teachers.map((teacher) => (
+          <th className="p-2 sm:p-3 text-sm sm:text-base">
+            Assigned Class
+          </th>
 
-                  <tr
-                    key={teacher.id}
-                    className="border-b"
-                  >
+          <th className="p-2 sm:p-3 text-sm sm:text-base hidden md:table-cell">
+            Contact
+          </th>
 
-                    {/* PASSPORT */}
-                    <td className="p-3">
+          <th className="p-2 sm:p-3 text-sm sm:text-base">
+            Action
+          </th>
 
-                      {
-                        teacher.passport
-                          ? (
+        </tr>
 
-                            <img
-                              src={`${SERVER_BASE_URL}/uploads/${teacher.passport}`}
-                              alt="passport"
-                              className="w-16 h-16 rounded-full object-cover"
-                            />
+      </thead>
 
-                          ) : (
 
-                            <div className="w-16 h-16 rounded-full bg-gray-300" />
+      <tbody>
 
-                          )
-                      }
+        {teachers.map((teacher) => (
 
-                    </td>
+          <tr
+            key={teacher.id}
+            className="border-b align-top"
+          >
 
+            {/* PASSPORT */}
+            <td className="p-2 sm:p-3">
 
-                    {/* REG NUMBER */}
-                    <td className="p-3 font-medium">
+              {teacher.passport ? (
 
-                      {teacher.regNumber}
+                <img
+                  src={`${SERVER_BASE_URL}/uploads/${teacher.passport}`}
+                  alt="Teacher passport"
+                  className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover"
+                />
 
-                    </td>
+              ) : (
 
+                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gray-300" />
 
-                    {/* FULL NAME */}
-                    <td className="p-3">
+              )}
 
-                      {teacher.fullName}
+            </td>
 
-                    </td>
 
+            {/* REG NUMBER */}
+            <td className="p-2 sm:p-3 font-medium break-words hidden md:table-cell">
 
-                    {/* USERNAME */}
-                    <td className="p-3">
+              {teacher.regNumber}
 
-                      {teacher.User?.username || "N/A"}
+            </td>
 
-                    </td>
 
+            {/* FULL NAME */}
+            <td className="p-2 sm:p-3">
 
-                    {/* ASSIGNED CLASS */}
-                    <td className="p-3">
+              <div className="font-medium break-words">
 
-                      {
-                        classes.find(
-                          (cls) =>
-                            String(cls.id) ===
-                            String(teacher.assignedClass)
-                        )?.className || "N/A"
-                      }
+                {teacher.fullName}
 
-                    </td>
+              </div>
 
-                    {/* CONTACT */}
-                    <td className="p-3">
+            </td>
 
-                      {teacher.contact || "N/A"}
 
-                    </td>
+            {/* USERNAME */}
+            <td className="p-2 sm:p-3 break-words hidden md:table-cell">
 
+              {teacher.User?.username || "N/A"}
 
-                    {/* ACTION */}
-                    <td className="p-3 flex gap-2">
+            </td>
 
-                      {/* EDIT */}
-                      <button
-                        onClick={() =>
-                          navigate(
-                            `/teachers/edit/${teacher.id}`
-                          )
-                        }
-                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
-                      >
 
-                        Edit
+            {/* ASSIGNED CLASS */}
+            <td className="p-2 sm:p-3">
 
-                      </button>
+              <div className="break-words">
 
+                {
+                  classes.find(
+                    (cls) =>
+                      String(cls.id) ===
+                      String(teacher.assignedClass)
+                  )?.className || "N/A"
+                }
 
-                      {/* VIEW */}
-                      <button
-                        onClick={() => {
+              </div>
 
-                          setSelectedTeacher(teacher);
+            </td>
 
-                          setShowProfile(true);
 
-                        }}
-                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
-                      >
+            {/* CONTACT */}
+            <td className="p-2 sm:p-3 break-words hidden md:table-cell">
 
-                        View
+              {teacher.contact || "N/A"}
 
-                      </button>
+            </td>
 
 
-                      {/* DELETE */}
-                      <button
-                        onClick={() =>
-                          handleDelete(teacher.id)
-                        }
-                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
-                      >
+            {/* ACTION */}
+            <td className="p-2 sm:p-3">
 
-                        Delete
+              <div className="flex flex-col gap-2">
 
-                      </button>
+                {/* EDIT */}
+                <button
+                  onClick={() =>
+                    navigate(
+                      `/teachers/edit/${teacher.id}`
+                    )
+                  }
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
+                >
 
-                    </td>
+                  Edit
 
-                  </tr>
+                </button>
 
-                ))
-              }
 
-            </tbody>
+                {/* VIEW */}
+                <button
+                  onClick={() => {
 
-          </table>
+                    setSelectedTeacher(teacher);
 
-        {/* PROFILE MODAL */}
-        {
-          showProfile && selectedTeacher && (
+                    setShowProfile(true);
 
-            <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
+                  }}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
+                >
 
-              <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden">
+                  View
 
-                {/* HEADER */}
-                <div className="bg-blue-700 text-white p-6 text-center">
+                </button>
 
-                  {/* SCHOOL LOGO */}
-                  <div className="flex justify-center mb-3">
 
-                    <img
-                      src="public/logo.png"
-                      alt="School Logo"
-                      className="w-24 h-24 rounded-full border-4 border-white object-cover"
-                    />
+                {/* DELETE */}
+                <button
+                  onClick={() =>
+                    handleDelete(teacher.id)
+                  }
+                  disabled={
+                    deletingId === teacher.id
+                  }
+                  className="w-full bg-red-500 hover:bg-red-600 disabled:opacity-60 disabled:cursor-not-allowed text-white px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap"
+                >
 
-                  </div>
+                  {
+                    deletingId === teacher.id
+                      ? "Deleting..."
+                      : "Delete"
+                  }
 
-                  <h1 className="text-3xl font-bold">
+                </button>
 
-                    GRISFIELD SCHOOLS
+              </div>
 
-                  </h1>
+            </td>
 
-                  <p className="text-lg mt-2">
+          </tr>
 
-                    STAFF PROFILE
+        ))}
 
+
+        {teachers.length === 0 && (
+
+          <tr>
+
+            <td
+              colSpan="7"
+              className="p-8 text-center text-slate-500"
+            >
+
+              No teachers found.
+
+            </td>
+
+          </tr>
+
+        )}
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+
+  {/* PROFILE MODAL */}
+  {
+    showProfile && selectedTeacher && (
+
+      <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
+
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+
+          {/* HEADER */}
+          <div className="bg-blue-700 text-white p-5 sm:p-6 text-center">
+
+            <div className="flex justify-center mb-3">
+
+              <img
+                src="/Logo.png"
+                alt="School Logo"
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white object-cover"
+              />
+
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl font-bold">
+              GRISFIELD SCHOOLS
+            </h1>
+
+            <p className="text-base sm:text-lg mt-2">
+              STAFF PROFILE
+            </p>
+
+          </div>
+
+
+          {/* BODY */}
+          <div className="p-5 sm:p-6">
+
+            <div className="flex flex-col md:flex-row gap-6">
+
+              {/* PASSPORT */}
+              <div className="flex justify-center md:justify-start flex-shrink-0">
+
+                {selectedTeacher.passport ? (
+
+                  <img
+                    src={`${SERVER_BASE_URL}/uploads/${selectedTeacher.passport}`}
+                    alt="Teacher passport"
+                    className="w-36 h-36 sm:w-44 sm:h-44 rounded-xl object-cover border"
+                  />
+
+                ) : (
+
+                  <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-xl bg-gray-300" />
+
+                )}
+
+              </div>
+
+
+              {/* DETAILS */}
+              <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                <div>
+                  <h3 className="font-bold text-gray-600">
+                    Full Name
+                  </h3>
+                  <p className="break-words">
+                    {selectedTeacher.fullName}
                   </p>
-
                 </div>
 
 
-                {/* BODY */}
-                <div className="p-6">
-
-                  <div className="flex flex-col md:flex-row gap-6">
-
-                    {/* PASSPORT */}
-                    <div className="flex justify-center">
-
-                      {
-                        selectedTeacher.passport
-                          ? (
-
-                            <img
-                              src={`${SERVER_BASE_URL}/uploads/${selectedTeacher.passport}`}
-                              alt="passport"
-                              className="w-44 h-44 rounded-xl object-cover border"
-                            />
-
-                          ) : (
-
-                            <div className="w-44 h-44 rounded-xl bg-gray-300" />
-
-                          )
-                      }
-
-                    </div>
-
-
-                    {/* DETAILS */}
-                    <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                      <div>
-
-                        <h3 className="font-bold text-gray-600">
-
-                          Full Name
-
-                        </h3>
-
-                        <p>
-
-                          {selectedTeacher.fullName}
-
-                        </p>
-
-                      </div>
-
-
-                      <div>
-
-                        <h3 className="font-bold text-gray-600">
-
-                          Reg Number
-
-                        </h3>
-
-                        <p>
-
-                          {selectedTeacher.regNumber}
-
-                        </p>
-
-                      </div>
-
-
-                      <div>
-
-                        <h3 className="font-bold text-gray-600">
-
-                          Username
-
-                        </h3>
-
-                        <p>
-
-                          {
-                            selectedTeacher.User?.username || "N/A"
-                          }
-
-                        </p>
-
-                      </div>
-
-
-                      <div>
-
-                        <h3 className="font-bold text-gray-600">
-
-                          Contact
-
-                        </h3>
-
-                        <p>
-
-                          {selectedTeacher.contact}
-
-                        </p>
-
-                      </div>
-
-
-                      <div>
-
-                        <h3 className="font-bold text-gray-600">
-
-                          Date Of Birth
-
-                        </h3>
-
-                        <p>
-
-                          {selectedTeacher.dob}
-
-                        </p>
-
-                      </div>
-
-
-                      <div>
-
-                        <h3 className="font-bold text-gray-600">
-
-                          Address
-
-                        </h3>
-
-                        <p>
-
-                          {selectedTeacher.address}
-
-                        </p>
-
-                      </div>
-
-
-                      <div>
-
-                        <h3 className="font-bold text-gray-600">
-
-                          Next Of Kin
-
-                        </h3>
-
-                        <p>
-
-                          {selectedTeacher.nextOfKin}
-
-                        </p>
-
-                      </div>
-
-
-                      <div>
-
-                        <h3 className="font-bold text-gray-600">
-
-                          NOK Contact
-
-                        </h3>
-
-                        <p>
-
-                          {selectedTeacher.nokContact}
-
-                        </p>
-
-                      </div>
-
-
-                      <div>
-
-                        <h3 className="font-bold text-gray-600">
-
-                          NOK Address
-
-                        </h3>
-
-                        <p>
-
-                          {selectedTeacher.nokAddress}
-
-                        </p>
-
-                      </div>
-
-                    </div>
-
-                  </div>
-
-
-                  {/* CLOSE BUTTON */}
-                  <div className="mt-8 text-center">
-
-                    <button
-                      onClick={() =>
-                        setShowProfile(false)
-                      }
-                      className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg"
-                    >
-
-                      Close
-
-                    </button>
-
-                  </div>
-
+                <div>
+                  <h3 className="font-bold text-gray-600">
+                    Reg Number
+                  </h3>
+                  <p className="break-words">
+                    {selectedTeacher.regNumber}
+                  </p>
+                </div>
+
+
+                <div>
+                  <h3 className="font-bold text-gray-600">
+                    Username
+                  </h3>
+                  <p className="break-words">
+                    {selectedTeacher.User?.username || "N/A"}
+                  </p>
+                </div>
+
+
+                <div>
+                  <h3 className="font-bold text-gray-600">
+                    Contact
+                  </h3>
+                  <p className="break-words">
+                    {selectedTeacher.contact || "N/A"}
+                  </p>
+                </div>
+
+
+                <div>
+                  <h3 className="font-bold text-gray-600">
+                    Date Of Birth
+                  </h3>
+                  <p className="break-words">
+                    {selectedTeacher.dob || "N/A"}
+                  </p>
+                </div>
+
+
+                <div>
+                  <h3 className="font-bold text-gray-600">
+                    Address
+                  </h3>
+                  <p className="break-words">
+                    {selectedTeacher.address || "N/A"}
+                  </p>
+                </div>
+
+
+                <div>
+                  <h3 className="font-bold text-gray-600">
+                    Next Of Kin
+                  </h3>
+                  <p className="break-words">
+                    {selectedTeacher.nextOfKin || "N/A"}
+                  </p>
+                </div>
+
+
+                <div>
+                  <h3 className="font-bold text-gray-600">
+                    NOK Contact
+                  </h3>
+                  <p className="break-words">
+                    {selectedTeacher.nokContact || "N/A"}
+                  </p>
+                </div>
+
+
+                <div>
+                  <h3 className="font-bold text-gray-600">
+                    NOK Address
+                  </h3>
+                  <p className="break-words">
+                    {selectedTeacher.nokAddress || "N/A"}
+                  </p>
                 </div>
 
               </div>
 
             </div>
 
-          )
-        }
-        
-        
-        
+
+            {/* CLOSE BUTTON */}
+            <div className="mt-8 text-center">
+
+              <button
+                onClick={() =>
+                  setShowProfile(false)
+                }
+                className="w-full sm:w-auto bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg"
+              >
+
+                Close
+
+              </button>
+
+            </div>
+
+          </div>
+
         </div>
+
+      </div>
+
+    )
+  }
+
+</div>
+
+                
 
       </div>
 

@@ -13,7 +13,7 @@ import {
   FaBullhorn,
   FaSignOutAlt,
   FaLock,
-  FaChevronRight
+  FaChevronRight,
 } from "react-icons/fa";
 
 import { useNavigate } from "react-router-dom";
@@ -23,6 +23,10 @@ import { useAuth } from "../context/AuthContext";
 import api from "../services/api";
 
 import { SERVER_BASE_URL } from "../config/apiConfig";
+
+import {
+  useNotification,
+} from "../context/NotificationContext";
 
 
 function StudentPortal() {
@@ -34,6 +38,10 @@ function StudentPortal() {
     logout
   } = useAuth();
 
+  const {
+    notify
+  } = useNotification();
+
   const [student, setStudent] =
     useState(null);
 
@@ -41,45 +49,53 @@ function StudentPortal() {
     useState(true);
 
 
-    // ==========================================
-    // LOAD AUTHENTICATED STUDENT PROFILE
-    // ==========================================
+  // ==========================================
+  // LOAD AUTHENTICATED STUDENT PROFILE
+  // ==========================================
 
-    useEffect(() => {
+  useEffect(() => {
 
     const fetchStudentProfile =
-        async () => {
+      async () => {
 
         try {
 
-            const res =
+          setLoadingStudent(true);
+
+          const res =
             await api.get(
-                "/students/me"
+              "/students/me"
             );
 
-            setStudent(
+          setStudent(
             res.data
-            );
+          );
 
         } catch (error) {
 
-            console.log(
+          console.log(
             "STUDENT PROFILE ERROR:",
             error
-            );
+          );
+
+          notify(
+            error.response?.data?.message ||
+              "Failed to load your student profile.",
+            "error"
+          );
 
         } finally {
 
-            setLoadingStudent(false);
+          setLoadingStudent(false);
 
         }
 
-        };
+      };
 
 
     fetchStudentProfile();
 
-    }, []);
+  }, []);
 
 
   // ==========================================
@@ -162,18 +178,26 @@ function StudentPortal() {
   // OPEN FEATURE
   // ==========================================
 
-  const handleFeatureClick = (feature) => {
+  const handleFeatureClick = (
+    feature
+  ) => {
 
-    if (feature.title === "My Results") {
+    if (
+      feature.title ===
+      "My Results"
+    ) {
 
-      navigate("/student-results");
+      navigate(
+        "/student-results"
+      );
 
       return;
 
     }
 
-    alert(
-      `${feature.title} will be available here soon.`
+    notify(
+      `${feature.title} will be available here soon.`,
+      "info"
     );
 
   };
@@ -181,7 +205,7 @@ function StudentPortal() {
 
   return (
 
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 overflow-x-hidden">
 
       {/* ========================================
           TOP NAVIGATION
@@ -189,29 +213,29 @@ function StudentPortal() {
 
       <header className="bg-blue-900 text-white shadow-lg">
 
-        <div className="max-w-7xl mx-auto px-5 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-5 py-3 sm:py-4">
 
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center justify-between gap-3">
 
             {/* SCHOOL BRAND */}
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
 
               <img
                 src="/Logo.png"
                 alt="Grisfield Schools"
-                className="w-12 h-12 rounded-full bg-white p-1 object-cover"
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white p-1 object-cover flex-shrink-0"
               />
 
-              <div>
+              <div className="min-w-0">
 
-                <h1 className="text-lg md:text-xl font-bold">
+                <h1 className="text-sm sm:text-lg md:text-xl font-bold truncate">
 
                   GRISFIELD SCHOOLS
 
                 </h1>
 
-                <p className="text-xs md:text-sm text-blue-200">
+                <p className="text-[11px] sm:text-xs md:text-sm text-blue-200">
 
                   Student Portal
 
@@ -226,7 +250,7 @@ function StudentPortal() {
 
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition"
+              className="flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 active:bg-red-800 px-3 sm:px-4 py-2.5 rounded-lg transition flex-shrink-0 min-h-[42px]"
             >
 
               <FaSignOutAlt />
@@ -250,44 +274,50 @@ function StudentPortal() {
           MAIN CONTENT
       ======================================== */}
 
-      <main className="max-w-7xl mx-auto px-5 py-8">
+      <main className="max-w-7xl mx-auto px-3 sm:px-5 py-5 sm:py-8">
 
         {/* ======================================
             WELCOME CARD
         ====================================== */}
 
-        <section className="bg-white rounded-2xl shadow p-6 md:p-8 mb-8">
+        <section className="bg-white rounded-2xl shadow p-4 sm:p-6 md:p-8 mb-6 sm:mb-8">
 
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 sm:gap-6">
 
-            <div className="flex items-center gap-5">
+            {/* STUDENT PROFILE */}
 
-              <div className="w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden bg-blue-100 flex items-center justify-center shrink-0 border-4 border-blue-100">
+            <div className="flex items-center gap-3 sm:gap-5 min-w-0">
+
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-blue-100 flex items-center justify-center shrink-0 border-4 border-blue-100">
 
                 {
-                    student?.passport
+                  student?.passport
                     ? (
 
-                        <img
+                      <img
                         src={`${SERVER_BASE_URL}/uploads/${student.passport}`}
-                        alt={student.fullName || "Student"}
+                        alt={
+                          student.fullName ||
+                          "Student"
+                        }
                         className="w-full h-full object-cover"
-                        />
+                      />
 
                     )
                     : (
 
-                        <FaUserGraduate
-                        size={32}
-                        className="text-blue-700"
-                        />
+                      <FaUserGraduate
+                        size={28}
+                        className="text-blue-700 sm:text-[32px]"
+                      />
 
                     )
                 }
 
-                </div>
+              </div>
 
-              <div>
+
+              <div className="min-w-0">
 
                 <p className="text-gray-500 text-sm">
 
@@ -295,28 +325,31 @@ function StudentPortal() {
 
                 </p>
 
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 break-words">
 
-                    {loadingStudent
-                        ? "Loading..."
-                        : student?.fullName || "Student"
-                    }
+                  {loadingStudent
+                    ? "Loading..."
+                    : student?.fullName ||
+                      "Student"
+                  }
 
                 </h2>
 
                 {
-                    student?.regNumber && (
+                  student?.regNumber && (
 
-                        <p className="text-gray-500 mt-1">
+                    <p className="text-gray-500 mt-1 text-sm sm:text-base break-all">
 
-                        {student.regNumber}
+                      {
+                        student.regNumber
+                      }
 
-                        </p>
+                    </p>
 
-                    )
+                  )
                 }
 
-                <p className="text-gray-500 mt-1">
+                <p className="text-gray-500 mt-1 text-sm">
 
                   Student Portal
 
@@ -327,7 +360,9 @@ function StudentPortal() {
             </div>
 
 
-            <div className="bg-blue-50 rounded-xl px-5 py-4">
+            {/* ACCOUNT STATUS */}
+
+            <div className="bg-blue-50 rounded-xl px-4 sm:px-5 py-3.5 sm:py-4 w-full md:w-auto md:min-w-[150px]">
 
               <p className="text-xs uppercase tracking-wide text-blue-600 font-semibold">
 
@@ -337,7 +372,7 @@ function StudentPortal() {
 
               <div className="flex items-center gap-2 mt-1">
 
-                <span className="w-2.5 h-2.5 bg-green-500 rounded-full" />
+                <span className="w-2.5 h-2.5 bg-green-500 rounded-full flex-shrink-0" />
 
                 <span className="font-semibold text-green-700">
 
@@ -358,17 +393,18 @@ function StudentPortal() {
             QUICK INTRO
         ====================================== */}
 
-        <section className="mb-6">
+        <section className="mb-5 sm:mb-6">
 
-          <h2 className="text-2xl font-bold text-gray-800">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
 
             My School Portal
 
           </h2>
 
-          <p className="text-gray-500 mt-1">
+          <p className="text-gray-500 mt-1 text-sm sm:text-base">
 
-            Access your academic information and school services.
+            Access your academic information and
+            school services.
 
           </p>
 
@@ -379,7 +415,7 @@ function StudentPortal() {
             FEATURE CARDS
         ====================================== */}
 
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
 
           {
             features.map(
@@ -392,15 +428,15 @@ function StudentPortal() {
                       feature
                     )
                   }
-                  className="bg-white rounded-2xl shadow hover:shadow-xl transition text-left p-6 group"
+                  className="w-full bg-white rounded-2xl shadow hover:shadow-xl active:scale-[0.99] transition text-left p-5 sm:p-6 group min-h-[220px]"
                 >
 
-                  {/* ICON */}
+                  {/* ICON + STATUS */}
 
-                  <div className="flex items-start justify-between">
+                  <div className="flex items-start justify-between gap-4">
 
                     <div
-                      className={`w-14 h-14 rounded-xl flex items-center justify-center text-xl ${feature.color}`}
+                      className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center text-lg sm:text-xl flex-shrink-0 ${feature.color}`}
                     >
 
                       {feature.icon}
@@ -411,7 +447,7 @@ function StudentPortal() {
                     {
                       feature.locked && (
 
-                        <div className="text-gray-400">
+                        <div className="text-gray-400 mt-1">
 
                           <FaLock />
 
@@ -425,15 +461,15 @@ function StudentPortal() {
 
                   {/* TEXT */}
 
-                  <div className="mt-5">
+                  <div className="mt-4 sm:mt-5">
 
-                    <h3 className="text-xl font-bold text-gray-800">
+                    <h3 className="text-lg sm:text-xl font-bold text-gray-800">
 
                       {feature.title}
 
                     </h3>
 
-                    <p className="text-gray-500 mt-2 leading-6">
+                    <p className="text-gray-500 mt-2 leading-6 text-sm sm:text-base">
 
                       {feature.description}
 
@@ -444,7 +480,7 @@ function StudentPortal() {
 
                   {/* ACTION */}
 
-                  <div className="mt-5 flex items-center gap-2 text-blue-600 font-semibold">
+                  <div className="mt-4 sm:mt-5 flex items-center gap-2 text-blue-600 font-semibold text-sm sm:text-base">
 
                     {
                       feature.locked
@@ -471,29 +507,30 @@ function StudentPortal() {
             RESULTS SECURITY NOTICE
         ====================================== */}
 
-        <section className="mt-8 bg-blue-50 border border-blue-100 rounded-2xl p-6">
+        <section className="mt-6 sm:mt-8 bg-blue-50 border border-blue-100 rounded-2xl p-4 sm:p-6">
 
-          <div className="flex gap-4">
+          <div className="flex gap-3 sm:gap-4">
 
-            <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
 
               <FaLock />
 
             </div>
 
-            <div>
+            <div className="min-w-0">
 
-              <h3 className="font-bold text-blue-900 text-lg">
+              <h3 className="font-bold text-blue-900 text-base sm:text-lg">
 
                 Results Security
 
               </h3>
 
-              <p className="text-blue-800 mt-1 leading-6">
+              <p className="text-blue-800 mt-1 leading-6 text-sm sm:text-base">
 
-                Your academic results are only available after
-                the result has been officially released through
-                the school's result verification system.
+                Your academic results are only available
+                after the result has been officially
+                released through the school's result
+                verification system.
 
               </p>
 

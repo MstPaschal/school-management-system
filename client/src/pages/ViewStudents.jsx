@@ -1,21 +1,40 @@
 import {
-
   useEffect,
-
   useState
-
 } from "react";
 
 import { useNavigate } from "react-router-dom";
 
 import api from "../services/api";
+
 import { SERVER_BASE_URL } from "../config/apiConfig";
+
+import {
+  FaUserGraduate,
+  FaSearch,
+  FaEye,
+  FaEdit,
+  FaTrash,
+  FaTimes,
+  FaPhone,
+  FaMapMarkerAlt,
+  FaCalendarAlt
+} from "react-icons/fa";
+
+import {
+  useNotification
+} from "../context/NotificationContext";
 
 
 function ViewStudents() {
 
   const navigate =
     useNavigate();
+
+  const {
+    notify,
+    confirmAction
+  } = useNotification();
 
   const [students, setStudents] =
     useState([]);
@@ -36,37 +55,58 @@ function ViewStudents() {
     setSelectedClass
   ] = useState("");
 
-  const [selectedStudent,
-  setSelectedStudent] =
-  useState(null);
+  const [
+    selectedStudent,
+    setSelectedStudent
+  ] = useState(null);
 
-  const [showProfile,
-  setShowProfile] =
-  useState(false);
+  const [
+    showProfile,
+    setShowProfile
+  ] = useState(false);
+
+  const [
+    loadingStudents,
+    setLoadingStudents
+  ] = useState(true);
+
+  const [
+    deletingId,
+    setDeletingId
+  ] = useState(null);
 
 
+  // ==========================================
   // LOAD DATA
+  // ==========================================
+
   useEffect(() => {
 
     fetchStudents();
-
     fetchClasses();
 
   }, []);
 
 
+  // ==========================================
   // FETCH STUDENTS
+  // ==========================================
+
   const fetchStudents =
     async () => {
 
       try {
+
+        setLoadingStudents(true);
 
         const res =
           await api.get(
             "/students"
           );
 
-        setStudents(res.data);
+        setStudents(
+          res.data
+        );
 
         setFilteredStudents(
           res.data
@@ -74,14 +114,30 @@ function ViewStudents() {
 
       } catch (error) {
 
-        console.log(error);
+        console.log(
+          "Failed to load students:",
+          error
+        );
+
+        notify(
+          error.response?.data?.message ||
+            "Failed to load students.",
+          "error"
+        );
+
+      } finally {
+
+        setLoadingStudents(false);
 
       }
 
     };
 
 
+  // ==========================================
   // FETCH CLASSES
+  // ==========================================
+
   const fetchClasses =
     async () => {
 
@@ -92,56 +148,106 @@ function ViewStudents() {
             "/classes"
           );
 
-        setClasses(res.data);
+        setClasses(
+          res.data
+        );
 
       } catch (error) {
 
-        console.log(error);
+        console.log(
+          "Failed to load classes:",
+          error
+        );
+
+        notify(
+          error.response?.data?.message ||
+            "Failed to load classes.",
+          "error"
+        );
 
       }
 
     };
 
 
+  // ==========================================
   // DELETE STUDENT
+  // ==========================================
+
   const handleDelete =
-    async (id) => {
+    async (student) => {
 
-      const confirmDelete =
-        window.confirm(
+      const confirmed =
+        await confirmAction(
+          `Are you sure you want to permanently delete ${student.fullName}? This action cannot be undone.`,
+          {
+            title:
+              "Delete Student",
 
-          "Are you sure you want to delete this student?"
+            confirmText:
+              "Delete Student",
 
+            cancelText:
+              "Cancel"
+          }
         );
 
-      if (!confirmDelete) return;
+      if (!confirmed) {
+        return;
+      }
 
 
       try {
 
-        const res =
-          await api.delete(
-
-            `/students/${id}`
-
-          );
-
-        alert(
-          res.data.message
+        setDeletingId(
+          student.id
         );
 
-        fetchStudents();
+        const res =
+          await api.delete(
+            `/students/${student.id}`
+          );
+
+        notify(
+          res.data.message ||
+            "Student deleted successfully.",
+          "success"
+        );
+
+        if (
+          selectedStudent?.id ===
+          student.id
+        ) {
+
+          setSelectedStudent(
+            null
+          );
+
+          setShowProfile(
+            false
+          );
+
+        }
+
+        await fetchStudents();
 
       } catch (error) {
 
-        console.log(error);
+        console.log(
+          "Delete student error:",
+          error
+        );
 
-        alert(
-
+        notify(
           error.response?.data?.message ||
+            "Delete failed.",
+          "error"
+        );
 
-          "Delete failed"
+      } finally {
 
+        setDeletingId(
+          null
         );
 
       }
@@ -149,44 +255,75 @@ function ViewStudents() {
     };
 
 
+  // ==========================================
   // SEARCH & FILTER
+  // ==========================================
+
   useEffect(() => {
 
-    let data = students;
+    let data =
+      students;
 
 
     // SEARCH
-    if (search) {
 
-      data = data.filter(
-        (student) =>
+    if (
+      search.trim()
+    ) {
 
-          student.fullName
-            .toLowerCase()
-            .includes(
-              search.toLowerCase()
-            )
-      );
+      const searchValue =
+        search
+          .trim()
+          .toLowerCase();
+
+      data =
+        data.filter(
+          (student) =>
+            student.fullName
+              ?.toLowerCase()
+              .includes(
+                searchValue
+              ) ||
+
+            student.regNumber
+              ?.toLowerCase()
+              .includes(
+                searchValue
+              ) ||
+
+            student.admissionNumber
+              ?.toLowerCase()
+              .includes(
+                searchValue
+              )
+        );
 
     }
 
 
     // FILTER BY CLASS
-    if (selectedClass) {
 
-      data = data.filter(
-        (student) =>
+    if (
+      selectedClass
+    ) {
 
-          String(
-            student.currentClass
-          ) ===
-          String(selectedClass)
-      );
+      data =
+        data.filter(
+          (student) =>
+            String(
+              student.currentClass
+            ) ===
+            String(
+              selectedClass
+            )
+        );
 
     }
 
 
-    setFilteredStudents(data);
+    setFilteredStudents(
+      data
+    );
 
   }, [
 
@@ -199,66 +336,152 @@ function ViewStudents() {
   ]);
 
 
+  // ==========================================
+  // OPEN PROFILE
+  // ==========================================
+
+  const openProfile =
+    (student) => {
+
+      setSelectedStudent(
+        student
+      );
+
+      setShowProfile(
+        true
+      );
+
+    };
+
+
+  // ==========================================
+  // CLOSE PROFILE
+  // ==========================================
+
+  const closeProfile =
+    () => {
+
+      setShowProfile(
+        false
+      );
+
+      setSelectedStudent(
+        null
+      );
+
+    };
+
+
   return (
 
-    <div className="p-6">
+    <div className="p-3 sm:p-4 md:p-6 overflow-x-hidden">
 
-      <div className="bg-white rounded-2xl shadow p-6">
+      <div className="bg-white rounded-2xl shadow p-4 sm:p-6">
 
-        {/* HEADER */}
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
+        {/* ========================================
+            HEADER
+        ======================================== */}
 
-          <h1 className="text-3xl font-bold">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6">
 
-            Students
+          <div className="flex items-center gap-3 min-w-0">
 
-          </h1>
+            <div className="bg-blue-100 text-blue-700 p-3 rounded-xl flex-shrink-0">
+
+              <FaUserGraduate
+                size={22}
+              />
+
+            </div>
+
+            <div className="min-w-0">
+
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">
+
+                Students
+
+              </h1>
+
+              <p className="text-gray-500 text-sm mt-1">
+
+                View, search and manage
+                student records.
+
+              </p>
+
+            </div>
+
+          </div>
 
 
-          <div className="flex gap-3 flex-col md:flex-row">
+          {/* SEARCH + FILTER */}
+
+          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
 
             {/* SEARCH */}
-            <input
-              type="text"
-              placeholder="Search student..."
-              value={search}
-              onChange={(e) =>
-                setSearch(
-                  e.target.value
-                )
-              }
-              className="border rounded-lg px-4 py-2"
-            />
+
+            <div className="relative w-full sm:w-64">
+
+              <FaSearch
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              />
+
+              <input
+                type="text"
+                placeholder="Search student..."
+                value={search}
+                onChange={(e) =>
+                  setSearch(
+                    e.target.value
+                  )
+                }
+                className="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+
+            </div>
 
 
             {/* FILTER */}
+
             <select
-              value={selectedClass}
+              value={
+                selectedClass
+              }
               onChange={(e) =>
                 setSelectedClass(
                   e.target.value
                 )
               }
-              className="border rounded-lg px-4 py-2"
+              className="w-full sm:w-52 border border-gray-300 rounded-lg px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
 
               <option value="">
+
                 All Classes
+
               </option>
 
               {
-                classes.map((cls) => (
+                classes.map(
+                  (cls) => (
 
-                  <option
-                    key={cls.id}
-                    value={cls.id}
-                  >
+                    <option
+                      key={
+                        cls.id
+                      }
+                      value={
+                        cls.id
+                      }
+                    >
 
-                    {cls.className}
+                      {
+                        cls.className
+                      }
 
-                  </option>
+                    </option>
 
-                ))
+                  )
+                )
               }
 
             </select>
@@ -268,452 +491,942 @@ function ViewStudents() {
         </div>
 
 
-        {/* TABLE */}
-        <div className="overflow-x-auto">
+        {/* ========================================
+            SUMMARY
+        ======================================== */}
 
-          <table className="w-full border-collapse">
+        <div className="bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 mb-5">
 
-            <thead>
+          <p className="text-sm text-blue-700">
 
-              <tr className="bg-gray-100 text-left">
+            Showing{" "}
 
-                <th className="p-3">
-                  Passport
-                </th>
+            <span className="font-bold">
 
-                <th className="p-3">
-                  Full Name
-                </th>
+              {
+                filteredStudents.length
+              }
 
-                <th className="p-3">
-                  Gender
-                </th>
+            </span>{" "}
 
-                <th className="p-3">
-                  Reg Number
-                </th>
+            of{" "}
 
-                <th className="p-3">
-                  Admission No
-                </th>
+            <span className="font-bold">
 
-                <th className="p-3">
-                  Status
-                </th>
+              {
+                students.length
+              }
 
-                <th className="p-3">
-                  Actions
-                </th>
+            </span>{" "}
 
-              </tr>
+            students
 
-            </thead>
+          </p>
+
+        </div>
 
 
-            <tbody>
+        {/* ========================================
+            LOADING
+        ======================================== */}
+
+        {
+          loadingStudents && (
+
+            <div className="py-16 text-center">
+
+              <div className="animate-spin w-10 h-10 border-4 border-blue-200 border-t-blue-600 rounded-full mx-auto mb-4" />
+
+              <p className="text-gray-500">
+
+                Loading students...
+
+              </p>
+
+            </div>
+
+          )
+        }
+
+
+        {/* ========================================
+            DESKTOP TABLE
+        ======================================== */}
+
+        {
+          !loadingStudents &&
+          filteredStudents.length > 0 && (
+
+            <div className="hidden md:block overflow-hidden">
+
+              <table className="w-full border-collapse">
+
+                <thead>
+
+                  <tr className="bg-gray-100 text-left">
+
+                    <th className="p-3">
+
+                      Passport
+
+                    </th>
+
+                    <th className="p-3">
+
+                      Full Name
+
+                    </th>
+
+                    <th className="p-3">
+
+                      Gender
+
+                    </th>
+
+                    <th className="p-3">
+
+                      Reg Number
+
+                    </th>
+
+                    <th className="p-3">
+
+                      Admission No
+
+                    </th>
+
+                    <th className="p-3">
+
+                      Status
+
+                    </th>
+
+                    <th className="p-3">
+
+                      Actions
+
+                    </th>
+
+                  </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                  {
+                    filteredStudents.map(
+                      (student) => {
+
+                        const isDeleting =
+                          deletingId ===
+                          student.id;
+
+                        return (
+
+                          <tr
+                            key={
+                              student.id
+                            }
+                            className="border-b hover:bg-gray-50"
+                          >
+
+                            {/* PASSPORT */}
+
+                            <td className="p-3">
+
+                              {
+                                student.passport
+                                  ? (
+
+                                    <img
+                                      src={`${SERVER_BASE_URL}/uploads/${student.passport}`}
+                                      alt={
+                                        student.fullName ||
+                                        "Student"
+                                      }
+                                      className="w-14 h-14 rounded-full object-cover"
+                                    />
+
+                                  )
+                                  : (
+
+                                    <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center text-gray-400">
+
+                                      <FaUserGraduate />
+
+                                    </div>
+
+                                  )
+                              }
+
+                            </td>
+
+
+                            {/* NAME */}
+
+                            <td className="p-3 font-medium">
+
+                              {
+                                student.fullName
+                              }
+
+                            </td>
+
+
+                            {/* GENDER */}
+
+                            <td className="p-3">
+
+                              {
+                                student.gender
+                              }
+
+                            </td>
+
+
+                            {/* REG NUMBER */}
+
+                            <td className="p-3">
+
+                              {
+                                student.regNumber
+                              }
+
+                            </td>
+
+
+                            {/* ADMISSION NUMBER */}
+
+                            <td className="p-3">
+
+                              {
+                                student.admissionNumber
+                              }
+
+                            </td>
+
+
+                            {/* STATUS */}
+
+                            <td className="p-3">
+
+                              <span
+                                className={`inline-flex px-3 py-1 rounded-full text-white text-sm font-semibold ${
+                                  student.status ===
+                                  "ACTIVE"
+                                    ? "bg-green-500"
+                                    : student.status ===
+                                      "INACTIVE"
+                                    ? "bg-red-500"
+                                    : "bg-purple-500"
+                                }`}
+                              >
+
+                                {
+                                  student.status
+                                }
+
+                              </span>
+
+                            </td>
+
+
+                            {/* ACTIONS */}
+
+                            <td className="p-3">
+
+                              <div className="flex items-center gap-2">
+
+                                <button
+                                  onClick={() =>
+                                    navigate(
+                                      `/students/edit/${student.id}`
+                                    )
+                                  }
+                                  className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg flex items-center gap-2 transition"
+                                >
+
+                                  <FaEdit />
+
+                                  <span>
+                                    Edit
+                                  </span>
+
+                                </button>
+
+
+                                <button
+                                  onClick={() =>
+                                    openProfile(
+                                      student
+                                    )
+                                  }
+                                  className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg flex items-center gap-2 transition"
+                                >
+
+                                  <FaEye />
+
+                                  <span>
+                                    View
+                                  </span>
+
+                                </button>
+
+
+                                <button
+                                  onClick={() =>
+                                    handleDelete(
+                                      student
+                                    )
+                                  }
+                                  disabled={
+                                    isDeleting
+                                  }
+                                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg flex items-center gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                                >
+
+                                  <FaTrash />
+
+                                  <span>
+
+                                    {
+                                      isDeleting
+                                        ? "Deleting..."
+                                        : "Delete"
+                                    }
+
+                                  </span>
+
+                                </button>
+
+                              </div>
+
+                            </td>
+
+                          </tr>
+
+                        );
+
+                      }
+                    )
+                  }
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          )
+        }
+
+
+        {/* ========================================
+            MOBILE STUDENT CARDS
+        ======================================== */}
+
+        {
+          !loadingStudents &&
+          filteredStudents.length > 0 && (
+
+            <div className="md:hidden space-y-3">
 
               {
                 filteredStudents.map(
-                  (student) => (
+                  (
+                    student,
+                    index
+                  ) => {
 
-                    <tr
-                      key={student.id}
-                      className="border-b"
-                    >
+                    const isDeleting =
+                      deletingId ===
+                      student.id;
 
-                      {/* PASSPORT */}
-                      <td className="p-3">
+                    return (
 
-                        {
-                          student.passport
-                            ? (
-
-                              <img
-                                src={`${SERVER_BASE_URL}/uploads/${student.passport}`}
-                                alt="passport"
-                                className="w-14 h-14 rounded-full object-cover"
-                              />
-
-                            ) : (
-
-                              <div className="w-14 h-14 rounded-full bg-gray-300" />
-
-                            )
+                      <div
+                        key={
+                          student.id
                         }
+                        className="border border-gray-200 rounded-2xl overflow-hidden bg-white shadow-sm"
+                      >
 
-                      </td>
+                        {/* FIRST LINE */}
 
+                        <div className="flex items-center gap-3 px-3 py-3 bg-gray-50 border-b border-gray-100">
 
-                      {/* NAME */}
-                      <td className="p-3 font-medium">
+                          {
+                            student.passport
+                              ? (
 
-                        {student.fullName}
+                                <img
+                                  src={`${SERVER_BASE_URL}/uploads/${student.passport}`}
+                                  alt={
+                                    student.fullName ||
+                                    "Student"
+                                  }
+                                  className="w-12 h-12 rounded-full object-cover flex-shrink-0 border-2 border-white shadow-sm"
+                                />
 
-                      </td>
+                              )
+                              : (
 
+                                <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 flex-shrink-0">
 
-                      {/* GENDER */}
-                      <td className="p-3">
+                                  <FaUserGraduate />
 
-                        {student.gender}
+                                </div>
 
-                      </td>
-
-
-                      {/* REG NUMBER */}
-                      <td className="p-3">
-
-                        {student.regNumber}
-
-                      </td>
-
-
-                      {/* ADMISSION NUMBER */}
-                      <td className="p-3">
-
-                        {student.admissionNumber}
-
-                      </td>
-
-
-                      {/* STATUS */}
-                      <td className="p-3">
-
-                        <span
-                          className={`px-3 py-1 rounded-full text-white text-sm ${
-                            student.status === "ACTIVE"
-                              ? "bg-green-500"
-                              : student.status === "INACTIVE"
-                              ? "bg-red-500"
-                              : "bg-purple-500"
-                          }`}
-                        >
-
-                          {student.status}
-
-                        </span>
-
-                      </td>
-
-
-                      {/* ACTIONS */}
-                      <td className="p-3 flex gap-2">
-
-                        <button
-                          onClick={() =>
-                            navigate(
-                              `/students/edit/${student.id}`
-                            )
+                              )
                           }
-                          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
-                        >
-
-                          Edit
-
-                        </button>
 
 
-                        <button
-                          onClick={() => {
+                          <div className="min-w-0 flex-1">
 
-                            setSelectedStudent(student);
+                            <div className="flex items-center gap-2">
 
-                            setShowProfile(true);
+                              <span className="text-xs text-gray-400 font-semibold">
 
-                          }}
-                          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
-                        >
+                                #
+                                {
+                                  index + 1
+                                }
 
-                          View
+                              </span>
 
-                        </button>
+                              <h3 className="font-semibold text-gray-800 break-words">
+
+                                {
+                                  student.fullName
+                                }
+
+                              </h3>
+
+                            </div>
+
+                            <p className="text-xs text-gray-500 mt-0.5 break-all">
+
+                              {
+                                student.regNumber
+                              }
+
+                            </p>
+
+                          </div>
 
 
-                        <button
-                          onClick={() =>
-                            handleDelete(student.id)
-                          }
-                          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
-                        >
+                          <span
+                            className={`px-2.5 py-1 rounded-full text-[10px] font-bold flex-shrink-0 ${
+                              student.status ===
+                              "ACTIVE"
+                                ? "bg-green-100 text-green-700"
+                                : student.status ===
+                                  "INACTIVE"
+                                ? "bg-red-100 text-red-700"
+                                : "bg-purple-100 text-purple-700"
+                            }`}
+                          >
 
-                          Delete
+                            {
+                              student.status
+                            }
 
-                        </button>
+                          </span>
 
-                      </td>
+                        </div>
 
-                    </tr>
 
-                  )
+                        {/* SECOND LINE */}
+
+                        <div className="grid grid-cols-2 gap-3 px-3 py-3">
+
+                          <div>
+
+                            <p className="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">
+
+                              Gender
+
+                            </p>
+
+                            <p className="text-sm text-gray-700 font-medium mt-0.5">
+
+                              {
+                                student.gender ||
+                                "N/A"
+                              }
+
+                            </p>
+
+                          </div>
+
+
+                          <div>
+
+                            <p className="text-[10px] uppercase tracking-wide text-gray-400 font-semibold">
+
+                              Admission No
+
+                            </p>
+
+                            <p className="text-sm text-gray-700 font-medium mt-0.5 break-all">
+
+                              {
+                                student.admissionNumber ||
+                                "N/A"
+                              }
+
+                            </p>
+
+                          </div>
+
+                        </div>
+
+
+                        {/* ACTIONS */}
+
+                        <div className="grid grid-cols-3 gap-2 px-3 pb-3">
+
+                          <button
+                            onClick={() =>
+                              navigate(
+                                `/students/edit/${student.id}`
+                              )
+                            }
+                            className="bg-blue-500 hover:bg-blue-600 text-white py-2.5 rounded-lg flex items-center justify-center gap-1.5 text-xs font-semibold transition"
+                          >
+
+                            <FaEdit />
+
+                            Edit
+
+                          </button>
+
+
+                          <button
+                            onClick={() =>
+                              openProfile(
+                                student
+                              )
+                            }
+                            className="bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg flex items-center justify-center gap-1.5 text-xs font-semibold transition"
+                          >
+
+                            <FaEye />
+
+                            View
+
+                          </button>
+
+
+                          <button
+                            onClick={() =>
+                              handleDelete(
+                                student
+                              )
+                            }
+                            disabled={
+                              isDeleting
+                            }
+                            className="bg-red-500 hover:bg-red-600 text-white py-2.5 rounded-lg flex items-center justify-center gap-1.5 text-xs font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
+                          >
+
+                            <FaTrash />
+
+                            {
+                              isDeleting
+                                ? "..."
+                                : "Delete"
+                            }
+
+                          </button>
+
+                        </div>
+
+                      </div>
+
+                    );
+
+                  }
                 )
               }
 
-            </tbody>
+            </div>
 
-          </table>
+          )
+        }
 
-        
-        {/* PROFILE MODAL */}
-          {
-            showProfile && selectedStudent && (
 
-              <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
+        {/* ========================================
+            EMPTY STATE
+        ======================================== */}
 
-                <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden">
+        {
+          !loadingStudents &&
+          filteredStudents.length === 0 && (
 
-                  {/* HEADER */}
-                  <div className="bg-blue-700 text-white p-6 text-center">
+            <div className="py-16 text-center">
 
-                    {/* SCHOOL LOGO */}
-                    <div className="flex justify-center mb-3">
+              <FaUserGraduate
+                size={48}
+                className="mx-auto text-gray-300 mb-4"
+              />
 
-                      <img
-                        src="/public/Logo.png"
-                        alt="School Logo"
-                        className="w-24 h-24 object-cover rounded-full border-4 border-white"
-                      />
+              <h2 className="text-xl font-semibold text-gray-600">
 
-                    </div>
+                No students found
 
-                    <h1 className="text-3xl font-bold">
+              </h2>
 
-                      GRISFIELD SCHOOLS
+              <p className="text-gray-400 mt-2 px-4">
 
-                    </h1>
+                {
+                  search ||
+                  selectedClass
+                    ? "Try adjusting your search or class filter."
+                    : "There are currently no students to display."
+                }
 
-                    <p className="text-lg mt-2">
+              </p>
 
-                      STUDENT PROFILE
+            </div>
 
-                    </p>
+          )
+        }
+
+      </div>
+
+
+      {/* ========================================
+          PROFILE MODAL
+      ======================================== */}
+
+      {
+        showProfile &&
+        selectedStudent && (
+
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-3 sm:p-4"
+            onClick={closeProfile}
+          >
+
+            <div
+              className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[94vh] overflow-hidden flex flex-col"
+              onClick={(e) =>
+                e.stopPropagation()
+              }
+            >
+
+              {/* HEADER */}
+
+              <div className="bg-blue-700 text-white p-5 sm:p-6 text-center relative flex-shrink-0">
+
+                <button
+                  onClick={
+                    closeProfile
+                  }
+                  className="absolute right-3 top-3 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                  aria-label="Close profile"
+                >
+
+                  <FaTimes />
+
+                </button>
+
+
+                {/* SCHOOL LOGO */}
+
+                <div className="flex justify-center mb-3">
+
+                  <img
+                    src="/Logo.png"
+                    alt="School Logo"
+                    className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-full border-4 border-white"
+                  />
+
+                </div>
+
+                <h1 className="text-xl sm:text-3xl font-bold">
+
+                  GRISFIELD SCHOOLS
+
+                </h1>
+
+                <p className="text-sm sm:text-lg mt-1 sm:mt-2 text-blue-100">
+
+                  STUDENT PROFILE
+
+                </p>
+
+              </div>
+
+
+              {/* BODY */}
+
+              <div className="p-4 sm:p-6 overflow-y-auto">
+
+                <div className="flex flex-col md:flex-row gap-6">
+
+                  {/* PASSPORT */}
+
+                  <div className="flex justify-center md:justify-start flex-shrink-0">
+
+                    {
+                      selectedStudent.passport
+                        ? (
+
+                          <img
+                            src={`${SERVER_BASE_URL}/uploads/${selectedStudent.passport}`}
+                            alt={
+                              selectedStudent.fullName ||
+                              "Student"
+                            }
+                            className="w-36 h-36 sm:w-40 sm:h-40 rounded-xl object-cover border"
+                          />
+
+                        )
+                        : (
+
+                          <div className="w-36 h-36 sm:w-40 sm:h-40 rounded-xl bg-gray-200 flex items-center justify-center text-gray-400">
+
+                            <FaUserGraduate
+                              size={40}
+                            />
+
+                          </div>
+
+                        )
+                    }
 
                   </div>
 
 
-                  {/* BODY */}
-                  <div className="p-6">
+                  {/* DETAILS */}
 
-                    <div className="flex flex-col md:flex-row gap-6">
+                  <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-                      {/* PASSPORT */}
-                      <div className="flex justify-center">
+                    <div>
+
+                      <h3 className="font-bold text-gray-600 text-sm">
+
+                        Full Name
+
+                      </h3>
+
+                      <p className="text-gray-800 break-words mt-0.5">
 
                         {
-                          selectedStudent.passport
-                            ? (
-
-                              <img
-                                src={`${SERVER_BASE_URL}/uploads/${selectedStudent.passport}`}
-                                alt="passport"
-                                className="w-40 h-40 rounded-xl object-cover border"
-                              />
-
-                            ) : (
-
-                              <div className="w-40 h-40 rounded-xl bg-gray-300" />
-
-                            )
+                          selectedStudent.fullName
                         }
 
-                      </div>
-
-
-                      {/* DETAILS */}
-                      <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                        <div>
-
-                          <h3 className="font-bold text-gray-600">
-
-                            Full Name
-
-                          </h3>
-
-                          <p>
-
-                            {selectedStudent.fullName}
-
-                          </p>
-
-                        </div>
-
-
-                        <div>
-
-                          <h3 className="font-bold text-gray-600">
-
-                            Reg Number
-
-                          </h3>
-
-                          <p>
-
-                            {selectedStudent.regNumber}
-
-                          </p>
-
-                        </div>
-
-
-                        <div>
-
-                          <h3 className="font-bold text-gray-600">
-
-                            Admission Number
-
-                          </h3>
-
-                          <p>
-
-                            {selectedStudent.admissionNumber}
-
-                          </p>
-
-                        </div>
-
-
-                        <div>
-
-                          <h3 className="font-bold text-gray-600">
-
-                            Gender
-
-                          </h3>
-
-                          <p>
-
-                            {selectedStudent.gender}
-
-                          </p>
-
-                        </div>
-
-
-                        <div>
-
-                          <h3 className="font-bold text-gray-600">
-
-                            Status
-
-                          </h3>
-
-                          <p>
-
-                            {selectedStudent.status}
-
-                          </p>
-
-                        </div>
-
-
-                        <div>
-
-                          <h3 className="font-bold text-gray-600">
-
-                            Date Of Birth
-
-                          </h3>
-
-                          <p>
-
-                            {selectedStudent.dob}
-
-                          </p>
-
-                        </div>
-
-
-                        <div>
-
-                          <h3 className="font-bold text-gray-600">
-
-                            Class
-
-                          </h3>
-
-                          <p>
-
-                            {
-                              classes.find(
-                                (cls) =>
-                                  String(cls.id) ===
-                                  String(selectedStudent.currentClass)
-                              )?.className || "N/A"
-                            }
-
-                          </p>
-
-                        </div>
-
-
-                        <div>
-
-                          <h3 className="font-bold text-gray-600">
-
-                            Parent Contact
-
-                          </h3>
-
-                          <p>
-
-                            {selectedStudent.contact1}
-
-                          </p>
-
-                        </div>
-
-
-                        <div>
-
-                          <h3 className="font-bold text-gray-600">
-
-                            Parent Contact
-
-                          </h3>
-
-                          <p>
-
-                            {selectedStudent.contact2}
-
-                          </p>
-
-                        </div>
-
-
-                        <div>
-
-                          <h3 className="font-bold text-gray-600">
-
-                            Address
-
-                          </h3>
-
-                          <p>
-
-                            {selectedStudent.address}
-
-                          </p>
-
-                        </div>
-
-                      </div>
+                      </p>
 
                     </div>
 
 
-                    {/* CLOSE BUTTON */}
-                    <div className="mt-8 text-center">
+                    <div>
 
-                      <button
-                        onClick={() =>
-                          setShowProfile(false)
+                      <h3 className="font-bold text-gray-600 text-sm">
+
+                        Reg Number
+
+                      </h3>
+
+                      <p className="text-gray-800 break-all mt-0.5">
+
+                        {
+                          selectedStudent.regNumber
                         }
-                        className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg"
-                      >
 
-                        Close
+                      </p>
 
-                      </button>
+                    </div>
+
+
+                    <div>
+
+                      <h3 className="font-bold text-gray-600 text-sm">
+
+                        Admission Number
+
+                      </h3>
+
+                      <p className="text-gray-800 break-all mt-0.5">
+
+                        {
+                          selectedStudent.admissionNumber
+                        }
+
+                      </p>
+
+                    </div>
+
+
+                    <div>
+
+                      <h3 className="font-bold text-gray-600 text-sm">
+
+                        Gender
+
+                      </h3>
+
+                      <p className="text-gray-800 mt-0.5">
+
+                        {
+                          selectedStudent.gender ||
+                          "N/A"
+                        }
+
+                      </p>
+
+                    </div>
+
+
+                    <div>
+
+                      <h3 className="font-bold text-gray-600 text-sm">
+
+                        Status
+
+                      </h3>
+
+                      <p className="mt-0.5">
+
+                        <span
+                          className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${
+                            selectedStudent.status ===
+                            "ACTIVE"
+                              ? "bg-green-100 text-green-700"
+                              : selectedStudent.status ===
+                                "INACTIVE"
+                              ? "bg-red-100 text-red-700"
+                              : "bg-purple-100 text-purple-700"
+                          }`}
+                        >
+
+                          {
+                            selectedStudent.status
+                          }
+
+                        </span>
+
+                      </p>
+
+                    </div>
+
+
+                    <div>
+
+                      <h3 className="font-bold text-gray-600 text-sm flex items-center gap-2">
+
+                        <FaCalendarAlt className="text-blue-600" />
+
+                        Date Of Birth
+
+                      </h3>
+
+                      <p className="text-gray-800 mt-0.5">
+
+                        {
+                          selectedStudent.dob ||
+                          "N/A"
+                        }
+
+                      </p>
+
+                    </div>
+
+
+                    <div>
+
+                      <h3 className="font-bold text-gray-600 text-sm">
+
+                        Class
+
+                      </h3>
+
+                      <p className="text-gray-800 mt-0.5">
+
+                        {
+                          classes.find(
+                            (cls) =>
+                              String(
+                                cls.id
+                              ) ===
+                              String(
+                                selectedStudent.currentClass
+                              )
+                          )?.className ||
+                          "N/A"
+                        }
+
+                      </p>
+
+                    </div>
+
+
+                    <div>
+
+                      <h3 className="font-bold text-gray-600 text-sm flex items-center gap-2">
+
+                        <FaPhone className="text-blue-600" />
+
+                        Parent Contact 1
+
+                      </h3>
+
+                      <p className="text-gray-800 break-all mt-0.5">
+
+                        {
+                          selectedStudent.contact1 ||
+                          "N/A"
+                        }
+
+                      </p>
+
+                    </div>
+
+
+                    <div>
+
+                      <h3 className="font-bold text-gray-600 text-sm flex items-center gap-2">
+
+                        <FaPhone className="text-blue-600" />
+
+                        Parent Contact 2
+
+                      </h3>
+
+                      <p className="text-gray-800 break-all mt-0.5">
+
+                        {
+                          selectedStudent.contact2 ||
+                          "N/A"
+                        }
+
+                      </p>
+
+                    </div>
+
+
+                    <div className="sm:col-span-2">
+
+                      <h3 className="font-bold text-gray-600 text-sm flex items-center gap-2">
+
+                        <FaMapMarkerAlt className="text-blue-600" />
+
+                        Address
+
+                      </h3>
+
+                      <p className="text-gray-800 break-words mt-0.5">
+
+                        {
+                          selectedStudent.address ||
+                          "N/A"
+                        }
+
+                      </p>
 
                     </div>
 
@@ -721,14 +1434,33 @@ function ViewStudents() {
 
                 </div>
 
+
+                {/* CLOSE BUTTON */}
+
+                <div className="mt-7 text-center">
+
+                  <button
+                    onClick={
+                      closeProfile
+                    }
+                    className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-semibold transition w-full sm:w-auto min-w-[120px]"
+                  >
+
+                    Close
+
+                  </button>
+
+                </div>
+
               </div>
 
-            )
-          }
-        
-        </div>
+            </div>
 
-      </div>
+          </div>
+
+        )
+
+      }
 
     </div>
 

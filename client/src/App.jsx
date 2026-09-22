@@ -1,100 +1,68 @@
 import {
-
   BrowserRouter,
-
   Routes,
-
   Route
-
 } from "react-router-dom";
 
 import Home from "./pages/Home";
-
 import About from "./pages/About";
-
 import Events from "./pages/Events";
-
 import Gallery from "./pages/Gallery";
-
 import Contact from "./pages/Contact";
-
 import ApplyNow from "./pages/ApplyNow";
-
 import Login from "./pages/Login";
 
 import StudentPortal from "./pages/StudentPortal";
+import StudentResults from "./pages/StudentResults";
+import StudentResultView from "./pages/StudentResultView";
 
 import Dashboard from "./pages/Dashboard";
+import TeacherDashboard from "./pages/TeacherDashboard";
 
 import MainLayout from "./layouts/MainLayout";
-
 import ProtectedRoute from "./routes/ProtectedRoute";
+import SuperAdminRoute from "./components/SuperAdminRoute";
 
 import CreateStudent from "./pages/CreateStudent";
-
 import ViewStudents from "./pages/ViewStudents";
-
 import StudentCredentials from "./pages/StudentCredentials";
-
 import EditStudent from "./pages/EditStudent";
 
 import SetPayment from "./pages/SetPayment";
-
 import AdminSettings from "./pages/AdminSettings";
 
 import CreateSession from "./pages/CreateSession";
-
 import CreateClass from "./pages/CreateClass";
-
 import CreateSubject from "./pages/CreateSubject";
 
 import CreateTeacher from "./pages/CreateTeacher";
-
 import AssignSubject from "./pages/AssignSubject";
-
 import EditTeacher from "./pages/EditTeacher";
 
 import ScoreEntry from "./pages/ScoreEntry";
-
 import CommentManager from "./pages/CommentManager";
-
 import MakeComments from "./pages/MakeComments";
 
 import ResultReport from "./pages/ResultReport";
-
 import StudentStatus from "./pages/StudentStatus";
-
 import StudentPromotion from "./pages/StudentPromotion";
 
 import DocumentUpload from "./pages/DocumentUpload";
-
 import ResultPins from "./pages/ResultPins";
-
 import ResultChecker from "./pages/ResultChecker";
-
 import ResultView from "./pages/ResultView";
-
-import TeacherDashboard from "./pages/TeacherDashboard";
 
 import CreateAdmin from "./pages/CreateAdmin";
 
-import SuperAdminRoute from "./components/SuperAdminRoute";
-
 import ForgotPassword from "./pages/ForgotPassword";
-
 import ResetPassword from "./pages/ResetPassword";
-
 import ChangePassword from "./pages/ChangePassword";
 
 import AdmissionRequests from "./pages/AdmissionRequests";
-
 import ManageEvents from "./pages/ManageEvents";
-
 import EventPreview from "./pages/EventPreview";
 
-import StudentResults from "./pages/StudentResults";
-
-import StudentResultView from "./pages/StudentResultView";
+import NotFound from "./pages/NotFound";
 
 
 function App() {
@@ -104,6 +72,10 @@ function App() {
     <BrowserRouter>
 
       <Routes>
+
+        {/* =========================
+            PUBLIC WEBSITE
+        ========================= */}
 
         <Route
           path="/"
@@ -126,6 +98,11 @@ function App() {
         />
 
         <Route
+          path="/events/:id"
+          element={<EventPreview />}
+        />
+
+        <Route
           path="/gallery"
           element={<Gallery />}
         />
@@ -140,516 +117,697 @@ function App() {
           element={<ApplyNow />}
         />
 
+        {/* =========================
+            STUDENT ROUTES
+        ========================= */}
+
         <Route
           path="/student-portal"
           element={
-            <ProtectedRoute>
+
+            <ProtectedRoute
+              allowedRoles={["student"]}
+            >
+
               <StudentPortal />
+
             </ProtectedRoute>
+
           }
         />
 
         <Route
           path="/student-results"
           element={
-            <ProtectedRoute>
+
+            <ProtectedRoute
+              allowedRoles={["student"]}
+            >
+
               <StudentResults />
+
             </ProtectedRoute>
+
           }
         />
 
         <Route
           path="/student-results/:accessId"
           element={
-            <ProtectedRoute>
+
+            <ProtectedRoute
+              allowedRoles={["student"]}
+            >
+
               <StudentResultView />
+
             </ProtectedRoute>
+
+          }
+        />
+
+        {/* =========================
+            ADMIN DASHBOARD
+        ========================= */}
+
+        <Route
+          path="/dashboard"
+          element={
+
+            <ProtectedRoute
+              allowedRoles={[
+                "admin",
+                "superadmin"
+              ]}
+            >
+
+              <MainLayout>
+
+                <Dashboard />
+
+              </MainLayout>
+
+            </ProtectedRoute>
+
+          }
+        />
+
+        {/* =========================
+            STUDENT MANAGEMENT
+            ADMIN + SUPERADMIN
+        ========================= */}
+
+        <Route
+          path="/students/create"
+          element={
+
+            <ProtectedRoute
+              allowedRoles={[
+                "admin",
+                "superadmin"
+              ]}
+            >
+
+              <MainLayout>
+
+                <CreateStudent />
+
+              </MainLayout>
+
+            </ProtectedRoute>
+
           }
         />
 
         <Route
-        path="/dashboard"
-        element={
+          path="/students/view"
+          element={
 
-        <ProtectedRoute>
+            <ProtectedRoute
+              allowedRoles={[
+                "admin",
+                "superadmin"
+              ]}
+            >
 
-        <MainLayout>
+              <MainLayout>
 
-        <Dashboard />
+                <ViewStudents />
 
-        </MainLayout>
+              </MainLayout>
 
-        </ProtectedRoute>
+            </ProtectedRoute>
 
-        }
+          }
         />
 
         <Route
-        path="/students/create"
-        element={
+          path="/students/credentials"
+          element={
 
-      <ProtectedRoute>
+            <ProtectedRoute
+              allowedRoles={[
+                "admin",
+                "superadmin"
+              ]}
+            >
 
-      <MainLayout>
+              <MainLayout>
 
-        <CreateStudent />
+                <StudentCredentials />
 
-      </MainLayout>
+              </MainLayout>
 
-      </ProtectedRoute>
+            </ProtectedRoute>
 
-      }
-      />
+          }
+        />
 
-      <Route
-      path="/students/view"
-      element={
+        <Route
+          path="/students/edit/:id"
+          element={
 
-      <ProtectedRoute>
+            <ProtectedRoute
+              allowedRoles={[
+                "admin",
+                "superadmin"
+              ]}
+            >
 
-        <MainLayout>
+              <MainLayout>
 
-          <ViewStudents />
+                <EditStudent />
 
-        </MainLayout>
+              </MainLayout>
 
-      </ProtectedRoute>
+            </ProtectedRoute>
 
-        }
-      />
+          }
+        />
 
+        {/* =========================
+            PAYMENTS
+            ADMIN + SUPERADMIN
+        ========================= */}
 
-    <Route
-      path="/students/credentials"
-      element={
-        <ProtectedRoute>
-          <MainLayout>
-            <StudentCredentials />
-          </MainLayout>
-        </ProtectedRoute>
-      }
-    />
+        <Route
+          path="/payments/set"
+          element={
 
+            <ProtectedRoute
+              allowedRoles={[
+                "admin",
+                "superadmin"
+              ]}
+            >
 
-    <Route
-  path="/students/edit/:id"
-  element={
+              <MainLayout>
 
-    <ProtectedRoute>
+                <SetPayment />
 
-      <MainLayout>
+              </MainLayout>
 
-        <EditStudent />
+            </ProtectedRoute>
 
-      </MainLayout>
+          }
+        />
 
-    </ProtectedRoute>
+        <Route
+          path="/admin-settings"
+          element={
 
-    }
-    />
+            <ProtectedRoute
+              allowedRoles={[
+                "admin",
+                "superadmin"
+              ]}
+            >
 
+              <MainLayout>
 
+                <AdminSettings />
 
-    <Route
-  path="/payments/set"
-  element={
+              </MainLayout>
 
-    <ProtectedRoute>
+            </ProtectedRoute>
 
-      <MainLayout>
+          }
+        />
 
-        <SetPayment />
+        {/* =========================
+            ACADEMIC SETUP
+            ADMIN + SUPERADMIN
+        ========================= */}
 
-      </MainLayout>
+        <Route
+          path="/sessions"
+          element={
 
-    </ProtectedRoute>
+            <ProtectedRoute
+              allowedRoles={[
+                "admin",
+                "superadmin"
+              ]}
+            >
 
-    }
-    />
+              <MainLayout>
 
+                <CreateSession />
 
+              </MainLayout>
 
-    <Route
-  path="/admin-settings"
-  element={
+            </ProtectedRoute>
 
-    <ProtectedRoute>
+          }
+        />
 
-      <MainLayout>
+        <Route
+          path="/classes"
+          element={
 
-        <AdminSettings />
+            <ProtectedRoute
+              allowedRoles={[
+                "admin",
+                "superadmin"
+              ]}
+            >
 
-      </MainLayout>
+              <MainLayout>
 
-    </ProtectedRoute>
+                <CreateClass />
 
-  }
-/>
+              </MainLayout>
 
+            </ProtectedRoute>
 
-    
-    <Route
-  path="/sessions"
-  element={
+          }
+        />
 
-    <ProtectedRoute>
+        <Route
+          path="/subjects"
+          element={
 
-      <MainLayout>
+            <ProtectedRoute
+              allowedRoles={[
+                "admin",
+                "superadmin"
+              ]}
+            >
 
-        <CreateSession />
+              <MainLayout>
 
-      </MainLayout>
+                <CreateSubject />
 
-    </ProtectedRoute>
+              </MainLayout>
 
-    }
-    />
+            </ProtectedRoute>
 
+          }
+        />
 
-    <Route
-  path="/classes"
-  element={
+        {/* =========================
+            TEACHER MANAGEMENT
+            ADMIN + SUPERADMIN
+        ========================= */}
 
-    <ProtectedRoute>
+        <Route
+          path="/teachers"
+          element={
 
-      <MainLayout>
+            <ProtectedRoute
+              allowedRoles={[
+                "admin",
+                "superadmin"
+              ]}
+            >
 
-        <CreateClass />
+              <MainLayout>
 
-      </MainLayout>
+                <CreateTeacher />
 
-    </ProtectedRoute>
+              </MainLayout>
 
-      }
-    />
+            </ProtectedRoute>
 
+          }
+        />
 
-    <Route
-  path="/subjects"
-  element={
+        <Route
+          path="/assign-subject"
+          element={
 
-    <ProtectedRoute>
+            <ProtectedRoute
+              allowedRoles={[
+                "admin",
+                "superadmin"
+              ]}
+            >
 
-      <MainLayout>
+              <MainLayout>
 
-        <CreateSubject />
+                <AssignSubject />
 
-      </MainLayout>
+              </MainLayout>
 
-    </ProtectedRoute>
+            </ProtectedRoute>
 
-      }
-    />
+          }
+        />
 
+        <Route
+          path="/teachers/edit/:id"
+          element={
 
-    <Route
-  path="/teachers"
-  element={
+            <ProtectedRoute
+              allowedRoles={[
+                "admin",
+                "superadmin"
+              ]}
+            >
 
-    <ProtectedRoute>
+              <MainLayout>
 
-      <MainLayout>
+                <EditTeacher />
 
-        <CreateTeacher />
+              </MainLayout>
 
-      </MainLayout>
+            </ProtectedRoute>
 
-    </ProtectedRoute>
+          }
+        />
 
-      }
-    />
+        {/* =========================
+            TEACHING / RESULT ROUTES
+            TEACHER + ADMIN + SUPERADMIN
+        ========================= */}
 
+        <Route
+          path="/score-entry"
+          element={
 
-    <Route
-  path="/assign-subject"
-  element={
+            <ProtectedRoute
+              allowedRoles={[
+                "teacher",
+                "admin",
+                "superadmin"
+              ]}
+            >
 
-    <ProtectedRoute>
+              <MainLayout>
 
-      <MainLayout>
+                <ScoreEntry />
 
-        <AssignSubject />
+              </MainLayout>
 
-      </MainLayout>
+            </ProtectedRoute>
 
-    </ProtectedRoute>
+          }
+        />
 
-    }
-    />
+        <Route
+          path="/comment-manager"
+          element={
 
+            <ProtectedRoute
+              allowedRoles={[
+                "admin",
+                "superadmin"
+              ]}
+            >
 
-    <Route
-  path="/teachers/edit/:id"
-  element={
+              <MainLayout>
 
-    <ProtectedRoute>
+                <CommentManager />
 
-      <MainLayout>
+              </MainLayout>
 
-        <EditTeacher />
+            </ProtectedRoute>
 
-      </MainLayout>
+          }
+        />
 
-    </ProtectedRoute>
+        <Route
+          path="/make-comments"
+          element={
 
-      }
-    />
+            <ProtectedRoute
+              allowedRoles={[
+                "teacher",
+                "admin",
+                "superadmin"
+              ]}
+            >
 
+              <MainLayout>
 
-    <Route
-  path="/score-entry"
-  element={
+                <MakeComments />
 
-    <ProtectedRoute>
+              </MainLayout>
 
-      <MainLayout>
+            </ProtectedRoute>
 
-        <ScoreEntry />
+          }
+        />
 
-      </MainLayout>
+        <Route
+          path="/results"
+          element={
 
-    </ProtectedRoute>
+            <ProtectedRoute
+              allowedRoles={[
+                "teacher",
+                "admin",
+                "superadmin"
+              ]}
+            >
 
-  }
-/>
+              <MainLayout>
 
+                <ResultReport />
 
-<Route
-  path="/comment-manager"
-  element={
-    <ProtectedRoute>
+              </MainLayout>
 
-      <MainLayout>
+            </ProtectedRoute>
 
-        <CommentManager />
+          }
+        />
 
-      </MainLayout>
+        {/* =========================
+            STUDENT ADMINISTRATION
+            ADMIN + SUPERADMIN
+        ========================= */}
 
-    </ProtectedRoute>
-  }
-/>
+        <Route
+          path="/student-status"
+          element={
 
+            <ProtectedRoute
+              allowedRoles={[
+                "admin",
+                "superadmin"
+              ]}
+            >
 
-<Route
-  path="/make-comments"
-  element={
+              <MainLayout>
 
-    <ProtectedRoute>
+                <StudentStatus />
 
-      <MainLayout>
+              </MainLayout>
 
-        <MakeComments />
+            </ProtectedRoute>
 
-      </MainLayout>
+          }
+        />
 
-    </ProtectedRoute>
+        <Route
+          path="/student-promotion"
+          element={
 
-  }
-/>
+            <ProtectedRoute
+              allowedRoles={[
+                "admin",
+                "superadmin"
+              ]}
+            >
 
+              <MainLayout>
 
-<Route
-  path="/results"
-  element={
+                <StudentPromotion />
 
-    <ProtectedRoute>
+              </MainLayout>
 
-      <MainLayout>
+            </ProtectedRoute>
 
-        <ResultReport />
+          }
+        />
 
-      </MainLayout>
+        {/* =========================
+            DOCUMENTS
+            ADMIN + SUPERADMIN
+        ========================= */}
 
-    </ProtectedRoute>
+        <Route
+          path="/documents"
+          element={
 
-  }
-/>
+            <ProtectedRoute
+              allowedRoles={[
+                "admin",
+                "superadmin"
+              ]}
+            >
 
+              <MainLayout>
 
-<Route
-  path="/student-status"
-  element={
+                <DocumentUpload />
 
-    <ProtectedRoute>
+              </MainLayout>
 
-      <MainLayout>
+            </ProtectedRoute>
 
-        <StudentStatus />
+          }
+        />
 
-      </MainLayout>
+        {/* =========================
+            SUPERADMIN ONLY
+        ========================= */}
 
-    </ProtectedRoute>
+        <Route
+          path="/result-pins"
+          element={
 
-  }
-/>
+            <SuperAdminRoute>
 
+              <MainLayout>
 
-<Route
-  path="/student-promotion"
-  element={
+                <ResultPins />
 
-    <ProtectedRoute>
+              </MainLayout>
 
-      <MainLayout>
+            </SuperAdminRoute>
 
-        <StudentPromotion />
+          }
+        />
 
-      </MainLayout>
+        <Route
+          path="/create-admin"
+          element={
 
-    </ProtectedRoute>
+            <SuperAdminRoute>
 
-  }
-/>
+              <MainLayout>
 
+                <CreateAdmin />
 
-<Route
-  path="/documents"
-  element={
+              </MainLayout>
 
-    <ProtectedRoute>
+            </SuperAdminRoute>
 
-      <MainLayout>
+          }
+        />
 
-        <DocumentUpload />
+        {/* =========================
+            TEACHER DASHBOARD
+        ========================= */}
 
-      </MainLayout>
+        <Route
+          path="/teacher-dashboard"
+          element={
 
-    </ProtectedRoute>
+            <ProtectedRoute
+              allowedRoles={["teacher"]}
+            >
 
-  }
-/>
+              <MainLayout>
 
+                <TeacherDashboard />
 
-<Route
-  path="/result-pins"
-  element={
+              </MainLayout>
 
-    <SuperAdminRoute>
+            </ProtectedRoute>
 
-      <MainLayout>
+          }
+        />
 
-        <ResultPins />
+        {/* =========================
+            PUBLIC RESULT CHECKER
+        ========================= */}
 
-      </MainLayout>
+        <Route
+          path="/result-checker"
+          element={<ResultChecker />}
+        />
 
-    </SuperAdminRoute>
+        <Route
+          path="/result-view"
+          element={<ResultView />}
+        />
 
-  }
-/>
+        {/* =========================
+            ADMISSIONS
+            ADMIN + SUPERADMIN
+        ========================= */}
 
+        <Route
+          path="/admission-requests"
+          element={
 
-<Route
-  path="/teacher-dashboard"
-  element={
+            <ProtectedRoute
+              allowedRoles={[
+                "admin",
+                "superadmin"
+              ]}
+            >
 
-    <ProtectedRoute>
+              <MainLayout>
 
-      <MainLayout>
+                <AdmissionRequests />
 
-        <TeacherDashboard />
-      
-      </MainLayout>
-      
-    </ProtectedRoute>
-    
-  }
-/>
+              </MainLayout>
 
+            </ProtectedRoute>
 
-<Route
-  path="/result-checker"
-  element={<ResultChecker />}
-/>
+          }
+        />
 
+        {/* =========================
+            EVENTS MANAGEMENT
+            ADMIN + SUPERADMIN
+        ========================= */}
 
-<Route
-  path="/result-view"
-  element={<ResultView />}
-/>
+        <Route
+          path="/manage-events"
+          element={
 
+            <ProtectedRoute
+              allowedRoles={[
+                "admin",
+                "superadmin"
+              ]}
+            >
 
-<Route
-  path="/create-admin"
-  element={
+              <MainLayout>
 
-    <SuperAdminRoute>
+                <ManageEvents />
 
-      <MainLayout>
+              </MainLayout>
 
-        <CreateAdmin />
+            </ProtectedRoute>
 
-      </MainLayout>
+          }
+        />
 
-    </SuperAdminRoute>
+        {/* =========================
+            PASSWORD ROUTES
+        ========================= */}
 
-  }
-/>
+        <Route
+          path="/forgot-password"
+          element={<ForgotPassword />}
+        />
 
+        <Route
+          path="/reset-password/:token"
+          element={<ResetPassword />}
+        />
 
-<Route
-  path="/admission-requests"
-  element={
+        <Route
+          path="/change-password"
+          element={
 
-    <ProtectedRoute>
+            <ProtectedRoute>
 
-      <MainLayout>
+              <ChangePassword />
 
-        <AdmissionRequests />
+            </ProtectedRoute>
 
-      </MainLayout>
+          }
+        />
 
-    </ProtectedRoute>
-
-  }
-/>
-
-<Route
-  path="/manage-events"
-  element={
-  
-    <ProtectedRoute>
-
-      <MainLayout>
-  
-        <ManageEvents />
-  
-      </MainLayout>
-
-    </ProtectedRoute>
-  
-  }
-/>
-
-
-<Route
-  path="/forgot-password"
-  element={<ForgotPassword />}
-/>
-
-<Route
-  path="/reset-password/:token"
-  element={<ResetPassword />}
-/>
-
-<Route
-  path="/change-password"
-  element={
-    <ProtectedRoute>
-      <ChangePassword />
-    </ProtectedRoute>
-  }
-/>
-
-<Route
-  path="/events"
-  element={<Events />}
-/>
-
-<Route
-  path="/events/:id"
-  element={<EventPreview />}
-/>
-
+        <Route 
+          path="*" 
+          element={<NotFound />} 
+        />
 
       </Routes>
 

@@ -1,282 +1,220 @@
-import {
-  useState
-} from "react";
-
-import {
-  useNavigate,
-  Link
-} from "react-router-dom";
-
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import {
   FaUser,
   FaLock,
   FaEye,
-  FaEyeSlash
+  FaEyeSlash,
 } from "react-icons/fa";
-
-import {
-  useAuth
-} from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
+import { useNotification } from "../context/NotificationContext";
 
 function Login() {
-
   const navigate = useNavigate();
-
   const { login } = useAuth();
+  const { notify } = useNotification();
 
-  const [username, setUsername] =
-    useState("");
-
-  const [password, setPassword] =
-    useState("");
-
-  const [showPassword, setShowPassword] =
-    useState(false);
-
-  const [loading, setLoading] =
-    useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
-
     e.preventDefault();
 
-    try {
+    const trimmedUsername = username.trim();
 
+    // Required field validation
+    if (!trimmedUsername) {
+      notify("Please enter your username.", "warning");
+      return;
+    }
+
+    if (!password.trim()) {
+      notify("Please enter your password.", "warning");
+      return;
+    }
+
+    try {
       setLoading(true);
 
-      const result =
-        await login(
-          username,
-          password
-        );
+      const result = await login(
+        trimmedUsername,
+        password
+      );
 
       if (result.success) {
+        notify("Login successful. Welcome back!", "success");
 
         if (
           result.user.role === "admin" ||
           result.user.role === "superadmin"
         ) {
-
           navigate("/dashboard");
-
-        } else if (
-          result.user.role === "teacher"
-        ) {
-
+        } else if (result.user.role === "teacher") {
           navigate("/teacher-dashboard");
-
-        } else if (
-          result.user.role === "student"
-        ) {
-
+        } else if (result.user.role === "student") {
           navigate("/student-portal");
-
+        } else {
+          notify(
+            "Your account role could not be recognized.",
+            "error"
+          );
         }
-
       } else {
-
-        alert(result.message);
-
+        notify(
+          result.message || "Invalid username or password.",
+          "error"
+        );
       }
-
     } catch (error) {
-
       console.log(error);
-
-      alert("Login failed");
-
+      notify(
+        "Login failed. Please check your connection and try again.",
+        "error"
+      );
     } finally {
-
       setLoading(false);
-
     }
-
   };
 
   return (
-
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 via-slate-200 to-slate-100 p-6">
-
-      <div className="w-full max-w-6xl bg-amber-50 rounded-[40px] shadow-2xl overflow-hidden">
-
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 via-slate-200 to-slate-100 p-4 sm:p-6">
+      <div className="w-full max-w-6xl bg-amber-50 rounded-[30px] sm:rounded-[40px] shadow-2xl overflow-hidden">
         <div className="grid md:grid-cols-2">
 
           {/* LEFT SIDE */}
-
-          <div className="p-10 md:p-14">
-
-            <div className="mb-10">
-
+          <div className="p-6 sm:p-10 md:p-14">
+            <div className="mb-8 sm:mb-10">
               <img
                 src="/Logo.png"
                 alt="School Logo"
-                className="w-20 mx-auto mb-6"
+                className="w-16 sm:w-20 mx-auto mb-5 sm:mb-6"
               />
 
-              <h1 className="text-4xl font-bold text-gray-800 text-center">
-
+              <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 text-center">
                 Hello!
-
               </h1>
 
-              <p className="text-gray-500 mt-2 text-center">
-
+              <p className="text-gray-500 mt-2 text-center text-sm sm:text-base">
                 Sign in to your account
-
               </p>
-
             </div>
 
             <form
               onSubmit={handleLogin}
-              className="space-y-6"
+              className="space-y-5 sm:space-y-6"
             >
-
               {/* USERNAME */}
-
               <div className="relative">
-
-                <FaUser
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-purple-600"
-                />
+                <FaUser className="absolute left-4 top-1/2 -translate-y-1/2 text-purple-600" />
 
                 <input
                   type="text"
                   value={username}
                   onChange={(e) =>
-                    setUsername(
-                      e.target.value
-                    )
+                    setUsername(e.target.value)
                   }
                   placeholder="Username"
-                  required
-                  className="w-full pl-12 pr-4 py-4 rounded-full bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  autoComplete="username"
+                  disabled={loading}
+                  className="w-full pl-12 pr-4 py-3.5 sm:py-4 rounded-full bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-60"
                 />
-
               </div>
 
               {/* PASSWORD */}
-
               <div className="relative">
-
-                <FaLock
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-purple-600"
-                />
+                <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-purple-600" />
 
                 <input
                   type={
-                    showPassword
-                      ? "text"
-                      : "password"
+                    showPassword ? "text" : "password"
                   }
                   value={password}
                   onChange={(e) =>
-                    setPassword(
-                      e.target.value
-                    )
+                    setPassword(e.target.value)
                   }
                   placeholder="Password"
-                  required
-                  className="w-full pl-12 pr-12 py-4 rounded-full bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  autoComplete="current-password"
+                  disabled={loading}
+                  className="w-full pl-12 pr-12 py-3.5 sm:py-4 rounded-full bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-60"
                 />
 
                 <button
                   type="button"
                   onClick={() =>
-                    setShowPassword(
-                      !showPassword
-                    )
+                    setShowPassword(!showPassword)
                   }
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-purple-600"
-                >
-
-                  {
+                  disabled={loading}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-purple-600 disabled:opacity-50"
+                  aria-label={
                     showPassword
-                      ? <FaEyeSlash />
-                      : <FaEye />
+                      ? "Hide password"
+                      : "Show password"
                   }
-
+                >
+                  {showPassword ? (
+                    <FaEyeSlash />
+                  ) : (
+                    <FaEye />
+                  )}
                 </button>
-
               </div>
 
-              <div className="flex justify-between text-sm">
-
-                <label className="flex items-center gap-2">
-
-                  <input type="checkbox" />
-
+              {/* OPTIONS */}
+              <div className="flex flex-col xs:flex-row sm:flex-row justify-between gap-3 text-sm">
+                <label className="flex items-center gap-2 text-gray-600">
+                  <input
+                    type="checkbox"
+                    className="accent-purple-600"
+                  />
                   Remember me
-
                 </label>
 
                 <Link
                   to="/forgot-password"
                   className="text-purple-600 hover:underline"
                 >
-
                   Forgot Password?
-
                 </Link>
-
               </div>
 
+              {/* LOGIN BUTTON */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold hover:scale-105 transition"
+                className="w-full py-3.5 sm:py-4 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold hover:scale-[1.02] transition disabled:opacity-70 disabled:hover:scale-100"
               >
-
-                {
-                  loading
-                    ? "Logging in..."
-                    : "SIGN IN"
-                }
-
+                {loading ? "Logging in..." : "SIGN IN"}
               </button>
-
             </form>
-
           </div>
 
           {/* RIGHT SIDE */}
-
           <div className="hidden md:flex flex-col items-center justify-center bg-gradient-to-br from-purple-700 via-purple-600 to-indigo-700 text-white p-12 relative overflow-hidden">
-
             <div className="absolute w-72 h-72 bg-white/10 rounded-full -top-20 -right-20"></div>
 
             <div className="absolute w-56 h-56 bg-white/10 rounded-full -bottom-10 -left-10"></div>
 
             <div className="relative z-10 text-center">
-
               <h2 className="text-5xl font-bold mb-6">
-
                 Welcome Back!
-
               </h2>
 
               <p className="text-lg leading-8 text-purple-100">
-
                 Welcome to GRISFIELD SCHOOLS
                 Management Portal.
-
                 <br />
                 Sign in to continue managing
                 students, teachers and records.
               </p>
-
             </div>
-
           </div>
 
         </div>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default Login;

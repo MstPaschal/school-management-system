@@ -17,7 +17,11 @@ const {
 } = require("../middleware/roleMiddleware");
 
 
+// =========================
 // CREATE CLASS
+// ADMIN + SUPERADMIN
+// =========================
+
 router.post(
   "/",
   verifyToken,
@@ -26,20 +30,30 @@ router.post(
 );
 
 
+// =========================
 // GET CLASSES
+// ADMIN + SUPERADMIN
+// =========================
+
 router.get(
   "/",
   verifyToken,
+  isAdmin,
   getClasses
 );
 
 
+// =========================
 // DELETE CLASS
+// ADMIN + SUPERADMIN
+// =========================
+
 router.delete(
   "/:id",
   verifyToken,
   isAdmin,
   deleteClass
 );
+
 
 module.exports = router;

@@ -4,144 +4,141 @@ import {
 } from "react";
 
 import api from "../services/api";
-
+import { useNotification } from "../context/NotificationContext";
 
 function CreateClass() {
+  const { notify, confirmAction } = useNotification();
 
-  const [className, setClassName] =
-    useState("");
-
-  const [classes, setClasses] =
-    useState([]);
-
-  const [loading, setLoading] =
-    useState(false);
-
+  const [className, setClassName] = useState("");
+  const [classes, setClasses] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
 
   // FETCH CLASSES
-  const fetchClasses =
-    async () => {
+  const fetchClasses = async () => {
+    try {
+      const res = await api.get("/classes");
 
-      try {
+      setClasses(res.data);
+    } catch (error) {
+      console.log(error);
 
-        const res =
-          await api.get(
-            "/classes"
-          );
-
-        setClasses(res.data);
-
-      } catch (error) {
-
-        console.log(error);
-
-      }
-
-    };
-
+      notify(
+        error.response?.data?.message ||
+          "Failed to load classes.",
+        "error"
+      );
+    }
+  };
 
   useEffect(() => {
-
     fetchClasses();
-
   }, []);
 
-
   // CREATE CLASS
-  const handleSubmit =
-    async (e) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-      e.preventDefault();
+    const trimmedClassName =
+      className.trim();
 
-      try {
+    if (!trimmedClassName) {
+      notify(
+        "Please enter a class name.",
+        "warning"
+      );
 
-        setLoading(true);
+      return;
+    }
 
-        const res =
-          await api.post(
-            "/classes",
-            { className }
-          );
+    try {
+      setLoading(true);
 
-        alert(res.data.message);
+      const res = await api.post(
+        "/classes",
+        {
+          className: trimmedClassName
+        }
+      );
 
-        setClassName("");
+      notify(
+        res.data.message ||
+          "Class created successfully.",
+        "success"
+      );
 
-        fetchClasses();
+      setClassName("");
 
-      } catch (error) {
+      fetchClasses();
+    } catch (error) {
+      console.log(error);
 
-        console.log(error);
-
-        alert(
-          error.response?.data?.message ||
-          "Failed to create class"
-        );
-
-      } finally {
-
-        setLoading(false);
-
-      }
-
-    };
-
+      notify(
+        error.response?.data?.message ||
+          "Failed to create class.",
+        "error"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // DELETE CLASS
-  const handleDelete =
-    async (id) => {
+  const handleDelete = async (id) => {
+    const confirmDelete =
+      await confirmAction(
+        "This class will be permanently deleted. This action cannot be undone.",
+        {
+          title: "Delete Class?",
+          confirmText: "Delete",
+          cancelText: "Cancel"
+        }
+      );
 
-      const confirmDelete =
-        window.confirm(
-          "Delete this class?"
-        );
+    if (!confirmDelete) return;
 
-      if (!confirmDelete) return;
+    try {
+      setDeletingId(id);
 
-      try {
+      const res = await api.delete(
+        `/classes/${id}`
+      );
 
-        const res =
-          await api.delete(
-            `/classes/${id}`
-          );
+      notify(
+        res.data.message ||
+          "Class deleted successfully.",
+        "success"
+      );
 
-        alert(res.data.message);
+      fetchClasses();
+    } catch (error) {
+      console.log(error);
 
-        fetchClasses();
-
-      } catch (error) {
-
-        console.log(error);
-
-        alert(
-          error.response?.data?.message ||
-          "Delete failed"
-        );
-
-      }
-
-    };
-
+      notify(
+        error.response?.data?.message ||
+          "Delete failed.",
+        "error"
+      );
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   return (
+    <div className="p-4 sm:p-6">
 
-    <div className="p-6">
+      <div className="bg-white rounded-2xl shadow p-4 sm:p-6 max-w-3xl">
 
-      <div className="bg-white rounded-2xl shadow p-6 max-w-3xl">
-
-        <h1 className="text-3xl font-bold mb-6">
-
+        {/* HEADER */}
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6">
           Create Class
-
         </h1>
-
 
         {/* FORM */}
         <form
           onSubmit={handleSubmit}
-          className="flex gap-3 mb-8"
+          className="flex flex-col sm:flex-row gap-3 mb-8"
         >
-
           <input
             type="text"
             placeholder="Enter class name"
@@ -151,98 +148,91 @@ function CreateClass() {
                 e.target.value
               )
             }
-            required
-            className="flex-1 border rounded-lg px-4 py-3"
+            className="flex-1 min-w-0 border border-slate-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
           />
 
-
           <button
+            type="submit"
             disabled={loading}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
+            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-medium transition"
           >
-
-            {
-              loading
-                ? "Creating..."
-                : "Create"
-            }
-
+            {loading
+              ? "Creating..."
+              : "Create"}
           </button>
-
         </form>
 
+        {/* EMPTY STATE */}
+        {classes.length === 0 ? (
+          <div className="py-8 text-center text-slate-500">
+            No classes found.
+          </div>
+        ) : (
+          /* TABLE */
+          <div className="w-full overflow-hidden">
+            <table className="w-full border-collapse table-fixed">
 
-        {/* TABLE */}
-        <div className="overflow-x-auto">
+              <thead>
+                <tr className="bg-gray-100 text-left">
 
-          <table className="w-full border-collapse">
+                  <th className="p-3 w-[65%]">
+                    Class Name
+                  </th>
 
-            <thead>
+                  <th className="p-3 w-[35%]">
+                    Action
+                  </th>
 
-              <tr className="bg-gray-100 text-left">
+                </tr>
+              </thead>
 
-                <th className="p-3">
-                  Class Name
-                </th>
+              <tbody>
 
-                <th className="p-3">
-                  Action
-                </th>
-
-              </tr>
-
-            </thead>
-
-
-            <tbody>
-
-              {
-                classes.map((cls) => (
-
+                {classes.map((cls) => (
                   <tr
                     key={cls.id}
                     className="border-b"
                   >
 
-                    <td className="p-3">
-
+                    <td className="p-3 break-words">
                       {cls.className}
-
                     </td>
-
 
                     <td className="p-3">
 
                       <button
                         onClick={() =>
-                          handleDelete(cls.id)
+                          handleDelete(
+                            cls.id
+                          )
                         }
-                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
+                        disabled={
+                          deletingId ===
+                          cls.id
+                        }
+                        className="bg-red-500 hover:bg-red-600 disabled:bg-red-300 disabled:cursor-not-allowed text-white px-3 sm:px-4 py-2 rounded-lg transition whitespace-nowrap"
                       >
-
-                        Delete
-
+                        {deletingId ===
+                        cls.id
+                          ? "Deleting..."
+                          : "Delete"}
                       </button>
 
                     </td>
 
                   </tr>
+                ))}
 
-                ))
-              }
+              </tbody>
 
-            </tbody>
-
-          </table>
-
-        </div>
+            </table>
+          </div>
+        )}
 
       </div>
 
     </div>
-
   );
-
 }
 
 export default CreateClass;

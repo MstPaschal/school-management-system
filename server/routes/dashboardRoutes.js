@@ -1,45 +1,46 @@
-const express =
-  require("express");
+const express = require("express");
 
-const router =
-  express.Router();
+const router = express.Router();
 
 const {
-
   getDashboardStats,
-
   getTeacherDashboard
-
-} = require(
-  "../controllers/dashboardController"
-);
+} = require("../controllers/dashboardController");
 
 const {
-
   verifyToken
+} = require("../middleware/authMiddleware");
 
-} = require(
-  "../middleware/authMiddleware"
-);
+const {
+  isAdmin,
+  isTeacher
+} = require("../middleware/roleMiddleware");
 
 
-// ======================================
+// =========================
 // ADMIN DASHBOARD
-// ======================================
+// ADMIN + SUPERADMIN ONLY
+// =========================
+
 router.get(
   "/stats",
   verifyToken,
+  isAdmin,
   getDashboardStats
 );
 
 
-// ======================================
+// =========================
 // TEACHER DASHBOARD
-// ======================================
+// TEACHER ONLY
+// =========================
+
 router.get(
   "/teacher",
   verifyToken,
+  isTeacher,
   getTeacherDashboard
 );
+
 
 module.exports = router;

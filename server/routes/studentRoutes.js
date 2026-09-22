@@ -37,13 +37,20 @@ const {
 } = require("../middleware/authMiddleware");
 
 const {
-  isAdmin
+  isAdmin,
+  isStaff,
+  isStudent
 } = require("../middleware/roleMiddleware");
 
-const upload = require("../config/multer");
+const upload =
+  require("../config/multer");
 
 
+// =========================
 // CREATE STUDENT
+// ADMIN + SUPERADMIN
+// =========================
+
 router.post(
   "/",
   verifyToken,
@@ -53,18 +60,28 @@ router.post(
 );
 
 
+// =========================
 // GET ALL STUDENTS
+// ADMIN + SUPERADMIN
+// =========================
+
 router.get(
   "/",
   verifyToken,
+  isAdmin,
   getStudents
 );
 
 
+// =========================
 // GET STUDENTS BY CLASS
+// TEACHER + ADMIN + SUPERADMIN
+// =========================
+
 router.get(
   "/class/:classId",
   verifyToken,
+  isStaff,
   getStudentsByClass
 );
 
@@ -77,6 +94,7 @@ router.get(
 router.get(
   "/me",
   verifyToken,
+  isStudent,
   getMyStudentProfile
 );
 
@@ -89,22 +107,23 @@ router.get(
 router.get(
   "/my-results",
   verifyToken,
+  isStudent,
   getMyReleasedResults
 );
 
 router.get(
   "/my-results/:accessId",
   verifyToken,
+  isStudent,
   getMyReleasedResult
 );
 
 
 // ==========================================
 // STUDENT PORTAL CREDENTIALS
-// ADMIN ONLY
+// ADMIN + SUPERADMIN
 // ==========================================
 
-// GET STUDENTS WITH PORTAL ACCOUNTS BY CLASS
 router.get(
   "/credentials/class/:classId",
   verifyToken,
@@ -112,8 +131,6 @@ router.get(
   getStudentCredentialsByClass
 );
 
-
-// GET ONE STUDENT'S PORTAL CREDENTIAL
 router.get(
   "/credentials/:studentId",
   verifyToken,
@@ -124,7 +141,9 @@ router.get(
 
 // =========================
 // STUDENT STATUS
+// ADMIN + SUPERADMIN
 // =========================
+
 router.get(
   "/status",
   verifyToken,
@@ -140,14 +159,24 @@ router.put(
 );
 
 
+// =========================
 // GET SINGLE STUDENT
+// TEACHER + ADMIN + SUPERADMIN
+// =========================
+
 router.get(
   "/:id",
   verifyToken,
+  isStaff,
   getSingleStudent
 );
 
+
+// =========================
 // UPDATE STUDENT
+// ADMIN + SUPERADMIN
+// =========================
+
 router.put(
   "/:id",
   verifyToken,
@@ -156,7 +185,12 @@ router.put(
   updateStudent
 );
 
+
+// =========================
 // DELETE STUDENT
+// ADMIN + SUPERADMIN
+// =========================
+
 router.delete(
   "/:id",
   verifyToken,
@@ -165,7 +199,11 @@ router.delete(
 );
 
 
+// =========================
 // DEACTIVATE STUDENT
+// ADMIN + SUPERADMIN
+// =========================
+
 router.put(
   "/deactivate/:id",
   verifyToken,
@@ -174,12 +212,17 @@ router.put(
 );
 
 
+// =========================
 // ACTIVATE STUDENT
+// ADMIN + SUPERADMIN
+// =========================
+
 router.put(
   "/activate/:id",
   verifyToken,
   isAdmin,
   activateStudent
 );
+
 
 module.exports = router;

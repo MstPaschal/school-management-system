@@ -10,6 +10,8 @@ import {
 
 import api from "../services/api";
 
+import { useNotification } from "../context/NotificationContext";
+
 
 function EditTeacher() {
 
@@ -19,11 +21,17 @@ function EditTeacher() {
   const { id } =
     useParams();
 
+  const {
+    notify
+  } = useNotification();
+
+
   const [loading, setLoading] =
     useState(false);
 
   const [classes, setClasses] =
     useState([]);
+
 
   const [formData, setFormData] =
     useState({
@@ -72,6 +80,7 @@ function EditTeacher() {
             `/teachers/${id}`
           );
 
+
         setFormData({
 
           fullName:
@@ -109,6 +118,12 @@ function EditTeacher() {
 
         console.log(error);
 
+        notify(
+          error.response?.data?.message ||
+          "Failed to load teacher details.",
+          "error"
+        );
+
       }
 
     };
@@ -125,11 +140,19 @@ function EditTeacher() {
             "/classes"
           );
 
-        setClasses(res.data);
+        setClasses(
+          res.data
+        );
 
       } catch (error) {
 
         console.log(error);
+
+        notify(
+          error.response?.data?.message ||
+          "Failed to load classes.",
+          "error"
+        );
 
       }
 
@@ -158,33 +181,118 @@ function EditTeacher() {
 
       e.preventDefault();
 
+
+      const fullName =
+        formData.fullName.trim();
+
+      const username =
+        formData.username.trim();
+
+      const assignedClass =
+        formData.assignedClass;
+
+
+      // VALIDATION
+      if (!fullName) {
+
+        notify(
+          "Please enter the teacher's full name.",
+          "warning"
+        );
+
+        return;
+
+      }
+
+
+      if (!username) {
+
+        notify(
+          "Please enter the teacher's username.",
+          "warning"
+        );
+
+        return;
+
+      }
+
+
+      if (!assignedClass) {
+
+        notify(
+          "Please select the teacher's assigned class.",
+          "warning"
+        );
+
+        return;
+
+      }
+
+
       try {
 
         setLoading(true);
+
+
+        const data = {
+
+          ...formData,
+
+          fullName,
+
+          username,
+
+          contact:
+            formData.contact.trim(),
+
+          address:
+            formData.address.trim(),
+
+          nextOfKin:
+            formData.nextOfKin.trim(),
+
+          nokContact:
+            formData.nokContact.trim(),
+
+          nokAddress:
+            formData.nokAddress.trim()
+
+        };
+
 
         const res =
           await api.put(
 
             `/teachers/${id}`,
 
-            formData
+            data
 
           );
 
-        alert(res.data.message);
 
-        navigate("/teachers");
+        notify(
+          res.data.message ||
+          "Teacher updated successfully.",
+          "success"
+        );
+
+
+        setTimeout(() => {
+
+          navigate(
+            "/teachers"
+          );
+
+        }, 700);
 
       } catch (error) {
 
         console.log(error);
 
-        alert(
-
+        notify(
           error.response?.data?.message ||
-
-          "Update failed"
-
+          "Update failed.",
+          "error"
         );
 
       } finally {
@@ -198,11 +306,11 @@ function EditTeacher() {
 
   return (
 
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
 
-      <div className="bg-white rounded-2xl shadow p-6 max-w-4xl mx-auto">
+      <div className="bg-white rounded-2xl shadow p-4 sm:p-6 max-w-4xl mx-auto">
 
-        <h1 className="text-3xl font-bold mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6">
 
           Edit Teacher
 
@@ -214,107 +322,205 @@ function EditTeacher() {
           className="grid grid-cols-1 md:grid-cols-2 gap-5"
         >
 
+
           {/* FULL NAME */}
-          <input
-            type="text"
-            name="fullName"
-            value={formData.fullName}
-            onChange={handleChange}
-            placeholder="Full Name"
-            className="border rounded-lg px-4 py-3"
-          />
+          <div>
+
+            <label className="block mb-1.5 font-medium text-slate-700">
+
+              Full Name
+
+            </label>
+
+            <input
+              type="text"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              placeholder="Full Name"
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+            />
+
+          </div>
 
 
           {/* USERNAME */}
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            placeholder="Username"
-            className="border rounded-lg px-4 py-3"
-          />
+          <div>
+
+            <label className="block mb-1.5 font-medium text-slate-700">
+
+              Username
+
+            </label>
+
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="Username"
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+            />
+
+          </div>
 
 
           {/* PASSWORD */}
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="New Password (optional)"
-            className="border rounded-lg px-4 py-3"
-          />
+          <div>
+
+            <label className="block mb-1.5 font-medium text-slate-700">
+
+              New Password
+
+            </label>
+
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="New Password (optional)"
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+            />
+
+            <p className="mt-1.5 text-xs text-slate-400">
+
+              Leave empty to keep the current password.
+
+            </p>
+
+          </div>
 
 
           {/* CONTACT */}
-          <input
-            type="text"
-            name="contact"
-            value={formData.contact}
-            onChange={handleChange}
-            placeholder="Contact"
-            className="border rounded-lg px-4 py-3"
-          />
+          <div>
+
+            <label className="block mb-1.5 font-medium text-slate-700">
+
+              Contact
+
+            </label>
+
+            <input
+              type="text"
+              name="contact"
+              value={formData.contact}
+              onChange={handleChange}
+              placeholder="Contact"
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+            />
+
+          </div>
 
 
           {/* DOB */}
-          <input
-            type="date"
-            name="dob"
-            value={formData.dob}
-            onChange={handleChange}
-            className="border rounded-lg px-4 py-3"
-          />
+          <div>
+
+            <label className="block mb-1.5 font-medium text-slate-700">
+
+              Date Of Birth
+
+            </label>
+
+            <input
+              type="date"
+              name="dob"
+              value={formData.dob}
+              onChange={handleChange}
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+            />
+
+          </div>
 
 
           {/* NEXT OF KIN */}
-          <input
-            type="text"
-            name="nextOfKin"
-            value={formData.nextOfKin}
-            onChange={handleChange}
-            placeholder="Next Of Kin"
-            className="border rounded-lg px-4 py-3"
-          />
+          <div>
+
+            <label className="block mb-1.5 font-medium text-slate-700">
+
+              Next Of Kin
+
+            </label>
+
+            <input
+              type="text"
+              name="nextOfKin"
+              value={formData.nextOfKin}
+              onChange={handleChange}
+              placeholder="Next Of Kin"
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+            />
+
+          </div>
 
 
           {/* NOK CONTACT */}
-          <input
-            type="text"
-            name="nokContact"
-            value={formData.nokContact}
-            onChange={handleChange}
-            placeholder="NOK Contact"
-            className="border rounded-lg px-4 py-3"
-          />
+          <div>
+
+            <label className="block mb-1.5 font-medium text-slate-700">
+
+              NOK Contact
+
+            </label>
+
+            <input
+              type="text"
+              name="nokContact"
+              value={formData.nokContact}
+              onChange={handleChange}
+              placeholder="NOK Contact"
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+            />
+
+          </div>
 
 
           {/* NOK ADDRESS */}
-          <input
-            type="text"
-            name="nokAddress"
-            value={formData.nokAddress}
-            onChange={handleChange}
-            placeholder="NOK Address"
-            className="border rounded-lg px-4 py-3"
-          />
+          <div>
+
+            <label className="block mb-1.5 font-medium text-slate-700">
+
+              NOK Address
+
+            </label>
+
+            <input
+              type="text"
+              name="nokAddress"
+              value={formData.nokAddress}
+              onChange={handleChange}
+              placeholder="NOK Address"
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+            />
+
+          </div>
 
 
           {/* ADDRESS */}
-          <textarea
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-            placeholder="Address"
-            className="border rounded-lg px-4 py-3 md:col-span-2"
-          />
+          <div className="md:col-span-2">
+
+            <label className="block mb-1.5 font-medium text-slate-700">
+
+              Address
+
+            </label>
+
+            <textarea
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              placeholder="Address"
+              rows="3"
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 resize-none outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+            />
+
+          </div>
 
 
           {/* ASSIGNED CLASS */}
           <div className="md:col-span-2">
 
-            <label className="block mb-1 font-medium">
+            <label className="block mb-1.5 font-medium text-slate-700">
 
               Assigned Class
 
@@ -324,11 +530,13 @@ function EditTeacher() {
               name="assignedClass"
               value={formData.assignedClass}
               onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-3"
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
             >
 
               <option value="">
+
                 Select Class
+
               </option>
 
               {
@@ -357,7 +565,7 @@ function EditTeacher() {
             <button
               type="submit"
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
+              className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-semibold transition"
             >
 
               {

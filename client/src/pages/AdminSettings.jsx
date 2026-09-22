@@ -9,10 +9,16 @@ import {
   useAuth
 } from "../context/AuthContext";
 
+import {
+  useNotification
+} from "../context/NotificationContext";
+
 
 function AdminSettings() {
 
   const { user } = useAuth();
+
+  const { notify } = useNotification();
 
   const [classes, setClasses] =
     useState([]);
@@ -106,6 +112,12 @@ function AdminSettings() {
 
         console.log(error);
 
+        notify(
+          error.response?.data?.message ||
+          "Failed to load classes",
+          "error"
+        );
+
       }
 
     };
@@ -126,6 +138,12 @@ function AdminSettings() {
 
         console.log(error);
 
+        notify(
+          error.response?.data?.message ||
+          "Failed to load sessions",
+          "error"
+        );
+
       }
 
     };
@@ -143,6 +161,11 @@ function AdminSettings() {
           e.target.value
 
       });
+
+      // If the filter changes, the currently
+      // displayed settings no longer represent
+      // the new selection.
+      setLoaded(false);
 
     };
 
@@ -167,24 +190,34 @@ function AdminSettings() {
   const loadSettings =
     async () => {
 
+      // REQUIRED FIELD VALIDATION
+      const missingFields = [];
+
+      if (!filters.classId) {
+        missingFields.push("Class");
+      }
+
+      if (!filters.sessionId) {
+        missingFields.push("Session");
+      }
+
+      if (!filters.term) {
+        missingFields.push("Term");
+      }
+
+      if (missingFields.length > 0) {
+
+        notify(
+          `Please select ${missingFields.join(" and ")} before loading settings.`,
+          "warning"
+        );
+
+        return;
+
+      }
+
+
       try {
-
-        if (
-
-          !filters.classId ||
-
-          !filters.sessionId ||
-
-          !filters.term
-
-        ) {
-
-          return alert(
-            "Select class, session and term"
-          );
-
-        }
-
 
         setLoading(true);
 
@@ -250,12 +283,15 @@ function AdminSettings() {
 
         setLoaded(true);
 
+
       } catch (error) {
 
         console.log(error);
 
-        alert(
-          "Failed to load settings"
+        notify(
+          error.response?.data?.message ||
+          "Failed to load settings",
+          "error"
         );
 
       } finally {
@@ -272,6 +308,34 @@ function AdminSettings() {
     async (e) => {
 
       e.preventDefault();
+
+
+      // SAFETY VALIDATION BEFORE SAVE
+      const missingFields = [];
+
+      if (!filters.classId) {
+        missingFields.push("Class");
+      }
+
+      if (!filters.sessionId) {
+        missingFields.push("Session");
+      }
+
+      if (!filters.term) {
+        missingFields.push("Term");
+      }
+
+      if (missingFields.length > 0) {
+
+        notify(
+          `Please select ${missingFields.join(" and ")} before saving settings.`,
+          "warning"
+        );
+
+        return;
+
+      }
+
 
       try {
 
@@ -296,17 +360,24 @@ function AdminSettings() {
           );
 
 
-        alert(res.data.message);
+        notify(
+          res.data.message ||
+          "Settings saved successfully",
+          "success"
+        );
+
 
       } catch (error) {
 
         console.log(error);
 
-        alert(
+        notify(
 
           error.response?.data?.message ||
 
-          "Save failed"
+          "Save failed",
+
+          "error"
 
         );
 
@@ -321,11 +392,11 @@ function AdminSettings() {
 
   return (
 
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
 
-      <div className="bg-white rounded-2xl shadow p-6">
+      <div className="bg-white rounded-2xl shadow p-4 sm:p-6">
 
-        <h1 className="text-3xl font-bold mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6">
 
           Admin Settings
 
@@ -343,7 +414,9 @@ function AdminSettings() {
             disabled={user?.role === "teacher"}
             className={`
 
+              w-full
               border rounded-lg px-4 py-3
+              text-sm sm:text-base
 
               ${
                 user?.role === "teacher"
@@ -381,7 +454,11 @@ function AdminSettings() {
             name="sessionId"
             value={filters.sessionId}
             onChange={handleFilterChange}
-            className="border rounded-lg px-4 py-3"
+            className="
+              w-full
+              border rounded-lg px-4 py-3
+              text-sm sm:text-base
+            "
           >
 
             <option value="">
@@ -411,8 +488,16 @@ function AdminSettings() {
             name="term"
             value={filters.term}
             onChange={handleFilterChange}
-            className="border rounded-lg px-4 py-3"
+            className="
+              w-full
+              border rounded-lg px-4 py-3
+              text-sm sm:text-base
+            "
           >
+
+            <option value="">
+              Select Term
+            </option>
 
             <option>
               1st Term
@@ -432,7 +517,20 @@ function AdminSettings() {
           {/* LOAD */}
           <button
             onClick={loadSettings}
-            className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-4 py-3"
+            disabled={loading}
+            className="
+              w-full
+              bg-blue-600
+              hover:bg-blue-700
+              disabled:opacity-60
+              disabled:cursor-not-allowed
+              text-white
+              rounded-lg
+              px-4
+              py-3
+              font-medium
+              transition
+            "
           >
 
             {
@@ -452,7 +550,12 @@ function AdminSettings() {
 
             <form
               onSubmit={handleSubmit}
-              className="grid grid-cols-1 md:grid-cols-3 gap-5"
+              className="
+                grid
+                grid-cols-1
+                md:grid-cols-3
+                gap-5
+              "
             >
 
               {/* NEXT TERM */}
@@ -469,7 +572,14 @@ function AdminSettings() {
                   name="nextTermResumes"
                   value={formData.nextTermResumes}
                   onChange={handleFormChange}
-                  className="w-full border rounded-lg px-4 py-3"
+                  className="
+                    w-full
+                    border
+                    rounded-lg
+                    px-4
+                    py-3
+                    text-sm sm:text-base
+                  "
                 />
 
               </div>
@@ -489,7 +599,15 @@ function AdminSettings() {
                   name="tuitionFee"
                   value={formData.tuitionFee}
                   onChange={handleFormChange}
-                  className="w-full border rounded-lg px-4 py-3"
+                  min="0"
+                  className="
+                    w-full
+                    border
+                    rounded-lg
+                    px-4
+                    py-3
+                    text-sm sm:text-base
+                  "
                 />
 
               </div>
@@ -509,7 +627,15 @@ function AdminSettings() {
                   name="saturdayLesson"
                   value={formData.saturdayLesson}
                   onChange={handleFormChange}
-                  className="w-full border rounded-lg px-4 py-3"
+                  min="0"
+                  className="
+                    w-full
+                    border
+                    rounded-lg
+                    px-4
+                    py-3
+                    text-sm sm:text-base
+                  "
                 />
 
               </div>
@@ -529,7 +655,15 @@ function AdminSettings() {
                   name="scratchCard"
                   value={formData.scratchCard}
                   onChange={handleFormChange}
-                  className="w-full border rounded-lg px-4 py-3"
+                  min="0"
+                  className="
+                    w-full
+                    border
+                    rounded-lg
+                    px-4
+                    py-3
+                    text-sm sm:text-base
+                  "
                 />
 
               </div>
@@ -549,7 +683,15 @@ function AdminSettings() {
                   name="termlyActivities"
                   value={formData.termlyActivities}
                   onChange={handleFormChange}
-                  className="w-full border rounded-lg px-4 py-3"
+                  min="0"
+                  className="
+                    w-full
+                    border
+                    rounded-lg
+                    px-4
+                    py-3
+                    text-sm sm:text-base
+                  "
                 />
 
               </div>
@@ -569,7 +711,15 @@ function AdminSettings() {
                   name="books"
                   value={formData.books}
                   onChange={handleFormChange}
-                  className="w-full border rounded-lg px-4 py-3"
+                  min="0"
+                  className="
+                    w-full
+                    border
+                    rounded-lg
+                    px-4
+                    py-3
+                    text-sm sm:text-base
+                  "
                 />
 
               </div>
@@ -579,8 +729,21 @@ function AdminSettings() {
               <div className="md:col-span-3">
 
                 <button
+                  type="submit"
                   disabled={loading}
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg"
+                  className="
+                    w-full sm:w-auto
+                    bg-green-600
+                    hover:bg-green-700
+                    disabled:opacity-60
+                    disabled:cursor-not-allowed
+                    text-white
+                    px-6
+                    py-3
+                    rounded-lg
+                    font-medium
+                    transition
+                  "
                 >
 
                   {

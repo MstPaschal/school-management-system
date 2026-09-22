@@ -11,13 +11,20 @@ const {
   verifyToken
 } = require("../middleware/authMiddleware");
 
+const {
+  isStaff
+} = require("../middleware/roleMiddleware");
+
 
 // ======================================
-// ADMIN RESULT VIEW
+// STAFF RESULT VIEW
+// TEACHER + ADMIN + SUPERADMIN
 // ======================================
+
 router.get(
   "/view",
   verifyToken,
+  isStaff,
   viewStudentResult
 );
 
@@ -25,6 +32,7 @@ router.get(
 // ======================================
 // PUBLIC RESULT CHECKER
 // ======================================
+
 router.post(
   "/result-checker",
   checkResult

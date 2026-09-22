@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
+import  {useNotification} from "../context/NotificationContext";
 
 function AdmissionRequests() {
+  const { notify, confirmAction } = useNotification();
+
   const [applications, setApplications] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -25,7 +28,7 @@ function AdmissionRequests() {
       setApplications(res.data);
     } catch (error) {
       console.log(error);
-      alert("Failed to load applications");
+      notify("Failed to load applications", "error");
     } finally {
       setLoading(false);
     }
@@ -93,7 +96,7 @@ function AdmissionRequests() {
   // =========================
   const handleBulkAccept = () => {
     if (selectedIds.length === 0) {
-      return alert("Select at least one student");
+      return notify("Select at least one student", "warning");
     }
     setShowSchedule(true);
   };
@@ -103,7 +106,7 @@ function AdmissionRequests() {
   // =========================
   const handleSendInvitation = async () => {
     if (!examDate || !examTime) {
-      return alert("Please select date and time");
+      return notify("Please select date and time", "warning");
     }
 
     try {
@@ -113,7 +116,7 @@ function AdmissionRequests() {
         examTime,
       });
 
-      alert(res.data.message);
+      notify(res.data.message, "success");
 
       setSelectedIds([]);
       setExamDate("");
@@ -123,7 +126,7 @@ function AdmissionRequests() {
       loadApplications();
     } catch (error) {
       console.log(error);
-      alert("Failed to send invitations");
+      notify("Failed to send invitations", "error");
     }
   };
 
@@ -131,16 +134,24 @@ function AdmissionRequests() {
   // REJECT SINGLE
   // =========================
   const handleReject = async (id) => {
-    const confirmReject = window.confirm("Reject this application?");
+    const confirmReject = await confirmAction(
+      "Reject this application?",
+      {
+        title: "Reject Application?",
+        confirmText: "Reject",
+        cancelText: "Cancel",
+      }
+    );
+
     if (!confirmReject) return;
 
     try {
       const res = await api.put(`/admissions/reject/${id}`);
-      alert(res.data.message);
+      notify(res.data.message, "success");
       loadApplications();
     } catch (error) {
       console.log(error);
-      alert("Failed to reject application");
+      notify("Failed to reject application", "error");
     }
   };
 

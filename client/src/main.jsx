@@ -1,3 +1,5 @@
+import { NotificationProvider } from "./context/NotificationContext";
+
 import React from "react";
 
 import ReactDOM from "react-dom/client";
@@ -20,7 +22,11 @@ ReactDOM.createRoot(
 
     <AuthProvider>
 
-      <App />
+      <NotificationProvider>
+
+        <App />
+
+      </NotificationProvider>
 
     </AuthProvider>
 

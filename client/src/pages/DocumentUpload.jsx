@@ -7,7 +7,16 @@ import api from "../services/api";
 
 import { SERVER_BASE_URL } from "../config/apiConfig";
 
+import { useNotification } from "../context/NotificationContext";
+
+
 function DocumentUpload() {
+
+  const {
+    notify,
+    confirmAction
+  } = useNotification();
+
 
   const [classes, setClasses] =
     useState([]);
@@ -24,6 +33,10 @@ function DocumentUpload() {
   const [uploading, setUploading] =
     useState(false);
 
+  const [deletingId, setDeletingId] =
+    useState(null);
+
+
   const [formData, setFormData] =
     useState({
 
@@ -34,6 +47,7 @@ function DocumentUpload() {
       term: "1st Term"
 
     });
+
 
   const [selectedFile, setSelectedFile] =
     useState(null);
@@ -56,13 +70,21 @@ function DocumentUpload() {
       try {
 
         const res =
-          await api.get("/classes");
+          await api.get(
+            "/classes"
+          );
 
         setClasses(res.data);
 
       } catch (error) {
 
         console.log(error);
+
+        notify(
+          error.response?.data?.message ||
+          "Failed to load classes.",
+          "error"
+        );
 
       }
 
@@ -76,13 +98,21 @@ function DocumentUpload() {
       try {
 
         const res =
-          await api.get("/sessions");
+          await api.get(
+            "/sessions"
+          );
 
         setSessions(res.data);
 
       } catch (error) {
 
         console.log(error);
+
+        notify(
+          error.response?.data?.message ||
+          "Failed to load sessions.",
+          "error"
+        );
 
       }
 
@@ -110,7 +140,7 @@ function DocumentUpload() {
     (e) => {
 
       setSelectedFile(
-        e.target.files[0]
+        e.target.files[0] || null
       );
 
     };
@@ -120,20 +150,34 @@ function DocumentUpload() {
   const loadDocuments =
     async () => {
 
-      if (
-        !formData.classId ||
-        !formData.sessionId
-      ) {
+      if (!formData.classId) {
 
-        return alert(
-          "Select class and session"
+        notify(
+          "Please select a class.",
+          "warning"
         );
 
+        return;
+
       }
+
+
+      if (!formData.sessionId) {
+
+        notify(
+          "Please select a session.",
+          "warning"
+        );
+
+        return;
+
+      }
+
 
       try {
 
         setLoading(true);
+
 
         const res =
           await api.get(
@@ -143,14 +187,19 @@ function DocumentUpload() {
             }
           );
 
-        setDocuments(res.data);
+
+        setDocuments(
+          res.data
+        );
 
       } catch (error) {
 
         console.log(error);
 
-        alert(
-          "Failed to load documents"
+        notify(
+          error.response?.data?.message ||
+          "Failed to load documents.",
+          "error"
         );
 
       } finally {
@@ -167,21 +216,39 @@ function DocumentUpload() {
     async (id) => {
 
       const confirmDelete =
-        window.confirm(
-          "Are you sure you want to delete this document?"
+        await confirmAction(
+
+          "Are you sure you want to delete this document? This action cannot be undone.",
+
+          {
+            title: "Delete Document?",
+            confirmText: "Delete",
+            cancelText: "Cancel"
+          }
+
         );
+
 
       if (!confirmDelete) return;
 
+
       try {
 
-        await api.delete(
-          `/documents/${id}`
+        setDeletingId(id);
+
+
+        const res =
+          await api.delete(
+            `/documents/${id}`
+          );
+
+
+        notify(
+          res.data.message ||
+          "Document deleted successfully.",
+          "success"
         );
 
-        alert(
-          "Document deleted successfully"
-        );
 
         // REFRESH DOCUMENTS
         loadDocuments();
@@ -190,10 +257,15 @@ function DocumentUpload() {
 
         console.log(error);
 
-        alert(
+        notify(
           error.response?.data?.message ||
-          "Failed to delete document"
+          "Failed to delete document.",
+          "error"
         );
+
+      } finally {
+
+        setDeletingId(null);
 
       }
 
@@ -206,35 +278,81 @@ function DocumentUpload() {
 
       e.preventDefault();
 
-      if (!selectedFile) {
 
-        return alert(
-          "Select a document"
+      if (!formData.classId) {
+
+        notify(
+          "Please select a class before uploading.",
+          "warning"
         );
 
+        return;
+
       }
+
+
+      if (!formData.sessionId) {
+
+        notify(
+          "Please select a session before uploading.",
+          "warning"
+        );
+
+        return;
+
+      }
+
+
+      if (!formData.term) {
+
+        notify(
+          "Please select a term before uploading.",
+          "warning"
+        );
+
+        return;
+
+      }
+
+
+      if (!selectedFile) {
+
+        notify(
+          "Please select a document to upload.",
+          "warning"
+        );
+
+        return;
+
+      }
+
 
       try {
 
         setUploading(true);
 
+
         const data =
           new FormData();
+
 
         data.append(
           "classId",
           formData.classId
         );
 
+
         data.append(
           "sessionId",
           formData.sessionId
         );
 
+
         data.append(
           "term",
           formData.term
         );
+
 
         // IMPORTANT
         data.append(
@@ -242,21 +360,50 @@ function DocumentUpload() {
           selectedFile
         );
 
+
         const res =
           await api.post(
+
             "/documents",
+
             data,
+
             {
+
               headers: {
+
                 "Content-Type":
                   "multipart/form-data"
+
               }
+
             }
+
           );
 
-        alert(res.data.message);
+
+        notify(
+          res.data.message ||
+          "Document uploaded successfully.",
+          "success"
+        );
+
 
         setSelectedFile(null);
+
+
+        const fileInput =
+          document.getElementById(
+            "document-file"
+          );
+
+
+        if (fileInput) {
+
+          fileInput.value = "";
+
+        }
+
 
         loadDocuments();
 
@@ -264,9 +411,10 @@ function DocumentUpload() {
 
         console.log(error);
 
-        alert(
+        notify(
           error.response?.data?.message ||
-          "Failed to upload document"
+          "Failed to upload document.",
+          "error"
         );
 
       } finally {
@@ -280,11 +428,12 @@ function DocumentUpload() {
 
   return (
 
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
 
-      <div className="bg-white rounded-2xl shadow p-6">
+      <div className="bg-white rounded-2xl shadow p-4 sm:p-6">
 
-        <h1 className="text-3xl font-bold mb-6">
+
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6">
 
           Document Upload
 
@@ -292,104 +441,141 @@ function DocumentUpload() {
 
 
         {/* FILTERS */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+
 
           {/* CLASS */}
-          <select
-            name="classId"
-            value={formData.classId}
-            onChange={handleChange}
-            className="border rounded-lg px-4 py-3"
-          >
+          <div>
 
-            <option value="">
-              Select Class
-            </option>
+            <label className="block mb-1.5 text-sm font-medium text-slate-700">
 
-            {
-              classes.map((cls) => (
+              Class
 
-                <option
-                  key={cls.id}
-                  value={cls.id}
-                >
+            </label>
 
-                  {cls.className}
+            <select
+              name="classId"
+              value={formData.classId}
+              onChange={handleChange}
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+            >
 
-                </option>
+              <option value="">
+                Select Class
+              </option>
 
-              ))
-            }
+              {
+                classes.map((cls) => (
 
-          </select>
+                  <option
+                    key={cls.id}
+                    value={cls.id}
+                  >
+
+                    {cls.className}
+
+                  </option>
+
+                ))
+              }
+
+            </select>
+
+          </div>
 
 
           {/* SESSION */}
-          <select
-            name="sessionId"
-            value={formData.sessionId}
-            onChange={handleChange}
-            className="border rounded-lg px-4 py-3"
-          >
+          <div>
 
-            <option value="">
-              Select Session
-            </option>
+            <label className="block mb-1.5 text-sm font-medium text-slate-700">
 
-            {
-              sessions.map((session) => (
+              Session
 
-                <option
-                  key={session.id}
-                  value={session.id}
-                >
+            </label>
 
-                  {session.sessionName}
+            <select
+              name="sessionId"
+              value={formData.sessionId}
+              onChange={handleChange}
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+            >
 
-                </option>
+              <option value="">
+                Select Session
+              </option>
 
-              ))
-            }
+              {
+                sessions.map((session) => (
 
-          </select>
+                  <option
+                    key={session.id}
+                    value={session.id}
+                  >
+
+                    {session.sessionName}
+
+                  </option>
+
+                ))
+              }
+
+            </select>
+
+          </div>
 
 
           {/* TERM */}
-          <select
-            name="term"
-            value={formData.term}
-            onChange={handleChange}
-            className="border rounded-lg px-4 py-3"
-          >
+          <div>
 
-            <option>
-              1st Term
-            </option>
+            <label className="block mb-1.5 text-sm font-medium text-slate-700">
 
-            <option>
-              2nd Term
-            </option>
+              Term
 
-            <option>
-              3rd Term
-            </option>
+            </label>
 
-          </select>
+            <select
+              name="term"
+              value={formData.term}
+              onChange={handleChange}
+              className="w-full border border-slate-200 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+            >
+
+              <option value="1st Term">
+                1st Term
+              </option>
+
+              <option value="2nd Term">
+                2nd Term
+              </option>
+
+              <option value="3rd Term">
+                3rd Term
+              </option>
+
+            </select>
+
+          </div>
 
 
           {/* LOAD */}
-          <button
-            onClick={loadDocuments}
-            className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-4 py-3"
-          >
+          <div className="flex items-end">
 
-            {
-              loading
-                ? "Loading..."
-                : "Load Documents"
-            }
+            <button
+              type="button"
+              onClick={loadDocuments}
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed text-white rounded-lg px-4 py-3 font-medium transition"
+            >
 
-          </button>
+              {
+                loading
+                  ? "Loading..."
+                  : "Load Documents"
+              }
+
+            </button>
+
+          </div>
 
         </div>
 
@@ -397,109 +583,206 @@ function DocumentUpload() {
         {/* UPLOAD FORM */}
         <form
           onSubmit={handleUpload}
-          className="border rounded-xl p-5 mb-8"
+          className="border border-slate-200 rounded-xl p-4 sm:p-5 mb-8"
         >
 
-          <input
-            type="file"
-            onChange={handleFileChange}
-            className="mb-4"
-          />
+          <h2 className="text-lg sm:text-xl font-semibold text-slate-800 mb-4">
 
-          <br />
+            Upload Document
 
-          <button
-            type="submit"
-            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg"
-          >
+          </h2>
 
-            {
-              uploading
-                ? "Uploading..."
-                : "Upload Document"
-            }
 
-          </button>
+          <div className="flex flex-col sm:flex-row gap-4 sm:items-end">
+
+            <div className="flex-1">
+
+              <label className="block mb-1.5 text-sm font-medium text-slate-700">
+
+                Document
+
+              </label>
+
+              <input
+                id="document-file"
+                type="file"
+                onChange={handleFileChange}
+                className="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm"
+              />
+
+              {
+                selectedFile && (
+
+                  <p className="mt-2 text-sm text-slate-500 break-words">
+
+                    Selected: {selectedFile.name}
+
+                  </p>
+
+                )
+              }
+
+            </div>
+
+
+            <button
+              type="submit"
+              disabled={uploading}
+              className="w-full sm:w-auto bg-green-600 hover:bg-green-700 disabled:bg-green-300 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-medium transition whitespace-nowrap"
+            >
+
+              {
+                uploading
+                  ? "Uploading..."
+                  : "Upload Document"
+              }
+
+            </button>
+
+          </div>
 
         </form>
 
 
         {/* DOCUMENTS */}
-        <div className="overflow-x-auto">
+        <div className="mt-4">
 
-          <table className="w-full border-collapse">
+          <div className="mb-4">
 
-            <thead>
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-800">
 
-              <tr className="bg-gray-100">
+              Documents
 
-                <th className="p-3 text-left">
-                  File Name
-                </th>
+            </h2>
 
-                <th className="p-3 text-left">
-                  Action
-                </th>
+            <p className="text-sm text-slate-500 mt-1">
 
-              </tr>
+              View or delete uploaded school documents.
 
-            </thead>
+            </p>
+
+          </div>
 
 
-            <tbody>
+          <div className="w-full overflow-hidden">
 
-              {
-                documents.map((doc) => (
+            <table className="w-full border-collapse">
 
-                  <tr
-                    key={doc.id}
-                    className="border-b"
-                  >
+              <thead>
 
-                    <td className="p-3">
+                <tr className="bg-gray-100">
 
-                      {doc.originalName}
+                  <th className="p-3 text-left text-sm sm:text-base">
 
-                    </td>
+                    File Name
 
-                    <td className="p-3">
+                  </th>
 
-                      <div className="flex gap-2">
+                  <th className="p-3 text-left text-sm sm:text-base">
 
-                        <a
-                          href={`${SERVER_BASE_URL}/uploads/${doc.fileName}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
-                        >
+                    Buttons
 
-                          View
+                  </th>
 
-                        </a>
+                </tr>
 
-                        <button
-                          onClick={() =>
-                            handleDeleteDocument(doc.id)
-                          }
-                          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
-                        >
+              </thead>
 
-                          Delete
 
-                        </button>
+              <tbody>
 
-                      </div>
+                {
+                  documents.length === 0 ? (
 
-                    </td>
+                    <tr>
 
-                  </tr>
+                      <td
+                        colSpan="2"
+                        className="p-8 text-center text-slate-500"
+                      >
 
-                ))
-              }
+                        No documents found.
 
-            </tbody>
+                      </td>
 
-          </table>
+                    </tr>
+
+                  ) : (
+
+                    documents.map((doc) => (
+
+                      <tr
+                        key={doc.id}
+                        className="border-b"
+                      >
+
+                        {/* FILE NAME */}
+                        <td className="p-3">
+
+                          <div className="font-medium break-words">
+
+                            {doc.originalName}
+
+                          </div>
+
+                        </td>
+
+
+                        {/* BUTTONS */}
+                        <td className="p-3">
+
+                          <div className="flex flex-col sm:flex-row gap-2">
+
+
+                            {/* VIEW */}
+                            <a
+                              href={`${SERVER_BASE_URL}/uploads/${doc.fileName}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="w-full sm:w-auto text-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition whitespace-nowrap"
+                            >
+
+                              View
+
+                            </a>
+
+
+                            {/* DELETE */}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleDeleteDocument(doc.id)
+                              }
+                              disabled={
+                                deletingId === doc.id
+                              }
+                              className="w-full sm:w-auto bg-red-600 hover:bg-red-700 disabled:bg-red-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg font-medium transition whitespace-nowrap"
+                            >
+
+                              {
+                                deletingId === doc.id
+                                  ? "Deleting..."
+                                  : "Delete"
+                              }
+
+                            </button>
+
+                          </div>
+
+                        </td>
+
+                      </tr>
+
+                    ))
+
+                  )
+                }
+
+              </tbody>
+
+            </table>
+
+          </div>
 
         </div>
 

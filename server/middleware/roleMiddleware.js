@@ -1,24 +1,23 @@
+// =========================
+// ADMIN
+// ADMIN + SUPERADMIN
+// =========================
+
 exports.isAdmin =
   (req, res, next) => {
 
-
-    console.log(
-      "USER ROLE:",
-      req.user
-    );
-
     if (
-
-      req.user.role !== "admin" &&
-
-      req.user.role !== "superadmin"
-
+      !req.user ||
+      (
+        req.user.role !== "admin" &&
+        req.user.role !== "superadmin"
+      )
     ) {
 
       return res.status(403).json({
 
         message:
-          "You are not an Admin"
+          "Access denied. Admin privileges required."
 
       });
 
@@ -29,17 +28,23 @@ exports.isAdmin =
   };
 
 
+// =========================
+// TEACHER
+// TEACHER ONLY
+// =========================
+
 exports.isTeacher =
   (req, res, next) => {
 
     if (
+      !req.user ||
       req.user.role !== "teacher"
     ) {
 
       return res.status(403).json({
 
         message:
-          "You are not a Teacher"
+          "Access denied. Teacher privileges required."
 
       });
 
@@ -50,17 +55,80 @@ exports.isTeacher =
   };
 
 
+// =========================
+// SUPER ADMIN
+// SUPERADMIN ONLY
+// =========================
+
 exports.isSuperAdmin =
   (req, res, next) => {
 
     if (
-      req.user.role !== "super_admin"
+      !req.user ||
+      req.user.role !== "superadmin"
     ) {
 
       return res.status(403).json({
 
         message:
-          "You are not a Super Admin"
+          "Access denied. Super Admin privileges required."
+
+      });
+
+    }
+
+    next();
+
+  };
+
+
+// =========================
+// STAFF
+// TEACHER + ADMIN + SUPERADMIN
+// =========================
+
+exports.isStaff =
+  (req, res, next) => {
+
+    if (
+      !req.user ||
+      ![
+        "teacher",
+        "admin",
+        "superadmin"
+      ].includes(req.user.role)
+    ) {
+
+      return res.status(403).json({
+
+        message:
+          "Access denied. Staff privileges required."
+
+      });
+
+    }
+
+    next();
+
+  };
+
+  // =========================
+// STUDENT
+// STUDENT ONLY
+// =========================
+
+exports.isStudent =
+  (req, res, next) => {
+
+    if (
+      !req.user ||
+      req.user.role !== "student"
+    ) {
+
+      return res.status(403).json({
+
+        message:
+          "Access denied. Student privileges required."
 
       });
 
