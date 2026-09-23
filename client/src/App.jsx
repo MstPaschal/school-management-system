@@ -1,8 +1,12 @@
 import {
   BrowserRouter,
   Routes,
-  Route
+  Route,
+  useLocation
 } from "react-router-dom";
+
+import { useEffect } from "react";
+import { setPageTitle } from "./utils/pageTitle";
 
 import Home from "./pages/Home";
 import About from "./pages/About";
@@ -65,11 +69,93 @@ import EventPreview from "./pages/EventPreview";
 import NotFound from "./pages/NotFound";
 
 
+function PageTitleManager() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const pageTitles = {
+      "/": "Home",
+      "/portal": "Login",
+      "/about": "About Us",
+      "/events": "Events",
+      "/gallery": "Gallery",
+      "/contact": "Contact Us",
+      "/apply": "Admissions",
+
+      "/student-portal": "Student Portal",
+      "/student-results": "Student Results",
+
+      "/dashboard": "Dashboard",
+
+      "/students/create": "Create Student",
+      "/students/view": "Students",
+      "/students/credentials": "Student Credentials",
+
+      "/payments/set": "Payments",
+      "/admin-settings": "Admin Settings",
+
+      "/sessions": "Sessions",
+      "/classes": "Classes",
+      "/subjects": "Subjects",
+
+      "/teachers": "Teachers",
+      "/assign-subject": "Assign Subjects",
+
+      "/score-entry": "Score Entry",
+      "/comment-manager": "Comment Manager",
+      "/make-comments": "Make Comments",
+      "/results": "Results",
+
+      "/student-status": "Student Status",
+      "/student-promotion": "Student Promotion",
+
+      "/documents": "Documents",
+
+      "/result-pins": "Result PINs",
+      "/create-admin": "Create Admin",
+
+      "/teacher-dashboard": "Teacher Dashboard",
+
+      "/result-checker": "Result Checker",
+      "/result-view": "Result",
+
+      "/admission-requests": "Admission Requests",
+      "/manage-events": "Manage Events",
+
+      "/forgot-password": "Forgot Password",
+      "/change-password": "Change Password",
+    };
+
+    let pageName = pageTitles[location.pathname];
+
+    if (!pageName) {
+      if (location.pathname.startsWith("/events/")) {
+        pageName = "Event";
+      } else if (location.pathname.startsWith("/students/edit/")) {
+        pageName = "Edit Student";
+      } else if (location.pathname.startsWith("/teachers/edit/")) {
+        pageName = "Edit Teacher";
+      } else if (location.pathname.startsWith("/student-results/")) {
+        pageName = "Student Result";
+      } else if (location.pathname.startsWith("/reset-password/")) {
+        pageName = "Reset Password";
+      }
+    }
+
+    setPageTitle(pageName);
+  }, [location.pathname]);
+
+  return null;
+}
+
+
 function App() {
 
   return (
 
     <BrowserRouter>
+
+      <PageTitleManager />
 
       <Routes>
 
