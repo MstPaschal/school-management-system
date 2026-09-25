@@ -27,6 +27,7 @@ const Subject = require("./models/Subject");
 const Session = require("./models/Session");
 const Teacher = require("./models/Teacher");
 const Student = require("./models/Student");
+const AcademicWeek = require("./models/AcademicWeek");
 const ClassSubject = require("./models/ClassSubject");
 const Score = require("./models/Score");
 const CommentTemplate = require("./models/CommentTemplate");
@@ -81,6 +82,15 @@ Student.belongsTo(User, {
   foreignKey: "userId"
 });
 
+Session.hasMany(AcademicWeek, {
+  foreignKey: "sessionId",
+  onDelete: "CASCADE",
+});
+
+AcademicWeek.belongsTo(Session, {
+  foreignKey: "sessionId",
+});
+
 // Routes
 const authRoutes = require("./routes/authRoutes");
 const testRoutes = require("./routes/testRoutes");
@@ -102,6 +112,7 @@ const resultCheckerRoutes = require("./routes/resultCheckerRoutes");
 const admissionRoutes = require("./routes/admissionRoutes");
 const contactRoutes = require("./routes/contactRoutes");
 const eventRoutes = require("./routes/eventRoutes");
+const academicWeekRoutes = require("./routes/academicWeekRoutes");
 
 
 
@@ -126,6 +137,7 @@ app.use("/api/result-checker", resultCheckerRoutes);
 app.use("/api/admissions", admissionRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/events", eventRoutes);
+app.use("/api/academic-weeks",academicWeekRoutes);
 
 // Home route
 app.get("/", (req, res) => {
